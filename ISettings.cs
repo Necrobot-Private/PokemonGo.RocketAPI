@@ -14,6 +14,7 @@ namespace PokemonGo.RocketAPI
         string PtcUsername { get; set; }
         string GoogleUsername { get; set; }
         string GooglePassword { get; set; }
+        string DevicePlatform { get; set; }
         string DeviceId { get; set; }
         string AndroidBoardName { get; set; }
         string AndroidBootloader { get; set; }
