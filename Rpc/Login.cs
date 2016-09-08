@@ -8,6 +8,7 @@ using PokemonGo.RocketAPI.Helpers;
 using PokemonGo.RocketAPI.Login;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
+using POGOProtos.Networking.Responses;
 
 namespace PokemonGo.RocketAPI.Rpc
 {
@@ -20,6 +21,7 @@ namespace PokemonGo.RocketAPI.Rpc
         public Login(Client client) : base(client)
         {
             login = SetLoginType(client.Settings);
+            _client.ApiUrl = Resources.RpcUrl;
         }
 
         private static ILoginType SetLoginType(ISettings settings)
@@ -52,10 +54,9 @@ namespace PokemonGo.RocketAPI.Rpc
                 LastTimestampMs = DateTime.UtcNow.ToUnixTime()
             };
             var checkAwardedBadgesMessage = new CheckAwardedBadgesMessage();
-            var downloadSettingsMessage = new DownloadSettingsMessage
-            {
-                Hash = "54b359c97e46900f87211ef6e6dd0b7f2a3ea1f5"
-            };
+            var downloadSettingsMessage = new DownloadSettingsMessage();
+            if (_client.SettingsHash != null)
+                downloadSettingsMessage.Hash = _client.SettingsHash;
 
             #endregion
 
@@ -82,17 +83,35 @@ namespace PokemonGo.RocketAPI.Rpc
                     RequestMessage = downloadSettingsMessage.ToByteString()
                 });
 
+            var serverResponse = await PostProto<Request>(serverRequest);
 
-            var serverResponse = await PostProto<Request>(Resources.RpcUrl, serverRequest);
+            if (!String.IsNullOrEmpty(serverResponse.ApiUrl))
+                _client.ApiUrl = "https://" + serverResponse.ApiUrl + "/rpc";
 
-            if (serverResponse.AuthTicket == null)
+            if (serverResponse.AuthTicket != null)
+                _client.AuthTicket = serverResponse.AuthTicket;
+
+            if (serverResponse.StatusCode == 102)
             {
                 _client.AuthToken = null;
                 throw new AccessTokenExpiredException();
             }
+            else if (serverResponse.StatusCode == 53)
+            {
+                // 53 means that the api_endpoint was not correctly set, should be at this point, though, so redo the request
+                await SetServer();
+                return;
+            }
+            else if (serverResponse.StatusCode == 3)
+            {
+                // Your account may be banned! please try from the official client.
+                throw new LoginFailedException("Your account may be banned! please try from the official client.");
+            }
+            
+            var downloadSettingsResponse = new DownloadSettingsResponse();
+            downloadSettingsResponse.MergeFrom(serverResponse.Returns[4]);
 
-            _client.AuthTicket = serverResponse.AuthTicket;
-            _client.ApiUrl = serverResponse.ApiUrl;
+            _client.SettingsHash = downloadSettingsResponse.Hash;
         }
 
     }
