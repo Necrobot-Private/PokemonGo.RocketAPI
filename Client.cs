@@ -3,6 +3,8 @@ using PokemonGo.RocketAPI.Enums;
 using PokemonGo.RocketAPI.Extensions;
 using PokemonGo.RocketAPI.HttpClient;
 using POGOProtos.Networking.Envelopes;
+using POGOProtos.Enums;
+using System;
 
 namespace PokemonGo.RocketAPI
 {
@@ -34,6 +36,9 @@ namespace PokemonGo.RocketAPI
         internal AuthTicket AuthTicket { get; set; }
 
         internal string SettingsHash { get; set; }
+        internal long InventoryLastUpdateTimestamp { get; set; }
+        internal Platform Platform { get; set; }
+        internal uint AppVersion { get; set; }
 
         public Client(ISettings settings, IApiFailureStrategy apiFailureStrategy)
         {
@@ -51,6 +56,21 @@ namespace PokemonGo.RocketAPI
             Misc = new Rpc.Misc(this);
 
             Player.SetCoordinates(Settings.DefaultLatitude, Settings.DefaultLongitude, Settings.DefaultAltitude);
+
+            InventoryLastUpdateTimestamp = 0;
+
+            if (settings.DevicePlatform.Equals("ios", System.StringComparison.Ordinal))
+                Platform = Platform.Ios;
+            else
+                Platform = Platform.Android;
+
+            AppVersion = 3500;
+            SettingsHash = "";
+        }
+
+        public static long GetCurrentTimeMillis()
+        {
+            return DateTime.UtcNow.ToUnixTime();
         }
 
         private WebProxy InitProxy()

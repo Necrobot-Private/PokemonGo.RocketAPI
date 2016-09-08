@@ -40,49 +40,16 @@ namespace PokemonGo.RocketAPI.Rpc
         public async Task DoLogin()
         {
             _client.AuthToken = await login.GetAccessToken().ConfigureAwait(false);
-            await SetServer().ConfigureAwait(false);
+
+            await FireRequestBlock(CommonRequest.GetDownloadRemoteConfigVersionMessageRequest(_client)).ConfigureAwait(false);
+            await FireRequestBlockTwo().ConfigureAwait(false);
         }
-
-        private async Task SetServer()
+        
+        private async Task FireRequestBlock(Request request)
         {
-            #region Standard intial request messages in right Order
+            Request[] requests = CommonRequest.FillRequest(request, _client);
 
-            var getPlayerMessage = new GetPlayerMessage();
-            var getHatchedEggsMessage = new GetHatchedEggsMessage();
-            var getInventoryMessage = new GetInventoryMessage
-            {
-                LastTimestampMs = DateTime.UtcNow.ToUnixTime()
-            };
-            var checkAwardedBadgesMessage = new CheckAwardedBadgesMessage();
-            var downloadSettingsMessage = new DownloadSettingsMessage();
-            if (_client.SettingsHash != null)
-                downloadSettingsMessage.Hash = _client.SettingsHash;
-
-            #endregion
-
-            var serverRequest = RequestBuilder.GetInitialRequestEnvelope(
-                new Request
-                {
-                    RequestType = RequestType.GetPlayer,
-                    RequestMessage = getPlayerMessage.ToByteString()
-                }, new Request
-                {
-                    RequestType = RequestType.GetHatchedEggs,
-                    RequestMessage = getHatchedEggsMessage.ToByteString()
-                }, new Request
-                {
-                    RequestType = RequestType.GetInventory,
-                    RequestMessage = getInventoryMessage.ToByteString()
-                }, new Request
-                {
-                    RequestType = RequestType.CheckAwardedBadges,
-                    RequestMessage = checkAwardedBadgesMessage.ToByteString()
-                }, new Request
-                {
-                    RequestType = RequestType.DownloadSettings,
-                    RequestMessage = downloadSettingsMessage.ToByteString()
-                });
-
+            var serverRequest = RequestBuilder.GetInitialRequestEnvelope(requests);
             var serverResponse = await PostProto<Request>(serverRequest);
 
             if (!String.IsNullOrEmpty(serverResponse.ApiUrl))
@@ -99,7 +66,7 @@ namespace PokemonGo.RocketAPI.Rpc
             else if (serverResponse.StatusCode == 53)
             {
                 // 53 means that the api_endpoint was not correctly set, should be at this point, though, so redo the request
-                await SetServer();
+                await FireRequestBlock(request);
                 return;
             }
             else if (serverResponse.StatusCode == 3)
@@ -107,11 +74,22 @@ namespace PokemonGo.RocketAPI.Rpc
                 // Your account may be banned! please try from the official client.
                 throw new LoginFailedException("Your account may be banned! please try from the official client.");
             }
-            
+
+            var responses = serverResponse.Returns;
+            var getInventoryResponse = new GetInventoryResponse();
+            getInventoryResponse.MergeFrom(responses[3]);
+
+            _client.InventoryLastUpdateTimestamp = Client.GetCurrentTimeMillis();
+
             var downloadSettingsResponse = new DownloadSettingsResponse();
-            downloadSettingsResponse.MergeFrom(serverResponse.Returns[4]);
+            downloadSettingsResponse.MergeFrom(responses[5]);
 
             _client.SettingsHash = downloadSettingsResponse.Hash;
+        }
+
+        public async Task FireRequestBlockTwo()
+        {
+            await FireRequestBlock(CommonRequest.GetGetAssetDigestMessageRequest(_client));
         }
 
     }
