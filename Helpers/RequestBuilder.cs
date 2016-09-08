@@ -61,6 +61,43 @@ namespace PokemonGo.RocketAPI.Helpers
         {
             var ticketBytes = _authTicket.ToByteArray();
 
+            Signature.Types.DeviceInfo deviceInfo;
+            if (settings.HardwareManufacturer.Equals("Apple", StringComparison.Ordinal))
+            {
+                // iOS
+                deviceInfo = new Signature.Types.DeviceInfo()
+                {
+                    DeviceId = settings.DeviceId,
+                    DeviceBrand = settings.DeviceBrand,
+                    DeviceModel = settings.DeviceModel,
+                    DeviceModelBoot = settings.DeviceModelBoot,
+                    HardwareManufacturer = settings.HardwareManufacturer,
+                    HardwareModel = settings.HardwareModel,
+                    FirmwareBrand = settings.FirmwareBrand,
+                    FirmwareType = settings.FirmwareType,
+                };
+            }
+            else
+            {
+                // Android
+                deviceInfo = new Signature.Types.DeviceInfo()
+                {
+                    DeviceId = settings.DeviceId,
+                    AndroidBoardName = settings.AndroidBoardName,
+                    AndroidBootloader = settings.AndroidBootloader,
+                    DeviceBrand = settings.DeviceBrand,
+                    DeviceModel = settings.DeviceModel,
+                    DeviceModelIdentifier = settings.DeviceModelIdentifier,
+                    DeviceModelBoot = settings.DeviceModelBoot,
+                    HardwareManufacturer = settings.HardwareManufacturer,
+                    HardwareModel = settings.HardwareModel,
+                    FirmwareBrand = settings.FirmwareBrand,
+                    FirmwareTags = settings.FirmwareTags,
+                    FirmwareType = settings.FirmwareType,
+                    FirmwareFingerprint = settings.FirmwareFingerprint
+                };
+            }
+
             var sig = new Signature()
             {
 				Timestamp = (ulong)Utils.GetTime(true),
@@ -87,22 +124,7 @@ namespace PokemonGo.RocketAPI.Helpers
                     GyroscopeRawZ = GenRandom(-0.9681901931762695, 0.8396636843681335),
                     AccelerometerAxes = 3
                 },
-                DeviceInfo = new Signature.Types.DeviceInfo()
-                {
-                    DeviceId = settings.DeviceId,
-                    AndroidBoardName = settings.AndroidBoardName,
-                    AndroidBootloader = settings.AndroidBootloader,
-                    DeviceBrand = settings.DeviceBrand,
-                    DeviceModel = settings.DeviceModel,
-                    DeviceModelIdentifier = settings.DeviceModelIdentifier,
-                    DeviceModelBoot = settings.DeviceModelBoot,
-                    HardwareManufacturer = settings.HardwareManufacturer,
-                    HardwareModel = settings.HardwareModel,
-                    FirmwareBrand = settings.FirmwareBrand,
-                    FirmwareTags = settings.FirmwareTags,
-                    FirmwareType = settings.FirmwareType,
-                    FirmwareFingerprint = settings.FirmwareFingerprint
-                }
+                DeviceInfo = deviceInfo
             };
 
             sig.LocationFix.Add(new Signature.Types.LocationFix()
