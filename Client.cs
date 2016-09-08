@@ -33,6 +33,8 @@ namespace PokemonGo.RocketAPI
         internal string ApiUrl { get; set; }
         internal AuthTicket AuthTicket { get; set; }
 
+        internal string SettingsHash { get; set; }
+
         public Client(ISettings settings, IApiFailureStrategy apiFailureStrategy)
         {
             Settings = settings;
