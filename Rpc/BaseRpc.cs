@@ -12,6 +12,7 @@ namespace PokemonGo.RocketAPI.Rpc
     {
         protected Client _client;
         protected RequestBuilder RequestBuilder => new RequestBuilder(_client.AuthToken, _client.AuthType, _client.CurrentLatitude, _client.CurrentLongitude, _client.CurrentAltitude, _client.Settings, _client.AuthTicket);
+        protected string ApiUrl => $"https://{_client.ApiUrl}/rpc";
         protected BaseRpc(Client client)
         {
             _client = client;
@@ -21,13 +22,13 @@ namespace PokemonGo.RocketAPI.Rpc
             where TResponsePayload : IMessage<TResponsePayload>, new()
         {
             var requestEnvelops = RequestBuilder.GetRequestEnvelope(type, message);
-            return await _client.PokemonHttpClient.PostProtoPayload<TRequest, TResponsePayload>(_client.ApiUrl, requestEnvelops, _client.ApiFailure);
+            return await _client.PokemonHttpClient.PostProtoPayload<TRequest, TResponsePayload>(ApiUrl, requestEnvelops, _client.ApiFailure);
         }
 
         protected async Task<TResponsePayload> PostProtoPayload<TRequest, TResponsePayload>(RequestEnvelope requestEnvelope) where TRequest : IMessage<TRequest>
             where TResponsePayload : IMessage<TResponsePayload>, new()
         {
-            return await _client.PokemonHttpClient.PostProtoPayload<TRequest, TResponsePayload>(_client.ApiUrl, requestEnvelope, _client.ApiFailure);
+            return await _client.PokemonHttpClient.PostProtoPayload<TRequest, TResponsePayload>(ApiUrl, requestEnvelope, _client.ApiFailure);
         }
 
         protected async Task<Tuple<T1, T2>> PostProtoPayload<TRequest, T1, T2>(RequestEnvelope requestEnvelope) where TRequest : IMessage<TRequest>
@@ -69,12 +70,16 @@ namespace PokemonGo.RocketAPI.Rpc
         
         protected async Task<IMessage[]> PostProtoPayload<TRequest>(RequestEnvelope requestEnvelope, params Type[] responseTypes) where TRequest : IMessage<TRequest>
         {
-            return await _client.PokemonHttpClient.PostProtoPayload<TRequest>(_client.ApiUrl, requestEnvelope, _client.ApiFailure, responseTypes);
+            return await _client.PokemonHttpClient.PostProtoPayload<TRequest>(ApiUrl, requestEnvelope, _client.ApiFailure, responseTypes);
         }
 
         protected async Task<ResponseEnvelope> PostProto<TRequest>(RequestEnvelope requestEnvelope) where TRequest : IMessage<TRequest>
         {
-            return await _client.PokemonHttpClient.PostProto<TRequest>(_client.ApiUrl, requestEnvelope);
+            return await _client.PokemonHttpClient.PostProto<TRequest>(ApiUrl, requestEnvelope);
+        }
+        protected async Task<ResponseEnvelope> PostProto<TRequest>(string url, RequestEnvelope requestEnvelope) where TRequest : IMessage<TRequest>
+        {
+            return await _client.PokemonHttpClient.PostProto<TRequest>(url, requestEnvelope);
         }
     }
 }

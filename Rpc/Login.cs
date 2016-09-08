@@ -8,7 +8,6 @@ using PokemonGo.RocketAPI.Helpers;
 using PokemonGo.RocketAPI.Login;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
-using POGOProtos.Networking.Responses;
 
 namespace PokemonGo.RocketAPI.Rpc
 {
@@ -21,7 +20,6 @@ namespace PokemonGo.RocketAPI.Rpc
         public Login(Client client) : base(client)
         {
             login = SetLoginType(client.Settings);
-            _client.ApiUrl = Resources.RpcUrl;
         }
 
         private static ILoginType SetLoginType(ISettings settings)
@@ -43,19 +41,6 @@ namespace PokemonGo.RocketAPI.Rpc
             await SetServer().ConfigureAwait(false);
         }
 
-        public static Request GetDownloadSettingsMessageRequest(Client client)
-        {
-            DownloadSettingsMessage downloadSettingsMessage = new DownloadSettingsMessage();
-            if (client.SettingsHash != null)
-                downloadSettingsMessage.Hash = client.SettingsHash;
-
-            return new Request
-            {
-                RequestType = RequestType.DownloadSettingsMessage,
-                RequestMessage = downloadSettingsMessage.ToByteString()
-            };
-        }
-
         private async Task SetServer()
         {
             #region Standard intial request messages in right Order
@@ -67,7 +52,11 @@ namespace PokemonGo.RocketAPI.Rpc
                 LastTimestampMs = DateTime.UtcNow.ToUnixTime()
             };
             var checkAwardedBadgesMessage = new CheckAwardedBadgesMessage();
-            
+            var downloadSettingsMessage = new DownloadSettingsMessage
+            {
+                Hash = "54b359c97e46900f87211ef6e6dd0b7f2a3ea1f5"
+            };
+
             #endregion
 
             var serverRequest = RequestBuilder.GetInitialRequestEnvelope(
@@ -90,38 +79,20 @@ namespace PokemonGo.RocketAPI.Rpc
                 }, new Request
                 {
                     RequestType = RequestType.DownloadSettings,
-                    RequestMessage = GetDownloadSettingsMessageRequest(_client).ToByteString()
+                    RequestMessage = downloadSettingsMessage.ToByteString()
                 });
 
-            var serverResponse = await PostProto<Request>(serverRequest);
 
-            if (!String.IsNullOrEmpty(serverResponse.ApiUrl))
-                _client.ApiUrl = "https://" + serverResponse.ApiUrl + "/rpc";
+            var serverResponse = await PostProto<Request>(Resources.RpcUrl, serverRequest);
 
-            if (serverResponse.AuthTicket != null)
-                _client.AuthTicket = serverResponse.AuthTicket;
-
-            if (serverResponse.StatusCode == 102)
+            if (serverResponse.AuthTicket == null)
             {
                 _client.AuthToken = null;
                 throw new AccessTokenExpiredException();
             }
-            else if (serverResponse.StatusCode == 53)
-            {
-                // 53 means that the api_endpoint was not correctly set, should be at this point, though, so redo the request
-                await SetServer();
-                return;
-            }
-            else if (serverResponse.StatusCode == 3)
-            {
-                // Your account may be banned! please try from the official client.
-                throw new LoginFailedException("Your account may be banned! please try from the official client.");
-            }
-            
-            var downloadSettingsResponse = new DownloadSettingsResponse();
-            downloadSettingsResponse.MergeFrom(serverResponse.Returns[4]);
 
-            _client.SettingsHash = downloadSettingsResponse.Hash;
+            _client.AuthTicket = serverResponse.AuthTicket;
+            _client.ApiUrl = serverResponse.ApiUrl;
         }
 
     }
