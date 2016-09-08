@@ -9,5 +9,7 @@ before_build:
     sed -i "s#$(SolutionDir)#.#g" PokemonGo.RocketAPI.csproj
 
     nuget restore -OutputDirectory packages
+    
+    git clone -q --branch=master https://github.com/Necrobot-Private/POGOProtos.git POGOProtos
 build:
   verbosity: minimal
