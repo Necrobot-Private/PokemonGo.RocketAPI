@@ -174,6 +174,7 @@
     <Compile Include="Exceptions\GoogleOfflineException.cs" />
     <Compile Include="Exceptions\LoginFailedException.cs" />
     <Compile Include="Helpers\Crypt.cs" />
+    <Compile Include="Helpers\DeviceInfo.cs" />
     <Compile Include="HttpClient\PokemonClient.cs" />
     <Compile Include="Enums\AuthType.cs" />
     <Compile Include="Exceptions\AccessTokenExpiredException.cs" />
