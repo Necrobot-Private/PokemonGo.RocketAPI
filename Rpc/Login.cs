@@ -76,20 +76,23 @@ namespace PokemonGo.RocketAPI.Rpc
             }
 
             var responses = serverResponse.Returns;
-            var getInventoryResponse = new GetInventoryResponse();
-            if (4 <= responses.Count)
+            if (responses != null)
             {
-                getInventoryResponse.MergeFrom(responses[3]);
+                var getInventoryResponse = new GetInventoryResponse();
+                if (4 <= responses.Count)
+                {
+                    getInventoryResponse.MergeFrom(responses[3]);
 
-                _client.InventoryLastUpdateTimestamp = Client.GetCurrentTimeMillis();
-            }
+                    _client.InventoryLastUpdateTimestamp = Client.GetCurrentTimeMillis();
+                }
 
-            var downloadSettingsResponse = new DownloadSettingsResponse();
-            if (6 <= responses.Count)
-            {
-                downloadSettingsResponse.MergeFrom(responses[5]);
+                var downloadSettingsResponse = new DownloadSettingsResponse();
+                if (6 <= responses.Count)
+                {
+                    downloadSettingsResponse.MergeFrom(responses[5]);
 
-                _client.SettingsHash = downloadSettingsResponse.Hash;
+                    _client.SettingsHash = downloadSettingsResponse.Hash;
+                }
             }
         }
 
