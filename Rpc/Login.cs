@@ -76,6 +76,11 @@ namespace PokemonGo.RocketAPI.Rpc
             }
 
             var responses = serverResponse.Returns;
+            if (responses == null)
+            {
+                await FireRequestBlock(request);
+                return;
+            }
             var getInventoryResponse = new GetInventoryResponse();
             getInventoryResponse.MergeFrom(responses[3]);
 
