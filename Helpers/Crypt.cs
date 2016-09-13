@@ -1,15 +1,19 @@
-﻿using System;
+﻿#region using directives
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
+#endregion
+
 namespace PokemonGo.RocketAPI.Helpers
 {
     public class Crypt
     {
-        private EncryptDelegate _encryptNative;
+        private readonly EncryptDelegate _encryptNative;
 
         public Crypt()
         {
@@ -18,12 +22,12 @@ namespace PokemonGo.RocketAPI.Helpers
             var encryptPath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources\encrypt.dll");
             if (File.Exists(encryptPath))
             {
-                _encryptNative = (EncryptDelegate)LoadFunction<EncryptDelegate>(@"Resources\encrypt.dll", "encrypt");
+                _encryptNative = (EncryptDelegate) LoadFunction<EncryptDelegate>(@"Resources\encrypt.dll", "encrypt");
                 return;
             }
             encryptPath = Path.Combine(Directory.GetCurrentDirectory(), @"encrypt.dll");
             if (File.Exists(encryptPath))
-                _encryptNative = (EncryptDelegate)LoadFunction<EncryptDelegate>(@"encrypt.dll", "encrypt");
+                _encryptNative = (EncryptDelegate) LoadFunction<EncryptDelegate>(@"encrypt.dll", "encrypt");
         }
 
         public byte[] Encrypt(byte[] bytes)
@@ -34,7 +38,6 @@ namespace PokemonGo.RocketAPI.Helpers
             var iv = new byte[32];
             new Random().NextBytes(iv);
             return EncryptSharp(bytes, iv);
-
         }
 
         //pokemongo-encrypt-native--------------------------------------
@@ -48,9 +51,6 @@ namespace PokemonGo.RocketAPI.Helpers
 
         [DllImport("kernel32.dll", EntryPoint = "RtlFillMemory", SetLastError = false)]
         private static extern void FillMemory(IntPtr destination, uint length, byte fill);
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private unsafe delegate int EncryptDelegate(IntPtr arr, int length, IntPtr iv, int ivsize, IntPtr output, out int outputSize);
 
         private Delegate LoadFunction<T>(string dllPath, string functionName)
         {
@@ -69,11 +69,11 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public byte[] EncryptNative(byte[] bytes)
         {
-            var outputLength = 32 + bytes.Length + (256 - (bytes.Length % 256));
+            var outputLength = 32 + bytes.Length + (256 - bytes.Length%256);
             var ptr = Marshal.AllocHGlobal(outputLength);
             var ptrOutput = Marshal.AllocHGlobal(outputLength);
-            FillMemory(ptr, (uint)outputLength, 0);
-            FillMemory(ptrOutput, (uint)outputLength, 0);
+            FillMemory(ptr, (uint) outputLength, 0);
+            FillMemory(ptrOutput, (uint) outputLength, 0);
             Marshal.Copy(bytes, 0, ptr, bytes.Length);
 
             var iv = GetURandom(32);
@@ -117,14 +117,14 @@ namespace PokemonGo.RocketAPI.Helpers
                 throw new ArgumentException("ivSize must be 32 length");
             }
 
-            roundedSize = inputSize + (256 - (inputSize % 256));
+            roundedSize = inputSize + (256 - inputSize%256);
             totalSize = roundedSize + 32;
 
-            for (int j = 0; j < 8; j++)
+            for (var j = 0; j < 8; j++)
             {
-                for (int i = 0; i < 32; i++)
+                for (var i = 0; i < 32; i++)
                 {
-                    arr2[32 * j + i] = rotl8(iv[i], j); //rotate byte left
+                    arr2[32*j + i] = rotl8(iv[i], j); //rotate byte left
                 }
             }
 
@@ -136,11 +136,11 @@ namespace PokemonGo.RocketAPI.Helpers
             // memcpy(output + 32, input, input_size);
             Buffer.BlockCopy(input, 0, output, 32, inputSize);
 
-            output[totalSize - 1] = (byte)(256 - (inputSize % 256));
+            output[totalSize - 1] = (byte) (256 - inputSize%256);
 
             for (var offset = 32; offset < totalSize; offset += 256)
             {
-                for (int i = 0; i < 256; i++)
+                for (var i = 0; i < 256; i++)
                 {
                     output[offset + i] ^= arr2[i];
                 }
@@ -161,13 +161,14 @@ namespace PokemonGo.RocketAPI.Helpers
         //----- (0009E9D8) --------------------------------------------------------
         private static void sub_9E9D8(IList<byte> input, IList<byte> output)
         {
-            uint[] temp = new uint[812 / 4];
-            uint[] temp2 = new uint[256 / 4];
+            var temp = new uint[812/4];
+            var temp2 = new uint[256/4];
             // memcpy(temp2, input, 0x100);
 
             Buffer.BlockCopy(input.ToArray(), 0, temp2, 0, 256);
-            sub_87568(temp, temp2); // -> iniatilizes newly created 768bytes 'temp' buffer with formula&input's first 256bytes (temp2) as a 'key' : the first 752 bytes are overwritten
-            sub_8930C(temp);                  // -> 'temp' first 744 bytes are modified with a static formula (no key involved)
+            sub_87568(temp, temp2);
+                // -> iniatilizes newly created 768bytes 'temp' buffer with formula&input's first 256bytes (temp2) as a 'key' : the first 752 bytes are overwritten
+            sub_8930C(temp); // -> 'temp' first 744 bytes are modified with a static formula (no key involved)
             sub_8B2F4(temp);
             sub_8D114(temp);
             sub_8F0B0(temp);
@@ -178,10 +179,11 @@ namespace PokemonGo.RocketAPI.Helpers
             sub_985E0(temp);
             sub_9A490(temp);
             sub_9C42C(temp);
-            sub_9E1C4(temp, temp2); // temp2 is entirely overwritten (256 first bytes) by this function (final computation of hash or encryption)
+            sub_9E1C4(temp, temp2);
+                // temp2 is entirely overwritten (256 first bytes) by this function (final computation of hash or encryption)
 
             // memcpy(output, temp2, 0x100);
-            byte[] outputBuffer = new byte[256];
+            var outputBuffer = new byte[256];
             Buffer.BlockCopy(temp2, 0, outputBuffer, 0, 256);
             for (var i = 0; i < 256; i++)
             {
@@ -192,7 +194,7 @@ namespace PokemonGo.RocketAPI.Helpers
         //----- (rotl8) --------------------------------------------------------
         private static byte rotl8(byte x, int n)
         {
-            return (byte)(((x << n) | (x >> (8 - n))) & byte.MaxValue);
+            return (byte) (((x << n) | (x >> (8 - n))) & byte.MaxValue);
         }
 
         //----- (00087568) --------------------------------------------------------
@@ -201,7 +203,7 @@ namespace PokemonGo.RocketAPI.Helpers
             // RESULT must have a size of (at least) 752 bytes / 188 uint
             // a2 has a size of 256 bytes / 64 uint at least
 
-            uint[] v = new uint[550]; // tmp buffer of 2200 bytes / 550 uint
+            var v = new uint[550]; // tmp buffer of 2200 bytes / 550 uint
 
             v[0] = a2[0];
             result[0] = a2[0];
@@ -478,7 +480,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[207] = v[127] ^ v[81] & v[154];
             v[208] = v[125] & v[62];
             v[209] = v[206];
-            result[28] = v[195] ^ (v[179] | v[61]) ^ (v[98] ^ v[118] & v[17] & ~v[173]) & v[32] ^ v[118] & ~(v[184] ^ v[188] & v[59]);
+            result[28] = v[195] ^ (v[179] | v[61]) ^ (v[98] ^ v[118] & v[17] & ~v[173]) & v[32] ^
+                         v[118] & ~(v[184] ^ v[188] & v[59]);
             v[210] = (v[179] | ~v[97]) & v[17];
             v[211] = v[107] ^ v[179] ^ (v[177] ^ v[186]) & v[59] ^ (v[61] | ~(v[179] & v[17])) & v[118];
             v[212] = v[205] | v[110];
@@ -492,13 +495,16 @@ namespace PokemonGo.RocketAPI.Helpers
             v[219] = v[218] & v[154];
             v[220] = v[218] & v[136];
             v[221] = v[217] ^ v[10] ^ v[220] ^ (v[117] & v[136] ^ v[99] ^ v[219]) & v[63] | v[120];
-            result[54] = v[177] ^ v[17] ^ v[150] ^ (v[172] | v[61]) ^ v[214] ^ v[32] & ~(v[210] ^ (v[17] ^ v[183] | v[61]) ^ v[172] ^ ((v[177] ^ v[17] | v[61]) ^ v[187]) & v[118]);
+            result[54] = v[177] ^ v[17] ^ v[150] ^ (v[172] | v[61]) ^ v[214] ^
+                         v[32] &
+                         ~(v[210] ^ (v[17] ^ v[183] | v[61]) ^ v[172] ^ ((v[177] ^ v[17] | v[61]) ^ v[187]) & v[118]);
             v[222] = v[136] & ~(v[102] | v[10]);
             result[36] = v[139] ^ (v[105] ^ v[136]) & v[154] ^ v[63] & ~(v[101] & v[136] ^ v[99] ^ v[217]) ^ v[221];
             result[63] = v[181];
             v[223] = v[63] & ~(v[220] ^ v[105]);
             v[224] = v[63] & ~(v[138] ^ v[101] ^ (v[10] ^ v[10] & v[136]) & v[154]);
-            result[14] = (v[222] ^ v[105] ^ v[217]) & v[63] ^ v[168] ^ v[220] ^ v[101] ^ ((v[101] | v[154]) ^ v[138] ^ v[63] & ~(v[99] & v[136] ^ v[154] & ~v[101] ^ v[101])) & ~v[120];
+            result[14] = (v[222] ^ v[105] ^ v[217]) & v[63] ^ v[168] ^ v[220] ^ v[101] ^
+                         ((v[101] | v[154]) ^ v[138] ^ v[63] & ~(v[99] & v[136] ^ v[154] & ~v[101] ^ v[101])) & ~v[120];
             v[225] = v[10] & v[136] ^ (v[102] | v[10]);
             v[226] = v[154] & ~(v[10] & v[136] ^ v[101]) ^ v[105] ^ v[136] & v[105];
             v[227] = v[154] & ~((v[102] | v[10]) & v[136] ^ v[105]) ^ v[138];
@@ -527,8 +533,10 @@ namespace PokemonGo.RocketAPI.Helpers
             v[250] = (v[203] ^ (v[231] | v[74])) & v[176];
             v[251] = v[91] ^ v[249];
             v[252] = v[130] | v[116];
-            v[253] = ((v[125] ^ v[62]) & v[142] ^ v[125]) & v[67] ^ v[200] & v[142] ^ v[165] ^ v[158] & ~((v[165] ^ v[142] | v[77]) ^ v[200]) | v[110];
-            v[254] = (v[231] & v[74] ^ (v[130] | v[116])) & v[176] ^ (v[124] & v[130] & v[201] ^ v[116]) & v[74] ^ v[169];
+            v[253] = ((v[125] ^ v[62]) & v[142] ^ v[125]) & v[67] ^ v[200] & v[142] ^ v[165] ^
+                     v[158] & ~((v[165] ^ v[142] | v[77]) ^ v[200]) | v[110];
+            v[254] = (v[231] & v[74] ^ (v[130] | v[116])) & v[176] ^ (v[124] & v[130] & v[201] ^ v[116]) & v[74] ^
+                     v[169];
             v[255] = (v[200] & v[142] ^ v[125] & v[62]) & v[77];
             v[256] = (v[203] ^ v[130]) & v[74];
             v[257] = (v[125] & v[62] ^ v[142]) & v[67] ^ v[16] ^ v[165] & v[142] ^ v[200];
@@ -800,7 +808,8 @@ namespace PokemonGo.RocketAPI.Helpers
             result[83] = v[294] & v[102] ^ v[37] ^ (v[36] & v[22] | v[63]);
             result[87] = v[374] & v[36] ^ v[102] & ~v[271];
             v[450] = v[402];
-            result[30] = ((v[63] | v[22]) ^ v[37] ^ v[278] & v[102]) & ~v[181] ^ v[329] ^ ((v[297] ^ v[63] ^ v[22]) & ~v[181] ^ result[85] | v[4]);
+            result[30] = ((v[63] | v[22]) ^ v[37] ^ v[278] & v[102]) & ~v[181] ^ v[329] ^
+                         ((v[297] ^ v[63] ^ v[22]) & ~v[181] ^ result[85] | v[4]);
             v[451] = v[134] & ~v[402];
             v[452] = v[152] & ~(v[451] ^ v[450]);
             v[453] = v[403];
@@ -976,7 +985,7 @@ namespace PokemonGo.RocketAPI.Helpers
             // input's first 744 are entirely overwritten in the process
 
             // v is a tmp buffer of 2072 bytes / 518 DWORD
-            uint[] v = new uint[518];
+            var v = new uint[518];
 
             v[0] = ~input[30];
             v[1] = input[79];
@@ -1166,7 +1175,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[167] = v[156] ^ v[146] ^ (v[152] ^ v[146] | v[142]);
             v[168] = input[2] & ~v[157];
             v[169] = input[185] ^ v[148];
-            v[170] = input[56] ^ input[37] ^ (v[149] | v[142]) ^ v[168] ^ (v[150] ^ (v[145] ^ v[137] ^ (v[137] | v[142])) & input[32]) & v[165];
+            v[170] = input[56] ^ input[37] ^ (v[149] | v[142]) ^ v[168] ^
+                     (v[150] ^ (v[145] ^ v[137] ^ (v[137] | v[142])) & input[32]) & v[165];
             input[83] = v[152] ^ v[154];
             v[171] = input[32];
             v[172] = v[168] ^ v[137];
@@ -1295,7 +1305,10 @@ namespace PokemonGo.RocketAPI.Helpers
             v[271] = v[261] & v[265] ^ v[270];
             v[272] = ~input[44];
             v[273] = v[269] ^ v[126] ^ v[261] & ~v[123];
-            v[274] = input[17] ^ input[99] ^ v[261] & input[101] ^ (v[261] & v[50] ^ input[164]) & v[272] ^ ((v[261] & input[164] ^ v[270]) & v[272] ^ v[261] & v[50] ^ input[99]) & input[6] ^ input[52] & ~((v[266] ^ v[270]) & v[272] ^ ((v[266] ^ input[162] | input[44]) ^ v[266] ^ input[94]) & input[6]);
+            v[274] = input[17] ^ input[99] ^ v[261] & input[101] ^ (v[261] & v[50] ^ input[164]) & v[272] ^
+                     ((v[261] & input[164] ^ v[270]) & v[272] ^ v[261] & v[50] ^ input[99]) & input[6] ^
+                     input[52] &
+                     ~((v[266] ^ v[270]) & v[272] ^ ((v[266] ^ input[162] | input[44]) ^ v[266] ^ input[94]) & input[6]);
             v[275] = input[29];
             v[276] = input[55] ^ v[17] ^ v[131] ^ v[261] & ~v[132];
             v[277] = (v[188] ^ v[140]) & v[274];
@@ -1309,7 +1322,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[281] = v[261] & input[99];
             input[17] = v[274];
             input[69] = v[276] & ~(v[262] & v[276]);
-            input[153] = v[274] & v[188] & v[140] ^ v[200] ^ v[197] & v[273] ^ ~v[264] & (v[188] ^ v[274] ^ v[277] & v[273]);
+            input[153] = v[274] & v[188] & v[140] ^ v[200] ^ v[197] & v[273] ^
+                         ~v[264] & (v[188] ^ v[274] ^ v[277] & v[273]);
             v[282] = v[262] ^ v[276];
             input[117] = (v[262] | v[276]) & ~v[276];
             input[185] = v[262] & ~v[276];
@@ -1324,7 +1338,8 @@ namespace PokemonGo.RocketAPI.Helpers
             input[100] = v[188] ^ v[274];
             v[289] = input[101];
             input[102] = v[283];
-            input[116] = (v[264] | (v[188] & v[140] ^ v[274]) & ~v[273]) ^ v[280] ^ v[188] & v[274] ^ v[135] & v[273] & v[188];
+            input[116] = (v[264] | (v[188] & v[140] ^ v[274]) & ~v[273]) ^ v[280] ^ v[188] & v[274] ^
+                         v[135] & v[273] & v[188];
             v[290] = v[261] ^ v[289];
             v[291] = v[286];
             v[292] = v[279] ^ v[261] & ~v[136];
@@ -1641,7 +1656,6 @@ namespace PokemonGo.RocketAPI.Helpers
             input[103] = v[122] | ~v[292] & (v[372] | v[322]) ^ (v[372] | v[322]);
             input[142] = v[497] ^ v[496] & ~v[383] | v[322];
             input[168] = v[389] ^ v[372];
-
         }
 
         //----- (0008B2F4) --------------------------------------------------------
@@ -1650,7 +1664,7 @@ namespace PokemonGo.RocketAPI.Helpers
             // input is a string of 744 bytes / 187 uint
             // after passing through this function, input gets updated in 152 position out of the 187 avaiblable
 
-            uint[] v = new uint[487]; // temporory buffer of 1948 bytes / 487 uint
+            var v = new uint[487]; // temporory buffer of 1948 bytes / 487 uint
 
             v[0] = result[35];
             v[1] = v[0] & ~result[27];
@@ -1735,7 +1749,9 @@ namespace PokemonGo.RocketAPI.Helpers
             v[71] = ~v[51] & result[55] ^ result[136];
             v[72] = result[31];
             v[73] = (v[51] | v[55]) ^ result[80];
-            v[74] = result[128] ^ result[31] ^ result[60] ^ (v[51] | v[62]) ^ (result[107] ^ v[71] | result[47]) ^ (result[31] & ~(v[51] | result[158]) ^ v[69] ^ (v[61] ^ result[76] ^ v[65] & result[31] | result[47])) & ~result[1];
+            v[74] = result[128] ^ result[31] ^ result[60] ^ (v[51] | v[62]) ^ (result[107] ^ v[71] | result[47]) ^
+                    (result[31] & ~(v[51] | result[158]) ^ v[69] ^
+                     (v[61] ^ result[76] ^ v[65] & result[31] | result[47])) & ~result[1];
             v[75] = (result[117] | v[51]) ^ result[158];
             v[76] = ~result[47];
             v[77] = v[74] & ~v[23];
@@ -1745,7 +1761,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[81] = ((~v[51] | ~result[128]) & v[72] ^ v[61]) & v[76] ^ v[69] ^ result[10] ^ v[65] & ~result[31];
             v[82] = v[74];
             v[83] = result[79] ^ result[26] ^ v[51] & ~result[153];
-            v[84] = (((~v[51] & result[128] ^ result[76]) & result[31] ^ result[136]) & v[76] ^ (~v[51] & result[185] ^ result[80] | v[72]) ^ v[73]) & ~result[1];
+            v[84] = (((~v[51] & result[128] ^ result[76]) & result[31] ^ result[136]) & v[76] ^
+                     (~v[51] & result[185] ^ result[80] | v[72]) ^ v[73]) & ~result[1];
             v[85] = v[51] | result[158];
             result[12] ^= result[78] ^ ~v[51] & result[162];
             v[86] = v[85] ^ result[80];
@@ -1785,7 +1802,9 @@ namespace PokemonGo.RocketAPI.Helpers
             v[112] = result[0] & ~v[111];
             v[113] = result[126] ^ result[53] ^ v[43];
             v[114] = v[111];
-            v[115] = v[51] ^ v[110] ^ result[58] ^ (v[64] ^ result[158] | result[31]) ^ (v[103] ^ result[31] & (v[51] ^ v[110]) | result[47]) ^ (v[68] & result[31] ^ v[103] ^ (v[109] ^ v[103]) & v[76] | result[1]);
+            v[115] = v[51] ^ v[110] ^ result[58] ^ (v[64] ^ result[158] | result[31]) ^
+                     (v[103] ^ result[31] & (v[51] ^ v[110]) | result[47]) ^
+                     (v[68] & result[31] ^ v[103] ^ (v[109] ^ v[103]) & v[76] | result[1]);
             v[116] = v[111];
             v[117] = result[65];
             v[118] = result[176] ^ result[86] ^ result[7];
@@ -2000,7 +2019,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[269] = v[261] ^ v[218] ^ v[60];
             v[270] = ~v[222] & v[88];
             v[271] = v[261] ^ v[224] ^ (v[255] ^ (v[218] | v[60])) & v[227];
-            v[272] = v[227] & ~(v[60] & v[257] & v[218] ^ v[218] ^ v[60]) ^ v[268] ^ v[91] & ~(v[263] ^ (v[218] | v[60] | v[227]));
+            v[272] = v[227] & ~(v[60] & v[257] & v[218] ^ v[218] ^ v[60]) ^ v[268] ^
+                     v[91] & ~(v[263] ^ (v[218] | v[60] | v[227]));
             v[273] = v[99] & ~(v[221] ^ v[219]) ^ v[219] | result[18];
             result[165] = v[272];
             result[146] = v[269];
@@ -2018,11 +2038,13 @@ namespace PokemonGo.RocketAPI.Helpers
             v[280] = ~v[279];
             v[281] = v[225] & v[88] ^ v[218];
             v[282] = (v[225] & v[88] ^ result[160] | v[99]) ^ result[160];
-            v[283] = (v[225] & v[88] ^ v[221]) & ~v[99] ^ v[228] ^ v[267] ^ v[273] ^ v[257] & ~((v[274] ^ v[219] & v[99]) & ~v[279] ^ v[277]);
+            v[283] = (v[225] & v[88] ^ v[221]) & ~v[99] ^ v[228] ^ v[267] ^ v[273] ^
+                     v[257] & ~((v[274] ^ v[219] & v[99]) & ~v[279] ^ v[277]);
             result[175] = v[277];
             v[284] = ~result[38];
             v[285] = v[78] & v[284];
-            v[286] = v[148] ^ v[221] ^ (v[222] ^ v[230] | result[18]) ^ (v[281] | v[99]) ^ v[257] & ~(v[282] ^ (~v[99] & (v[225] ^ v[88]) ^ v[219]) & ~v[279]);
+            v[286] = v[148] ^ v[221] ^ (v[222] ^ v[230] | result[18]) ^ (v[281] | v[99]) ^
+                     v[257] & ~(v[282] ^ (~v[99] & (v[225] ^ v[88]) ^ v[219]) & ~v[279]);
             result[112] = v[278];
             v[287] = v[286];
             result[185] = v[197] & ~v[283];
@@ -2082,18 +2104,22 @@ namespace PokemonGo.RocketAPI.Helpers
             v[336] = v[334] ^ v[41] & v[295];
             v[337] = v[298] ^ v[318];
             v[338] = (v[41] & v[313] ^ v[297]) & ~v[57] | result[62];
-            v[339] = v[335] ^ (v[302] ^ v[291]) & v[57] ^ (v[41] & v[297] ^ v[295] ^ (v[78] & v[284] & v[41] ^ v[297]) & v[57] | result[62]);
+            v[339] = v[335] ^ (v[302] ^ v[291]) & v[57] ^
+                     (v[41] & v[297] ^ v[295] ^ (v[78] & v[284] & v[41] ^ v[297]) & v[57] | result[62]);
             v[340] = v[298] | result[0];
             v[341] = v[324] ^ v[322];
             v[342] = v[329] & v[276];
             v[343] = ~result[62];
             v[344] = (v[134] | result[111]) ^ result[114];
             v[345] = result[147] ^ result[16];
-            v[346] = v[327] ^ (v[317] | result[0]) ^ v[338] ^ result[61] ^ v[330] & ~((v[317] | result[0]) ^ v[41] & v[78] ^ v[297] ^ v[332] & v[343]);
+            v[346] = v[327] ^ (v[317] | result[0]) ^ v[338] ^ result[61] ^
+                     v[330] & ~((v[317] | result[0]) ^ v[41] & v[78] ^ v[297] ^ v[332] & v[343]);
             v[347] = v[196] & ~(v[326] ^ v[325]);
             v[348] = v[319] & result[80] ^ v[344];
-            v[349] = v[330] & ~(v[333] & v[343] ^ v[302] & ~v[57] ^ v[318]) ^ v[340] ^ v[317] ^ (v[41] & v[78] ^ v[316] ^ v[317] & v[57] | result[62]) ^ result[9];
-            v[350] = v[339] ^ result[59] ^ ((v[337] ^ v[323]) & v[343] ^ result[0] & ~(v[291] ^ v[41] & v[295]) ^ v[336]) & v[330];
+            v[349] = v[330] & ~(v[333] & v[343] ^ v[302] & ~v[57] ^ v[318]) ^ v[340] ^ v[317] ^
+                     (v[41] & v[78] ^ v[316] ^ v[317] & v[57] | result[62]) ^ result[9];
+            v[350] = v[339] ^ result[59] ^
+                     ((v[337] ^ v[323]) & v[343] ^ result[0] & ~(v[291] ^ v[41] & v[295]) ^ v[336]) & v[330];
             v[351] = v[345] & ~(v[60] ^ result[0]) ^ v[133];
             result[153] = v[326] ^ v[325];
             result[122] = v[351];
@@ -2151,8 +2177,13 @@ namespace PokemonGo.RocketAPI.Helpers
             result[79] = v[381] ^ v[78];
             v[383] = ~result[32];
             v[384] = ~result[14];
-            v[385] = v[114] & v[66] & v[369] ^ v[364] ^ v[382] ^ v[345] & ~(v[60] ^ v[119]) ^ ((v[114] & v[66] ^ v[114]) & v[345] ^ v[124] ^ v[119] | result[32]) ^ ((v[60] ^ v[119]) & v[345] ^ v[112] ^ v[53] ^ ((v[365] ^ v[364]) & v[345] ^ v[119]) & v[383] | result[62]);
-            v[386] = v[380] ^ v[97] ^ v[377] & ~v[82] ^ result[51] ^ v[23] & ~((v[381] ^ v[379]) & ~v[82] ^ v[380] ^ v[379]) ^ (v[23] & ~(result[79] ^ v[378] & ~v[82]) ^ (v[379] & v[384] | v[82])) & result[38];
+            v[385] = v[114] & v[66] & v[369] ^ v[364] ^ v[382] ^ v[345] & ~(v[60] ^ v[119]) ^
+                     ((v[114] & v[66] ^ v[114]) & v[345] ^ v[124] ^ v[119] | result[32]) ^
+                     ((v[60] ^ v[119]) & v[345] ^ v[112] ^ v[53] ^ ((v[365] ^ v[364]) & v[345] ^ v[119]) & v[383] |
+                      result[62]);
+            v[386] = v[380] ^ v[97] ^ v[377] & ~v[82] ^ result[51] ^
+                     v[23] & ~((v[381] ^ v[379]) & ~v[82] ^ v[380] ^ v[379]) ^
+                     (v[23] & ~(result[79] ^ v[378] & ~v[82]) ^ (v[379] & v[384] | v[82])) & result[38];
             v[387] = (v[364] & v[66] ^ v[114]) & v[345];
             v[388] = v[385] & ~v[202];
             v[389] = ~v[78] & result[14];
@@ -2268,7 +2299,9 @@ namespace PokemonGo.RocketAPI.Helpers
             result[83] = v[483];
             result[92] = v[484];
             result[108] = v[472] & v[343];
-            result[70] = v[287] & ~((v[202] & v[385] & ~v[355] ^ v[202] & v[385]) & ~v[386] ^ v[202] & v[385] & ~v[355] ^ v[388]) ^ (v[386] | v[405]) ^ v[357];
+            result[70] = v[287] &
+                         ~((v[202] & v[385] & ~v[355] ^ v[202] & v[385]) & ~v[386] ^ v[202] & v[385] & ~v[355] ^ v[388]) ^
+                         (v[386] | v[405]) ^ v[357];
             result[11] = v[474];
             result[51] = v[386];
             result[171] = v[197] & ~v[485];
@@ -2285,7 +2318,8 @@ namespace PokemonGo.RocketAPI.Helpers
             result[13] = v[466] ^ v[128] ^ v[480];
             result[121] = v[385] | v[197];
             result[178] = v[385] | v[197];
-            result[177] = v[287] & ~(~v[386] & (v[202] | v[355]) ^ v[355]) ^ (v[388] ^ v[202] & ~v[355]) & ~v[386] ^ v[405];
+            result[177] = v[287] & ~(~v[386] & (v[202] | v[355]) ^ v[355]) ^ (v[388] ^ v[202] & ~v[355]) & ~v[386] ^
+                          v[405];
             result[104] = v[486];
             result[100] = (v[386] | v[202]) ^ v[202] ^ ((v[385] ^ v[202]) & ~v[386] ^ v[388]) & v[287];
             result[186] = ((v[385] ^ v[202] | v[386]) ^ (v[388] | v[355]) ^ v[388]) & v[287];
@@ -2301,7 +2335,7 @@ namespace PokemonGo.RocketAPI.Helpers
             // input is a string of 744 bytes / 187 uint
             // after passing through this function, input gets updated in 172 position out of the 187 avaiblable
 
-            uint[] v = new uint[545]; // temporary buffer
+            var v = new uint[545]; // temporary buffer
 
 
             v[0] = result[33];
@@ -2578,7 +2612,10 @@ namespace PokemonGo.RocketAPI.Helpers
             v[220] = v[77] & v[206] & v[123];
             v[221] = v[198] & ~(v[198] & ~v[206]);
             v[222] = v[77] & v[206];
-            v[223] = result[4] ^ result[7] ^ (result[96] | v[198] & ~(v[198] & ~v[206])) ^ result[42] & ~(v[220] ^ v[206]) ^ result[50] & ~((v[200] ^ v[198] & ~v[206]) & result[42] ^ v[198] & v[206] ^ v[200]) ^ result[26] & ~(v[215] & result[50] ^ v[219] ^ result[42] & ~(v[198] ^ v[217]));
+            v[223] = result[4] ^ result[7] ^ (result[96] | v[198] & ~(v[198] & ~v[206])) ^
+                     result[42] & ~(v[220] ^ v[206]) ^
+                     result[50] & ~((v[200] ^ v[198] & ~v[206]) & result[42] ^ v[198] & v[206] ^ v[200]) ^
+                     result[26] & ~(v[215] & result[50] ^ v[219] ^ result[42] & ~(v[198] ^ v[217]));
             v[224] = ~result[153];
             v[225] = v[223] & v[224];
             v[226] = v[223] & result[153];
@@ -2586,10 +2623,14 @@ namespace PokemonGo.RocketAPI.Helpers
             v[228] = v[223] & result[148];
             v[229] = v[228] ^ result[23];
             v[230] = v[228] | result[31];
-            v[231] = v[227] ^ result[28] ^ v[226] ^ (v[225] ^ result[77] | result[31]) ^ (result[167] & v[223] ^ result[92] ^ result[31] & v[70] & v[226]) & v[51] ^ (v[225] | ~result[31]) & v[70];
+            v[231] = v[227] ^ result[28] ^ v[226] ^ (v[225] ^ result[77] | result[31]) ^
+                     (result[167] & v[223] ^ result[92] ^ result[31] & v[70] & v[226]) & v[51] ^
+                     (v[225] | ~result[31]) & v[70];
             v[232] = v[223] ^ result[153];
-            v[233] = v[226] ^ result[77] ^ (v[229] | result[31]) ^ v[70] & ~(result[77] ^ (result[153] ^ v[225] | result[31]));
-            v[234] = result[23] ^ v[223] & ~result[23] ^ v[230] ^ v[70] & ~(v[223] & ~result[23] ^ (v[226] | result[31]));
+            v[233] = v[226] ^ result[77] ^ (v[229] | result[31]) ^
+                     v[70] & ~(result[77] ^ (result[153] ^ v[225] | result[31]));
+            v[234] = result[23] ^ v[223] & ~result[23] ^ v[230] ^
+                     v[70] & ~(v[223] & ~result[23] ^ (v[226] | result[31]));
             v[235] = (v[200] ^ result[4]) & result[42];
             v[236] = result[42] & result[50] & (v[77] & v[123] ^ v[206]);
             v[237] = v[226] ^ result[31] & ~v[226];
@@ -2677,10 +2718,14 @@ namespace PokemonGo.RocketAPI.Helpers
             v[304] = v[301] ^ result[50] ^ v[270] ^ v[269];
             v[305] = v[70] & ~(v[223] & v[239]);
             v[306] = result[102];
-            v[307] = (v[277] ^ v[238] | v[26]) ^ v[266] ^ v[238] & ~v[277] ^ v[265] & ~(v[242] & v[238] ^ v[242] ^ (v[277] | v[26])) ^ v[306] & ~(v[296] ^ (v[251] ^ v[223] ^ v[279]) & v[265]);
-            v[308] = (v[274] | v[26]) ^ v[277] ^ v[238] ^ result[2] ^ v[276] ^ v[306] & ~(v[265] & v[26] & (v[223] & v[238] ^ result[61]) ^ v[223] & v[238] ^ v[274] & v[26]);
+            v[307] = (v[277] ^ v[238] | v[26]) ^ v[266] ^ v[238] & ~v[277] ^
+                     v[265] & ~(v[242] & v[238] ^ v[242] ^ (v[277] | v[26])) ^
+                     v[306] & ~(v[296] ^ (v[251] ^ v[223] ^ v[279]) & v[265]);
+            v[308] = (v[274] | v[26]) ^ v[277] ^ v[238] ^ result[2] ^ v[276] ^
+                     v[306] & ~(v[265] & v[26] & (v[223] & v[238] ^ result[61]) ^ v[223] & v[238] ^ v[274] & v[26]);
             v[309] = v[246] & v[238] ^ v[267] ^ v[297] ^ ((v[223] ^ v[238] | v[26]) ^ v[259]) & v[265] ^ v[298] & v[306];
-            v[310] = (v[246] ^ v[223] & v[238]) & v[32] ^ v[275] ^ (v[246] & ~v[223] | v[26]) & v[265] ^ ((v[246] | v[26]) ^ v[251] ^ v[238] & v[265] & ~v[246]) & v[306];
+            v[310] = (v[246] ^ v[223] & v[238]) & v[32] ^ v[275] ^ (v[246] & ~v[223] | v[26]) & v[265] ^
+                     ((v[246] | v[26]) ^ v[251] ^ v[238] & v[265] & ~v[246]) & v[306];
             result[22] = v[310];
             v[311] = ~v[254] & v[193];
             v[312] = v[304] ^ v[305] ^ (v[278] ^ v[303] | result[61]);
@@ -3027,7 +3072,7 @@ namespace PokemonGo.RocketAPI.Helpers
         //----- (0008F0B0) --------------------------------------------------------
         private static void sub_8F0B0(uint[] result)
         {
-            uint[] v = new uint[544];
+            var v = new uint[544];
 
             v[0] = result[166];
             v[1] = result[198];
@@ -3726,11 +3771,12 @@ namespace PokemonGo.RocketAPI.Helpers
         //----- (000910A8) --------------------------------------------------------
         private static void sub_910A8(uint[] result)
         {
-            uint[] v = new uint[400]; // temporary buffer
+            var v = new uint[400]; // temporary buffer
 
             v[0] = result[66];
             v[1] = result[5] ^ result[90];
-            v[2] = result[7] ^ result[198] ^ result[142] & result[160] ^ (result[109] & result[160] ^ result[105] | result[106]);
+            v[2] = result[7] ^ result[198] ^ result[142] & result[160] ^
+                   (result[109] & result[160] ^ result[105] | result[106]);
             v[3] = result[154];
             v[4] = result[21];
             v[5] = result[202];
@@ -3753,7 +3799,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[21] = v[9] & v[15] ^ v[11];
             v[22] = v[19] ^ v[10];
             v[23] = (result[53] & ~v[18] ^ v[18]) & v[2];
-            v[24] = v[15] & ~result[135] ^ result[94] ^ result[53] & ~(~v[15] & result[79] ^ result[164]) ^ v[2] & ~(result[53] & ~((v[15] | result[138]) ^ result[152]) ^ (result[97] | v[15]) ^ result[136]);
+            v[24] = v[15] & ~result[135] ^ result[94] ^ result[53] & ~(~v[15] & result[79] ^ result[164]) ^
+                    v[2] & ~(result[53] & ~((v[15] | result[138]) ^ result[152]) ^ (result[97] | v[15]) ^ result[136]);
             v[25] = result[157] ^ result[22] ^ (v[15] | result[173]) ^ v[15] & result[53];
             v[26] = result[113] ^ result[104] ^ ~v[15] & result[82] ^ result[53] & ((v[15] | result[137]) ^ result[162]);
             v[27] = result[59] & ~v[21];
@@ -3820,7 +3867,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[83] = (result[61] & ~(v[12] ^ result[102]) ^ v[30]) & v[63] ^ result[61] ^ result[140] ^ v[2];
             v[84] = v[66] & v[71] ^ v[70] ^ v[67];
             v[85] = result[59] & v[81];
-            v[86] = (v[74] | result[61]) ^ result[31] ^ (v[2] | result[151]) ^ (v[76] ^ v[57] ^ result[153] | result[23]);
+            v[86] = (v[74] | result[61]) ^ result[31] ^ (v[2] | result[151]) ^
+                    (v[76] ^ v[57] ^ result[153] | result[23]);
             v[87] = v[75] ^ v[72] ^ (v[69] | result[23]) ^ v[71] & ~v[82];
             v[88] = v[71] & ~(v[62] ^ v[30] ^ v[68]) ^ result[32] ^ v[83];
             v[89] = v[81] | result[59];
@@ -3828,7 +3876,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[91] = result[62] ^ result[172] ^ v[15] & result[117] ^ v[85];
             v[92] = result[172] ^ v[15] & result[117];
             v[93] = (v[73] ^ (v[2] | result[31])) & v[71] ^ result[28] ^ v[86];
-            v[94] = v[79] ^ result[70] ^ result[53] & ~(~v[15] & result[159] ^ result[181]) ^ result[2] ^ v[2] & ~(v[80] ^ result[94] ^ (result[138] & ~v[15] ^ result[94]) & result[53]);
+            v[94] = v[79] ^ result[70] ^ result[53] & ~(~v[15] & result[159] ^ result[181]) ^ result[2] ^
+                    v[2] & ~(v[80] ^ result[94] ^ (result[138] & ~v[15] ^ result[94]) & result[53]);
             result[28] = v[93];
             v[95] = v[93];
             v[96] = v[92] ^ result[52];
@@ -4130,13 +4179,15 @@ namespace PokemonGo.RocketAPI.Helpers
             v[351] = v[320] ^ v[321] ^ (v[333] ^ v[319]) & v[109];
             v[352] = (result[44] & ~v[281] & v[109] ^ v[313] ^ v[334]) & result[6] ^ v[341];
             v[353] = (v[295] | v[285]) & ~v[285];
-            v[354] = v[347] ^ v[324] ^ (v[346] | v[112]) ^ result[6] & ~(v[319] & v[281] ^ v[313] ^ v[335] ^ (v[346] | v[112]));
+            v[354] = v[347] ^ v[324] ^ (v[346] | v[112]) ^
+                     result[6] & ~(v[319] & v[281] ^ v[313] ^ v[335] ^ (v[346] | v[112]));
             v[355] = ((v[313] | v[112]) ^ v[320] ^ v[346] | result[36]) ^ v[351];
             v[356] = v[100] & v[311] & v[111];
             v[357] = v[111] & ~(v[100] | v[311]) ^ v[100] ^ v[311];
             v[358] = v[354];
             v[359] = ~(v[100] & ~v[311]);
-            result[17] ^= v[320] ^ v[319] & v[281] ^ (v[112] | v[318] ^ v[320]) ^ (v[333] ^ (v[112] | result[44])) & v[121] ^ result[6] & ~v[355];
+            result[17] ^= v[320] ^ v[319] & v[281] ^ (v[112] | v[318] ^ v[320]) ^
+                          (v[333] ^ (v[112] | result[44])) & v[121] ^ result[6] & ~v[355];
             result[27] = v[336];
             result[3] = v[352];
             result[197] = v[349];
@@ -4146,15 +4197,24 @@ namespace PokemonGo.RocketAPI.Helpers
             result[19] = v[310];
             result[23] = v[354];
             v[362] = v[46] & ~v[311] & ~v[289] ^ (v[297] | v[46]);
-            v[363] = v[100] ^ v[310] ^ v[356] ^ (v[360] ^ v[359] & v[100] | v[156]) ^ ((v[356] ^ v[100] & v[311]) & v[156] ^ v[357]) & v[43] ^ (((v[100] ^ v[311]) & v[111] ^ v[100] & ~v[311] | v[156]) ^ v[311] ^ v[361] ^ v[43] & ~(v[357] ^ v[100] & v[311] & ~v[156])) & result[56];
+            v[363] = v[100] ^ v[310] ^ v[356] ^ (v[360] ^ v[359] & v[100] | v[156]) ^
+                     ((v[356] ^ v[100] & v[311]) & v[156] ^ v[357]) & v[43] ^
+                     (((v[100] ^ v[311]) & v[111] ^ v[100] & ~v[311] | v[156]) ^ v[311] ^ v[361] ^
+                      v[43] & ~(v[357] ^ v[100] & v[311] & ~v[156])) & result[56];
             v[364] = (v[289] ^ v[302]) & v[46];
             v[365] = v[362] & v[98];
             v[366] = v[330] ^ v[304];
-            v[367] = v[359] & v[111] ^ v[345] ^ ((v[100] ^ v[311]) & v[111] ^ v[100] | v[156]) ^ result[56] & ~((~v[100] & v[111] ^ v[100] & v[311]) & ~v[156] ^ (~v[100] & v[111] ^ v[314] & ~v[156]) & v[43]);
-            v[368] = (v[111] & ~(v[100] ^ v[311]) ^ v[100]) & ~v[156] ^ v[350] ^ v[43] & ~(v[111] & ~(v[100] ^ v[311]) & v[156] ^ v[100]) ^ result[56] & ~((v[356] ^ (v[100] | v[311])) & ~v[156] ^ v[356] ^ v[311] ^ v[43] & ~(v[340] ^ ~v[100] & v[156]));
+            v[367] = v[359] & v[111] ^ v[345] ^ ((v[100] ^ v[311]) & v[111] ^ v[100] | v[156]) ^
+                     result[56] &
+                     ~((~v[100] & v[111] ^ v[100] & v[311]) & ~v[156] ^ (~v[100] & v[111] ^ v[314] & ~v[156]) & v[43]);
+            v[368] = (v[111] & ~(v[100] ^ v[311]) ^ v[100]) & ~v[156] ^ v[350] ^
+                     v[43] & ~(v[111] & ~(v[100] ^ v[311]) & v[156] ^ v[100]) ^
+                     result[56] &
+                     ~((v[356] ^ (v[100] | v[311])) & ~v[156] ^ v[356] ^ v[311] ^ v[43] & ~(v[340] ^ ~v[100] & v[156]));
             v[369] = v[309] | result[0];
             v[370] = v[309] & v[307] ^ v[111] ^ v[46] & ~v[291];
-            v[371] = ((v[299] ^ v[111]) & ~v[46] | v[311]) ^ v[342] ^ v[309] & v[307] ^ v[46] & (v[307] | ~v[111]) ^ v[98] & ~(v[348] ^ v[343]);
+            v[371] = ((v[299] ^ v[111]) & ~v[46] | v[311]) ^ v[342] ^ v[309] & v[307] ^ v[46] & (v[307] | ~v[111]) ^
+                     v[98] & ~(v[348] ^ v[343]);
             result[13] = v[371];
             v[372] = ~v[336] & (v[295] ^ v[285]);
             result[136] = (~v[295] & v[285] ^ (v[336] | v[285]) | v[349]) ^ (v[353] | v[336]);
@@ -4212,8 +4272,10 @@ namespace PokemonGo.RocketAPI.Helpers
             result[198] = v[371] | v[368];
             result[185] = v[379] ^ (v[336] | v[352]);
             result[87] = v[363];
-            v[381] = v[366] ^ v[380] ^ v[46] & ~(v[309] ^ v[299]) ^ (v[46] & v[301] ^ v[282] & v[307] | v[311]) ^ (~v[309] & v[46] ^ v[374] ^ (v[304] ^ v[282] ^ v[46] & ~(v[301] ^ v[299]) | v[311])) & v[98];
-            v[382] = v[156] ^ v[71] ^ v[111] ^ v[100] ^ v[311] ^ (v[356] ^ v[311] ^ ~v[156] & v[311] & (v[111] ^ v[100]) ^ ~v[340] & v[43]) & result[56];
+            v[381] = v[366] ^ v[380] ^ v[46] & ~(v[309] ^ v[299]) ^ (v[46] & v[301] ^ v[282] & v[307] | v[311]) ^
+                     (~v[309] & v[46] ^ v[374] ^ (v[304] ^ v[282] ^ v[46] & ~(v[301] ^ v[299]) | v[311])) & v[98];
+            v[382] = v[156] ^ v[71] ^ v[111] ^ v[100] ^ v[311] ^
+                     (v[356] ^ v[311] ^ ~v[156] & v[311] & (v[111] ^ v[100]) ^ ~v[340] & v[43]) & result[56];
             v[383] = (v[363] ^ v[352]) & ~v[336];
             v[384] = result[41] ^ result[0] ^ v[301];
             result[31] = v[381];
@@ -4281,7 +4343,7 @@ namespace PokemonGo.RocketAPI.Helpers
         //----- (00092E08) --------------------------------------------------------
         private static void sub_92E08(uint[] result)
         {
-            uint[] v = new uint[447]; // temporary buffer
+            var v = new uint[447]; // temporary buffer
 
             v[0] = result[148] & result[38];
             v[1] = v[0] ^ result[30];
@@ -4342,7 +4404,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[52] = v[40] ^ result[38] ^ v[39] & v[50];
             v[53] = result[193];
             v[54] = result[143];
-            v[55] = result[135] ^ result[154] ^ v[48] ^ v[31] ^ result[14] & ~(v[41] ^ result[115]) ^ (v[28] ^ result[188] ^ v[44] | result[60]);
+            v[55] = result[135] ^ result[154] ^ v[48] ^ v[31] ^ result[14] & ~(v[41] ^ result[115]) ^
+                    (v[28] ^ result[188] ^ v[44] | result[60]);
             v[56] = result[1];
             v[57] = result[58];
             v[58] = result[62];
@@ -4406,7 +4469,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[107] = result[62] & ~(result[134] ^ v[40]);
             v[108] = v[102] & v[105] ^ v[37] ^ ((v[35] ^ result[119]) & result[62] ^ v[59] | result[0]);
             v[109] = ((v[22] ^ result[38]) & result[62] ^ v[24]) & v[73];
-            v[110] = result[152] ^ result[55] ^ v[48] ^ v[98] & ~v[100] ^ (v[96] & result[14] ^ v[2] | result[22]) ^ v[101];
+            v[110] = result[152] ^ result[55] ^ v[48] ^ v[98] & ~v[100] ^ (v[96] & result[14] ^ v[2] | result[22]) ^
+                     v[101];
             v[111] = v[99] ^ result[9] ^ v[106] & result[46];
             v[112] = result[17];
             v[113] = v[26] ^ result[17];
@@ -4545,7 +4609,9 @@ namespace PokemonGo.RocketAPI.Helpers
             v[229] = v[219] & result[160];
             v[230] = result[160] & ~v[220];
             v[231] = result[34] ^ result[51] ^ v[216] ^ v[217] ^ (v[215] ^ v[129]) & v[19];
-            v[232] = result[162] ^ result[139] ^ result[57] ^ v[220] ^ (result[106] ^ result[84] & v[230]) & result[113] ^ (v[229] & result[84] ^ v[229] ^ v[219] ^ result[113] & ~((v[220] & v[221] ^ v[223]) & result[84] ^ v[224] ^ v[223] & v[221])) & ~v[204];
+            v[232] = result[162] ^ result[139] ^ result[57] ^ v[220] ^ (result[106] ^ result[84] & v[230]) & result[113] ^
+                     (v[229] & result[84] ^ v[229] ^ v[219] ^
+                      result[113] & ~((v[220] & v[221] ^ v[223]) & result[84] ^ v[224] ^ v[223] & v[221])) & ~v[204];
             v[233] = result[107] & ~v[89];
             v[234] = v[232] & result[182];
             v[235] = result[20] ^ result[97];
@@ -4593,7 +4659,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[268] = result[39];
             result[182] = v[257];
             v[269] = v[261] ^ result[194] ^ (v[254] ^ v[260] | result[196]) ^ result[18];
-            v[270] = v[232] & (v[61] ^ result[71]) ^ (v[259] ^ v[264] | result[196]) ^ v[26] & ~v[53] ^ result[75] ^ result[36];
+            v[270] = v[232] & (v[61] ^ result[71]) ^ (v[259] ^ v[264] | result[196]) ^ v[26] & ~v[53] ^ result[75] ^
+                     result[36];
             v[271] = result[105];
             v[272] = v[26] & v[45] ^ v[49] ^ (v[26] & ~v[268] ^ result[96] | result[196]);
             v[273] = v[270] & ~v[249];
@@ -4739,7 +4806,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[379] = result[160];
             result[124] = v[211] | v[362] | v[359];
             v[380] = result[84];
-            result[192] = v[348] & ~(v[298] & ~(v[167] ^ v[247]) ^ v[167] & v[247]) ^ (v[167] | v[247]) & v[298] ^ v[167] ^ v[247];
+            result[192] = v[348] & ~(v[298] & ~(v[167] ^ v[247]) ^ v[167] & v[247]) ^ (v[167] | v[247]) & v[298] ^
+                          v[167] ^ v[247];
             result[185] = v[298] & ~v[357] ^ v[167] & v[247] ^ v[348] & ~((v[167] | v[247]) & v[298] ^ v[167] ^ v[247]);
             result[19] = v[366] & v[348] ^ v[374];
             v[381] = result[106];
@@ -4747,14 +4815,18 @@ namespace PokemonGo.RocketAPI.Helpers
             v[382] = (v[371] ^ v[372]) & result[113];
             v[383] = (v[345] ^ v[228] ^ v[380] & ~v[373]) & result[113];
             v[384] = result[84];
-            result[170] = v[348] & ~(v[298] & ~(v[167] | v[247]) ^ (v[167] | v[247])) ^ v[298] & ~(v[167] | v[247]) ^ (v[167] | v[247]);
+            result[170] = v[348] & ~(v[298] & ~(v[167] | v[247]) ^ (v[167] | v[247])) ^ v[298] & ~(v[167] | v[247]) ^
+                          (v[167] | v[247]);
             result[120] = ~v[167] & v[298] ^ (v[167] | v[247]) ^ (v[167] ^ v[247] ^ v[298]) & v[348];
-            v[385] = v[377] ^ result[7] ^ v[383] ^ v[384] & ~(~v[224] & v[381] ^ v[230]) ^ (~v[224] & v[379] ^ v[228] ^ v[382] ^ v[384] & ~(v[230] ^ v[227]) | v[204]);
+            v[385] = v[377] ^ result[7] ^ v[383] ^ v[384] & ~(~v[224] & v[381] ^ v[230]) ^
+                     (~v[224] & v[379] ^ v[228] ^ v[382] ^ v[384] & ~(v[230] ^ v[227]) | v[204]);
             v[386] = v[385] | result[173];
             v[387] = ~result[173];
             v[388] = result[37];
             v[389] = v[386] & v[388];
-            v[390] = result[22] ^ v[87] ^ v[385] & v[387] ^ v[386] & v[388] ^ v[55] & ~((result[173] ^ result[37]) & ~v[87] & v[385] ^ v[385] & result[173]) ^ (~v[87] & v[55] & v[385] & result[173] ^ v[87] & result[37] & v[385] ^ v[388] | result[53]);
+            v[390] = result[22] ^ v[87] ^ v[385] & v[387] ^ v[386] & v[388] ^
+                     v[55] & ~((result[173] ^ result[37]) & ~v[87] & v[385] ^ v[385] & result[173]) ^
+                     (~v[87] & v[55] & v[385] & result[173] ^ v[87] & result[37] & v[385] ^ v[388] | result[53]);
             v[391] = v[167] & ~v[290];
             v[392] = v[167] & ~v[247];
             v[393] = result[37] & ~(~(v[385] & v[387]) & v[385]);
@@ -4806,14 +4878,18 @@ namespace PokemonGo.RocketAPI.Helpers
             v[413] = result[37];
             result[70] = v[401] ^ v[290] ^ v[249] & ~(((v[167] | v[290]) ^ v[167]) & v[306]) ^ (v[400] | v[306]);
             v[414] = v[410] & v[413];
-            result[142] = v[306] & ~((v[167] | v[390]) ^ (v[167] | v[290])) ^ (v[167] | v[290]) ^ v[390] ^ v[249] & ~((v[167] | v[290]) ^ v[390] | v[306]);
+            result[142] = v[306] & ~((v[167] | v[390]) ^ (v[167] | v[290])) ^ (v[167] | v[290]) ^ v[390] ^
+                          v[249] & ~((v[167] | v[290]) ^ v[390] | v[306]);
             result[151] = v[249] & ~(v[399] ^ v[391]) ^ v[306] & ~((v[167] | v[390]) ^ v[398]);
             v[415] = result[173];
             result[162] = v[400] ^ v[306] ^ ((v[167] | v[390]) ^ v[391] ^ ~v[306] & (v[167] ^ v[390])) & v[249];
             result[130] = v[385] ^ v[415];
             v[416] = result[37];
-            result[158] = (v[167] | v[290]) & v[306] ^ v[401] ^ v[249] & ~(v[400] ^ (v[306] | (v[167] | v[390]) ^ v[290]));
-            v[417] = v[87] & ~(v[389] ^ v[386]) ^ result[130] ^ result[2] ^ v[416] ^ v[55] & ~(v[414] ^ (v[389] ^ v[386]) & v[87]) ^ ((v[414] ^ v[410] ^ v[87] & v[310]) & v[55] ^ (v[410] ^ v[416]) & v[87] | result[53]);
+            result[158] = (v[167] | v[290]) & v[306] ^ v[401] ^
+                          v[249] & ~(v[400] ^ (v[306] | (v[167] | v[390]) ^ v[290]));
+            v[417] = v[87] & ~(v[389] ^ v[386]) ^ result[130] ^ result[2] ^ v[416] ^
+                     v[55] & ~(v[414] ^ (v[389] ^ v[386]) & v[87]) ^
+                     ((v[414] ^ v[410] ^ v[87] & v[310]) & v[55] ^ (v[410] ^ v[416]) & v[87] | result[53]);
             v[418] = result[113] ^ result[4] ^ v[87] ^ (v[87] & v[387] ^ v[103]) & v[55];
             v[419] = result[130] & result[37];
             v[420] = v[395] & ~v[306];
@@ -4877,7 +4953,7 @@ namespace PokemonGo.RocketAPI.Helpers
         //----- (00094BDC) --------------------------------------------------------
         private static void sub_94BDC(uint[] result)
         {
-            uint[] v = new uint[471]; // temporary buffer
+            var v = new uint[471]; // temporary buffer
 
             v[0] = ~result[7];
             v[1] = v[0] & result[42];
@@ -4890,12 +4966,16 @@ namespace PokemonGo.RocketAPI.Helpers
             v[8] = ~v[1] & result[23];
             v[9] = v[1] & v[7];
             v[10] = ~result[61];
-            v[11] = v[4] ^ result[28] ^ v[8] ^ (v[5] | result[61]) ^ result[31] & ~(result[183] ^ (v[1] ^ result[72]) & result[61]) ^ (result[31] | ~(result[7] ^ v[1] & v[7])) & result[15];
+            v[11] = v[4] ^ result[28] ^ v[8] ^ (v[5] | result[61]) ^
+                    result[31] & ~(result[183] ^ (v[1] ^ result[72]) & result[61]) ^
+                    (result[31] | ~(result[7] ^ v[1] & v[7])) & result[15];
             v[12] = v[0] & result[23];
             v[13] = v[12] & result[61];
             v[14] = result[6] & v[11];
             v[15] = result[6] & ~v[14];
-            v[16] = v[4] ^ result[28] ^ v[8] ^ (v[5] | result[61]) ^ result[31] & ~(result[183] ^ (v[1] ^ result[72]) & result[61]) ^ (result[31] | ~(result[7] ^ v[1] & v[7])) & result[15];
+            v[16] = v[4] ^ result[28] ^ v[8] ^ (v[5] | result[61]) ^
+                    result[31] & ~(result[183] ^ (v[1] ^ result[72]) & result[61]) ^
+                    (result[31] | ~(result[7] ^ v[1] & v[7])) & result[15];
             v[17] = result[6] | v[11];
             v[18] = result[31] & ~(~v[1] & result[61] ^ v[6]) ^ v[12] & result[61];
             v[19] = v[11] & result[36];
@@ -4988,7 +5068,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[92] = v[61] & result[23];
             v[93] = v[87];
             v[94] = v[23] & v[79] ^ result[77];
-            v[95] = result[15] & ~((result[118] ^ v[36]) & result[31] ^ result[7] ^ result[81] ^ v[37]) ^ result[54] ^ v[9] ^ v[40] ^ result[31] & ~(v[33] ^ result[201] ^ v[38]);
+            v[95] = result[15] & ~((result[118] ^ v[36]) & result[31] ^ result[7] ^ result[81] ^ v[37]) ^ result[54] ^
+                    v[9] ^ v[40] ^ result[31] & ~(v[33] ^ result[201] ^ v[38]);
             v[96] = v[95] & result[140];
             v[97] = v[95] & result[39];
             v[98] = v[95] & ~result[80] ^ result[115];
@@ -4996,7 +5077,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[100] = result[61];
             v[101] = result[145];
             v[102] = result[129] & v[95];
-            result[178] = v[60] & result[160] ^ result[15] ^ result[108] ^ result[199] & ~(v[60] & result[178] ^ result[102]);
+            result[178] = v[60] & result[160] ^ result[15] ^ result[108] ^
+                          result[199] & ~(v[60] & result[178] ^ result[102]);
             v[103] = v[100] ^ v[101] ^ v[102];
             v[104] = result[148] ^ v[95] & ~v[99];
             v[105] = result[61] & ~v[4];
@@ -5100,7 +5182,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[197] = v[162] ^ result[13] ^ (result[149] ^ v[177]) & result[24];
             v[198] = v[186] ^ result[24] & ~result[0] & v[60] ^ v[186] & ~result[24] & v[23];
             v[199] = v[188] ^ v[153] & v[23];
-            v[200] = result[155] ^ result[31] ^ result[73] ^ v[192] ^ (v[193] & ~(v[173] ^ result[77]) ^ v[189] ^ result[75]) & v[23];
+            v[200] = result[155] ^ result[31] ^ result[73] ^ v[192] ^
+                     (v[193] & ~(v[173] ^ result[77]) ^ v[189] ^ result[75]) & v[23];
             v[201] = result[36];
             v[202] = v[171] ^ result[63] ^ (v[172] | v[144]);
             v[203] = ~result[36];
@@ -5235,8 +5318,10 @@ namespace PokemonGo.RocketAPI.Helpers
             v[318] = (v[265] & ~(v[272] ^ (v[237] | v[75])) ^ v[267] & v[75]) & v[134];
             v[319] = v[303] ^ v[312] & ~v[298] ^ v[286];
             v[320] = v[263] & v[237] & ~v[75];
-            v[321] = ~v[265] & v[267] & v[75] ^ ((v[263] | v[237] | v[75]) ^ (v[263] | v[237]) ^ v[267] & ~v[265]) & v[134] ^ v[75];
-            v[322] = v[265] & v[134] & ~v[317] ^ ((v[267] | v[75]) ^ (v[263] | v[237]) | v[265]) ^ v[320] ^ (v[263] | v[237]);
+            v[321] = ~v[265] & v[267] & v[75] ^
+                     ((v[263] | v[237] | v[75]) ^ (v[263] | v[237]) ^ v[267] & ~v[265]) & v[134] ^ v[75];
+            v[322] = v[265] & v[134] & ~v[317] ^ ((v[267] | v[75]) ^ (v[263] | v[237]) | v[265]) ^ v[320] ^
+                     (v[263] | v[237]);
             v[323] = v[263] ^ v[237] ^ v[75] ^ result[38] ^ ((v[263] ^ v[237] | v[75]) ^ v[267]) & ~v[265];
             v[324] = v[134] & ~(v[315] & v[265] ^ (v[267] | v[75]) ^ (v[263] | v[237]));
             v[325] = v[263] ^ v[237] ^ v[75] ^ v[265] & ~((v[237] | v[75]) ^ v[237]) ^ result[24];
@@ -5426,7 +5511,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[437] = (v[422] ^ v[420]) & v[341] ^ v[425] & ~v[397] ^ v[423];
             v[438] = result[52];
             result[164] = v[420] & ~v[397] ^ v[405];
-            v[439] = v[423] ^ v[422] & v[341] ^ v[420] & ~v[397] ^ (v[341] & (v[423] ^ (v[396] | v[397])) ^ v[431]) & v[74];
+            v[439] = v[423] ^ v[422] & v[341] ^ v[420] & ~v[397] ^
+                     (v[341] & (v[423] ^ (v[396] | v[397])) ^ v[431]) & v[74];
             v[440] = v[341] & ~(v[429] ^ v[427]) ^ result[164] ^ (v[341] & ~v[428] ^ v[425]) & v[74];
             v[441] = v[420] ^ v[397] ^ v[341] & ~v[432] ^ v[74] & ~v[437];
             v[442] = v[341] & ~(v[421] ^ v[396]) ^ v[405] ^ (v[420] | v[397]) ^ v[430] & v[74];
@@ -5506,14 +5592,18 @@ namespace PokemonGo.RocketAPI.Helpers
         //----- (00096984) --------------------------------------------------------
         private static void sub_96984(uint[] result)
         {
-            uint[] v = new uint[469]; // temporary buffer
+            var v = new uint[469]; // temporary buffer
 
             v[0] = result[18];
             v[1] = result[10] & ~v[0];
-            v[2] = result[173] ^ result[86] ^ result[10] ^ result[45] ^ (result[81] ^ (result[79] ^ v[0] | result[56])) & ~result[125] ^ (result[2] & ~(result[97] ^ result[10] & ~result[195]) ^ result[18]) & ~result[56];
+            v[2] = result[173] ^ result[86] ^ result[10] ^ result[45] ^
+                   (result[81] ^ (result[79] ^ v[0] | result[56])) & ~result[125] ^
+                   (result[2] & ~(result[97] ^ result[10] & ~result[195]) ^ result[18]) & ~result[56];
             v[3] = ~result[56];
             v[4] = v[2] & ~result[182];
-            v[5] = result[173] ^ result[86] ^ result[10] ^ result[45] ^ (result[81] ^ (result[79] ^ v[0] | result[56])) & ~result[125] ^ (result[2] & ~(result[97] ^ result[10] & ~result[195]) ^ result[18]) & v[3];
+            v[5] = result[173] ^ result[86] ^ result[10] ^ result[45] ^
+                   (result[81] ^ (result[79] ^ v[0] | result[56])) & ~result[125] ^
+                   (result[2] & ~(result[97] ^ result[10] & ~result[195]) ^ result[18]) & v[3];
             v[6] = result[157];
             v[7] = result[193];
             v[8] = result[2];
@@ -5529,7 +5619,9 @@ namespace PokemonGo.RocketAPI.Helpers
             v[16] = v[12] & result[10];
             v[17] = result[2] | v[6];
             v[18] = result[2] ^ result[142] ^ v[5] & ~result[19] ^ result[37] & ~(v[5] & result[113] ^ result[172]);
-            v[19] = result[25] ^ v[12] ^ v[17] ^ (~v[8] & v[6] ^ v[7] | result[56]) ^ (v[16] ^ result[18] ^ (v[16] ^ result[64]) & ~v[8] ^ ((result[181] ^ result[10]) & ~v[8] ^ result[194]) & v[3] | result[125]);
+            v[19] = result[25] ^ v[12] ^ v[17] ^ (~v[8] & v[6] ^ v[7] | result[56]) ^
+                    (v[16] ^ result[18] ^ (v[16] ^ result[64]) & ~v[8] ^
+                     ((result[181] ^ result[10]) & ~v[8] ^ result[194]) & v[3] | result[125]);
             v[20] = v[18] & result[24];
             v[21] = v[18] | result[24];
             v[22] = v[18] & result[24] & result[199];
@@ -5636,14 +5728,20 @@ namespace PokemonGo.RocketAPI.Helpers
             v[105] = v[89] ^ v[94];
             v[106] = ~result[58];
             v[107] = result[1];
-            v[108] = v[107] & ~(result[140] & v[102] ^ result[184]) ^ result[123] ^ result[10] ^ v[102] & result[149] ^ (v[102] & result[185] ^ result[107] ^ result[1] & ~((v[89] ^ v[94] | result[29]) ^ result[107]) | result[63]);
+            v[108] = v[107] & ~(result[140] & v[102] ^ result[184]) ^ result[123] ^ result[10] ^ v[102] & result[149] ^
+                     (v[102] & result[185] ^ result[107] ^ result[1] & ~((v[89] ^ v[94] | result[29]) ^ result[107]) |
+                      result[63]);
             v[109] = v[108] | v[18];
             v[110] = result[58];
-            v[111] = result[60] ^ result[170] ^ (v[89] ^ v[94] | result[132]) ^ result[1] & ~(v[102] & result[151] ^ result[145]) ^ (v[107] & ~(v[102] & result[152] ^ result[73]) ^ result[151]) & v[80];
+            v[111] = result[60] ^ result[170] ^ (v[89] ^ v[94] | result[132]) ^
+                     result[1] & ~(v[102] & result[151] ^ result[145]) ^
+                     (v[107] & ~(v[102] & result[152] ^ result[73]) ^ result[151]) & v[80];
             v[112] = v[108] & ~v[18];
             v[113] = v[18] & ~v[108];
             v[114] = (v[18] | result[58]) ^ v[18];
-            v[115] = v[107] & ~(result[140] & v[102] ^ result[184]) ^ result[123] ^ result[10] ^ v[102] & result[149] ^ (v[102] & result[185] ^ result[107] ^ result[1] & ~((v[89] ^ v[94] | result[29]) ^ result[107]) | result[63]);
+            v[115] = v[107] & ~(result[140] & v[102] ^ result[184]) ^ result[123] ^ result[10] ^ v[102] & result[149] ^
+                     (v[102] & result[185] ^ result[107] ^ result[1] & ~((v[89] ^ v[94] | result[29]) ^ result[107]) |
+                      result[63]);
             v[116] = v[108] ^ v[18];
             v[117] = v[108] | v[18] | v[110];
             v[118] = v[18] & ~v[108] | v[110];
@@ -6008,7 +6106,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[405] = v[382] ^ v[388];
             v[406] = v[402] ^ v[292] & ~v[398];
             v[407] = v[405] & ~v[186] ^ v[383] ^ (v[36] & ~v[383] ^ v[381] ^ v[390]) & v[92];
-            v[408] = v[401] & ~v[97] ^ v[113] ^ v[18] & v[106] ^ (v[97] & ~(v[395] ^ v[18]) ^ v[113] ^ v[18] & v[106]) & v[98];
+            v[408] = v[401] & ~v[97] ^ v[113] ^ v[18] & v[106] ^
+                     (v[97] & ~(v[395] ^ v[18]) ^ v[113] ^ v[18] & v[106]) & v[98];
             v[409] = v[403] & ~(v[406] & v[403]);
             v[410] = (v[401] | v[97]) ^ v[404] ^ v[105] ^ ((v[395] ^ v[18]) & v[97] ^ v[18]) & v[98] ^ (v[408] | v[397]);
             v[411] = v[402] ^ v[292] & ~v[398];
@@ -6137,7 +6236,7 @@ namespace PokemonGo.RocketAPI.Helpers
         //----- (000985E0) --------------------------------------------------------
         private static void sub_985E0(uint[] result)
         {
-            uint[] v = new uint[464]; // temporary buffer
+            var v = new uint[464]; // temporary buffer
 
             v[0] = result[6];
             v[1] = result[55] ^ result[168] ^ (v[0] | result[108]) ^ (result[141] ^ result[73] & ~v[0] | result[98]);
@@ -6287,7 +6386,9 @@ namespace PokemonGo.RocketAPI.Helpers
             v[109] = v[108];
             v[110] = v[105] ^ v[24];
             v[111] = ~v[0] & result[28];
-            v[112] = result[3] ^ v[53] ^ v[108] ^ (result[105] ^ result[68] ^ v[24] | result[60]) ^ (v[105] | result[36]) ^ result[191] & ~((v[102] ^ result[192] ^ v[104]) & v[39] ^ v[105] & v[6] ^ v[51]);
+            v[112] = result[3] ^ v[53] ^ v[108] ^ (result[105] ^ result[68] ^ v[24] | result[60]) ^
+                     (v[105] | result[36]) ^
+                     result[191] & ~((v[102] ^ result[192] ^ v[104]) & v[39] ^ v[105] & v[6] ^ v[51]);
             v[113] = result[25];
             v[114] = v[24] | ~v[0];
             v[115] = v[112] ^ v[113];
@@ -6343,7 +6444,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[165] = v[153] ^ v[140] & result[41];
             v[166] = result[41] & ~v[155];
             v[167] = v[156] ^ v[150];
-            v[168] = ((v[130] | result[57]) ^ v[115] & v[15] ^ result[25] ^ (result[196] | v[115] & v[15] ^ result[25] ^ v[122] & result[57])) & result[41];
+            v[168] = ((v[130] | result[57]) ^ v[115] & v[15] ^ result[25] ^
+                      (result[196] | v[115] & v[15] ^ result[25] ^ v[122] & result[57])) & result[41];
             v[169] = v[160] ^ result[1];
             result[106] = v[84] ^ v[68];
             result[94] = v[82] ^ v[62];
@@ -6406,7 +6508,9 @@ namespace PokemonGo.RocketAPI.Helpers
             v[208] = v[202] ^ v[204];
             v[209] = (result[148] ^ v[111]) & v[6] ^ v[181];
             v[210] = result[38];
-            v[211] = v[205] & ~result[62] ^ result[80] ^ result[54] & ~(v[202] ^ v[204]) ^ (v[206] & result[54] ^ v[207]) & result[98] ^ v[210] & ~(result[98] & ~(v[198] ^ result[64]) ^ v[200] & result[54] ^ v[206]);
+            v[211] = v[205] & ~result[62] ^ result[80] ^ result[54] & ~(v[202] ^ v[204]) ^
+                     (v[206] & result[54] ^ v[207]) & result[98] ^
+                     v[210] & ~(result[98] & ~(v[198] ^ result[64]) ^ v[200] & result[54] ^ v[206]);
             v[212] = result[62] & result[0] & ~v[207];
             v[213] = result[62] & ~v[202] ^ v[207] & v[191];
             v[214] = result[0];
@@ -6456,14 +6560,16 @@ namespace PokemonGo.RocketAPI.Helpers
             v[252] = v[236] ^ (v[211] & v[250] ^ result[145]) & result[178] | result[7];
             v[253] = result[7];
             v[254] = ~result[42];
-            v[255] = (v[205] ^ result[153] ^ v[247] ^ result[98] & ~(v[212] ^ v[203] ^ result[54] & ~(v[201] ^ result[88]))) & v[210];
+            v[255] = (v[205] ^ result[153] ^ v[247] ^
+                      result[98] & ~(v[212] ^ v[203] ^ result[54] & ~(v[201] ^ result[88]))) & v[210];
             v[256] = v[216] & v[254] ^ result[42];
             v[257] = result[173] & ~(v[48] & v[253] ^ v[224] ^ v[231]);
             v[258] = v[254] & v[219] ^ result[15];
             v[259] = v[232] & result[53];
             v[260] = result[173];
             v[261] = (v[235] ^ result[66]) & ~v[48];
-            v[262] = v[243] ^ result[53] ^ (v[243] ^ result[2]) & v[48] ^ (v[235] ^ result[7] ^ (v[235] ^ result[159]) & v[48]) & v[260];
+            v[262] = v[243] ^ result[53] ^ (v[243] ^ result[2]) & v[48] ^
+                     (v[235] ^ result[7] ^ (v[235] ^ result[159]) & v[48]) & v[260];
             v[263] = v[260] & ~(((v[219] | result[2]) ^ v[253]) & v[48]);
             v[264] = (v[203] ^ result[167]) & result[54];
             v[265] = ~v[207] & result[62];
@@ -6660,7 +6766,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[402] = result[126] ^ v[398] ^ ((v[18] & v[158] & v[149] ^ v[388]) & ~v[394] ^ v[176]) & result[25];
             v[403] = v[298] ^ v[8];
             v[404] = (v[8] | v[298]) & v[310];
-            v[405] = v[159] ^ v[395] ^ (v[157] ^ v[19] & v[158]) & v[149] ^ (v[394] | v[149] & (v[18] & v[158] ^ v[18])) ^ ((v[149] & (v[18] & v[158] ^ v[18]) ^ v[157] ^ v[18] & v[158] | v[394]) ^ v[179]) & result[25];
+            v[405] = v[159] ^ v[395] ^ (v[157] ^ v[19] & v[158]) & v[149] ^ (v[394] | v[149] & (v[18] & v[158] ^ v[18])) ^
+                     ((v[149] & (v[18] & v[158] ^ v[18]) ^ v[157] ^ v[18] & v[158] | v[394]) ^ v[179]) & result[25];
             v[406] = v[401] & v[158];
             v[407] = ~v[298] & v[8];
             v[408] = ~(v[298] & v[8]);
@@ -6737,8 +6844,12 @@ namespace PokemonGo.RocketAPI.Helpers
             result[137] = v[423] & v[278] ^ (v[302] | v[405]);
             result[193] = v[302] ^ v[405] ^ v[278];
             result[129] = v[453] ^ v[423];
-            v[457] = v[455] & ~v[363] ^ result[59] ^ v[220] ^ (v[266] ^ v[265] ^ v[456] & ~(v[267] ^ v[264])) & v[210] ^ (result[54] & ~(v[364] ^ v[207]) ^ v[221]) & result[98];
-            v[458] = result[25] & ~(v[160] ^ v[18] ^ (v[454] ^ v[18]) & v[149] ^ (v[147] ^ v[406] ^ (v[449] ^ v[18]) & v[149]) & ~v[394]) ^ v[196] ^ ((v[449] ^ v[18]) & v[149] ^ v[391] ^ v[19] | v[394]);
+            v[457] = v[455] & ~v[363] ^ result[59] ^ v[220] ^ (v[266] ^ v[265] ^ v[456] & ~(v[267] ^ v[264])) & v[210] ^
+                     (result[54] & ~(v[364] ^ v[207]) ^ v[221]) & result[98];
+            v[458] = result[25] &
+                     ~(v[160] ^ v[18] ^ (v[454] ^ v[18]) & v[149] ^
+                       (v[147] ^ v[406] ^ (v[449] ^ v[18]) & v[149]) & ~v[394]) ^ v[196] ^
+                     ((v[449] ^ v[18]) & v[149] ^ v[391] ^ v[19] | v[394]);
             v[459] = v[302] & ~v[405];
             result[161] = v[197] & v[457] ^ v[106];
             v[460] = result[161] ^ (v[75] ^ v[148]) & v[173];
@@ -6777,7 +6888,7 @@ namespace PokemonGo.RocketAPI.Helpers
         //----- (0009A490) --------------------------------------------------------
         private static void sub_9A490(uint[] result)
         {
-            uint[] v = new uint[482];
+            var v = new uint[482];
 
             v[0] = result[164] ^ result[200] ^ result[59] ^ result[146] ^ result[20];
             v[1] = result[28];
@@ -6957,7 +7068,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[150] = v[120] & ((v[94] | v[117]) ^ result[202]) ^ result[136] ^ result[134] ^ result[41] ^ v[130];
             v[151] = ~result[16];
             v[152] = v[149] ^ v[147] | result[16];
-            v[153] = v[138] & v[120] ^ result[183] ^ result[102] ^ (v[94] | v[127]) ^ v[144] ^ (v[137] ^ v[135] | result[16]);
+            v[153] = v[138] & v[120] ^ result[183] ^ result[102] ^ (v[94] | v[127]) ^ v[144] ^
+                     (v[137] ^ v[135] | result[16]);
             v[154] = v[146] ^ (v[132] | result[104]) ^ (v[145] ^ v[140]) & v[151];
             v[155] = v[143] ^ result[13] ^ v[136] ^ (v[139] | result[104]) ^ (v[142] & v[120] ^ v[148]) & v[151];
             v[156] = result[71] & v[65] ^ result[167] ^ result[45] | result[37];
@@ -7001,7 +7113,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[185] = v[181] ^ result[97];
             v[186] = v[182] & ~result[142];
             v[187] = result[21] ^ result[128];
-            v[188] = result[119] & ~(v[111] ^ result[50] ^ v[113] ^ (v[115] ^ v[118]) & ~v[180]) ^ v[122] ^ result[184] ^ result[80] ^ (result[104] & ~v[116] ^ v[121]) & ~v[180];
+            v[188] = result[119] & ~(v[111] ^ result[50] ^ v[113] ^ (v[115] ^ v[118]) & ~v[180]) ^ v[122] ^ result[184] ^
+                     result[80] ^ (result[104] & ~v[116] ^ v[121]) & ~v[180];
             v[189] = result[7] ^ result[67];
             v[190] = v[182] & result[172];
             v[191] = result[57] ^ result[2];
@@ -7011,7 +7124,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[195] = result[115] ^ result[43];
             v[196] = v[182] & ~result[5];
             v[197] = v[181] ^ result[177] ^ v[173] & result[104] ^ (v[175] ^ result[159] | v[180]);
-            v[198] = result[39] ^ result[9] ^ v[184] ^ result[104] & ~v[185] ^ (v[124] ^ result[97] ^ (v[126] ^ v[176]) & result[104] | v[180]);
+            v[198] = result[39] ^ result[9] ^ v[184] ^ result[104] & ~v[185] ^
+                     (v[124] ^ result[97] ^ (v[126] ^ v[176]) & result[104] | v[180]);
             v[199] = v[182] & result[5];
             v[200] = v[197] & result[119];
             result[58] = v[182];
@@ -7065,18 +7179,25 @@ namespace PokemonGo.RocketAPI.Helpers
             v[240] = ~result[97];
             v[241] = (v[232] ^ v[238]) & v[240];
             v[242] = v[121];
-            v[243] = ((v[124] ^ result[159]) & v[120] ^ v[185] | v[180]) ^ result[59] ^ (v[94] | result[39]) ^ result[171] ^ result[104] & ~(v[237] ^ result[97]) ^ result[119] & ~(result[19] & result[104] & ~v[94] ^ v[124] ^ result[50] ^ ((v[181] ^ result[171]) & result[104] ^ v[184]) & ~v[180]);
-            v[244] = v[241] ^ v[235] ^ result[51] ^ ((v[233] ^ (v[228] | v[229]) & v[98]) & result[97] ^ v[239] ^ v[228] | result[22]);
+            v[243] = ((v[124] ^ result[159]) & v[120] ^ v[185] | v[180]) ^ result[59] ^ (v[94] | result[39]) ^
+                     result[171] ^ result[104] & ~(v[237] ^ result[97]) ^
+                     result[119] &
+                     ~(result[19] & result[104] & ~v[94] ^ v[124] ^ result[50] ^
+                       ((v[181] ^ result[171]) & result[104] ^ v[184]) & ~v[180]);
+            v[244] = v[241] ^ v[235] ^ result[51] ^
+                     ((v[233] ^ (v[228] | v[229]) & v[98]) & result[97] ^ v[239] ^ v[228] | result[22]);
             v[245] = result[19];
             v[246] = v[126] ^ v[245];
             v[247] = result[11] ^ v[245];
             v[248] = result[104];
             v[249] = v[247] ^ v[111] ^ v[246] & result[104];
             v[250] = v[244] ^ result[14] & ~(v[236] ^ v[231] ^ (v[98] & v[234] ^ result[119]) & v[240]);
-            v[251] = (v[94] ^ result[101] ^ (v[184] ^ result[171]) & result[104] | v[180]) ^ v[242] ^ result[159] ^ v[248] & ~(v[126] ^ result[101]);
+            v[251] = (v[94] ^ result[101] ^ (v[184] ^ result[171]) & result[104] | v[180]) ^ v[242] ^ result[159] ^
+                     v[248] & ~(v[126] ^ result[101]);
             v[252] = v[250] ^ v[243];
             v[253] = v[249] ^ ~v[180] & ((v[237] ^ result[177]) & v[248] ^ v[118]);
-            v[254] = v[123] & result[117] ^ result[135] ^ v[109] & v[98] ^ result[3] ^ v[230] & ~(v[107] & v[98] ^ v[108] ^ result[176]);
+            v[254] = v[123] & result[117] ^ result[135] ^ v[109] & v[98] ^ result[3] ^
+                     v[230] & ~(v[107] & v[98] ^ v[108] ^ result[176]);
             v[255] = v[158] & ~(v[250] ^ v[243]);
             v[256] = v[91] ^ result[36] ^ v[95] & v[98];
             v[257] = result[23];
@@ -7096,7 +7217,8 @@ namespace PokemonGo.RocketAPI.Helpers
             result[49] = v[157] & v[261];
             result[166] = v[157] & v[261];
             result[139] = v[157] & v[261];
-            v[268] = ~(v[250] & v[243]) & v[158] & v[46] ^ v[263] ^ v[261] & ~(~v[250] & v[243] & v[158] ^ v[250] ^ v[46] & ~(v[158] & ~(v[250] ^ v[243])));
+            v[268] = ~(v[250] & v[243]) & v[158] & v[46] ^ v[263] ^
+                     v[261] & ~(~v[250] & v[243] & v[158] ^ v[250] ^ v[46] & ~(v[158] & ~(v[250] ^ v[243])));
             result[36] = v[243];
             v[269] = v[265] ^ v[230] & ~v[264];
             result[47] = ~v[205] & v[225];
@@ -7216,7 +7338,9 @@ namespace PokemonGo.RocketAPI.Helpers
             v[366] = v[269] & ~v[362];
             v[367] = ~result[149];
             v[368] = v[363] & v[367];
-            v[369] = v[358] ^ v[180] ^ v[46] & ~(v[344] ^ v[250]) ^ v[261] & ~((v[321] & v[349] ^ v[321]) & ~v[46] ^ v[357]) ^ (v[364] ^ v[261] & ~(v[346] ^ v[347])) & v[367];
+            v[369] = v[358] ^ v[180] ^ v[46] & ~(v[344] ^ v[250]) ^
+                     v[261] & ~((v[321] & v[349] ^ v[321]) & ~v[46] ^ v[357]) ^
+                     (v[364] ^ v[261] & ~(v[346] ^ v[347])) & v[367];
             v[370] = v[318] ^ v[231] & v[240] ^ result[154] ^ v[300] ^ (v[361] ^ v[239] | result[22]);
             v[371] = v[335] ^ v[334] ^ v[269];
             v[372] = (v[254] | v[350] ^ v[75]) ^ v[350] ^ v[75];
@@ -7224,7 +7348,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[374] = v[261] & ~(v[352] ^ (v[349] ^ v[250]) & v[46]) ^ v[365] | result[149];
             v[375] = v[360] ^ v[4] ^ v[337] ^ (v[352] ^ v[259]) & v[261];
             v[376] = (v[284] ^ v[230] | result[97]) & result[14];
-            v[377] = result[14] & ~(v[351] ^ v[240] & (v[339] ^ v[231])) ^ (v[318] & v[240] ^ v[236] ^ result[119] | result[22]) ^ result[55] ^ result[97] ^ v[239] ^ v[230];
+            v[377] = result[14] & ~(v[351] ^ v[240] & (v[339] ^ v[231])) ^
+                     (v[318] & v[240] ^ v[236] ^ result[119] | result[22]) ^ result[55] ^ result[97] ^ v[239] ^ v[230];
             v[378] = (v[348] | v[269]) & ~v[222];
             v[379] = v[359] ^ (v[353] | result[149]);
             v[380] = v[373] ^ v[268];
@@ -7262,7 +7387,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[393] = (v[350] ^ v[75]) & ~v[254];
             v[394] = v[350] ^ v[254];
             v[395] = v[75] & ~(v[350] & v[75]) | v[254];
-            v[396] = (v[293] & v[299] ^ v[325] ^ v[390] & ~(v[196] ^ v[385] ^ v[293] & v[299])) & result[195] ^ v[392] ^ v[391] ^ result[5] ^ v[282] ^ v[388];
+            v[396] = (v[293] & v[299] ^ v[325] ^ v[390] & ~(v[196] ^ v[385] ^ v[293] & v[299])) & result[195] ^ v[392] ^
+                     v[391] ^ result[5] ^ v[282] ^ v[388];
             v[397] = (v[350] | v[254]) ^ v[350];
             v[398] = v[350] ^ (v[75] | v[254]);
             v[399] = (v[75] | v[254]) ^ v[75];
@@ -7400,7 +7526,7 @@ namespace PokemonGo.RocketAPI.Helpers
         //----- (0009C42C) --------------------------------------------------------
         private static void sub_9C42C(uint[] result)
         {
-            uint[] v = new uint[496]; // temporary buffer
+            var v = new uint[496]; // temporary buffer
 
             v[0] = result[201] ^ result[167] ^ result[199] ^ result[154] & ~(result[182] ^ result[59] & ~result[99]);
             v[1] = result[137] | v[0];
@@ -7434,7 +7560,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[29] = v[15] | v[6];
             v[30] = v[16] | result[102];
             v[31] = result[42] ^ result[82];
-            v[32] = result[178] ^ ((v[4] ^ result[107]) & result[56] ^ v[1] ^ result[107] | result[24]) ^ (v[5] | result[179]) ^ result[121] ^ result[56] & ~(v[13] ^ result[107]);
+            v[32] = result[178] ^ ((v[4] ^ result[107]) & result[56] ^ v[1] ^ result[107] | result[24]) ^
+                    (v[5] | result[179]) ^ result[121] ^ result[56] & ~(v[13] ^ result[107]);
             v[33] = ((v[15] | v[6]) ^ v[15] | result[102]) & v[32];
             result[42] = v[16];
             v[34] = v[28] ^ v[24];
@@ -7466,9 +7593,11 @@ namespace PokemonGo.RocketAPI.Helpers
             v[59] = v[32] & ~v[56] ^ v[53] ^ v[29] ^ v[55] ^ (v[32] & result[159] ^ v[54] | result[23]);
             v[60] = v[49] ^ result[39] ^ v[32] & ~v[47] ^ (v[32] & (v[40] ^ v[38]) ^ v[41] ^ v[25] | v[57]);
             v[61] = ~result[24];
-            v[62] = v[52] ^ v[38] ^ result[162] ^ result[96] ^ ((v[43] | result[102]) ^ v[48]) & ~v[57] ^ v[32] & ~((v[17] ^ result[47] | result[102]) ^ v[19]);
+            v[62] = v[52] ^ v[38] ^ result[162] ^ result[96] ^ ((v[43] | result[102]) ^ v[48]) & ~v[57] ^
+                    v[32] & ~((v[17] ^ result[47] | result[102]) ^ v[19]);
             v[63] = ~v[60];
-            v[64] = (v[5] | result[129]) ^ result[150] ^ result[37] ^ result[56] & ~(v[5] & result[156] ^ result[179]) ^ (v[5] & ~result[78] ^ result[108] ^ result[56] & ~(v[4] ^ result[108])) & v[61];
+            v[64] = (v[5] | result[129]) ^ result[150] ^ result[37] ^ result[56] & ~(v[5] & result[156] ^ result[179]) ^
+                    (v[5] & ~result[78] ^ result[108] ^ result[56] & ~(v[4] ^ result[108])) & v[61];
             v[65] = result[197];
             result[70] = ~v[60] & result[46] ^ v[60];
             result[39] = v[60];
@@ -7586,11 +7715,14 @@ namespace PokemonGo.RocketAPI.Helpers
             v[160] = v[146];
             v[161] = ~result[11];
             v[162] = v[146] ^ v[145] | result[112];
-            v[163] = v[155] ^ v[162] ^ (v[153] & v[148] ^ v[149]) & v[151] ^ ((result[130] ^ v[146] ^ v[145]) & v[151] ^ (v[156] | v[157]) ^ v[146] ^ v[145] | result[11]);
-            v[164] = v[156] ^ result[24] ^ v[149] & v[153] ^ (v[153] | ~v[148]) & v[151] ^ (v[151] & ~(v[156] ^ result[0]) ^ result[112]) & v[161];
+            v[163] = v[155] ^ v[162] ^ (v[153] & v[148] ^ v[149]) & v[151] ^
+                     ((result[130] ^ v[146] ^ v[145]) & v[151] ^ (v[156] | v[157]) ^ v[146] ^ v[145] | result[11]);
+            v[164] = v[156] ^ result[24] ^ v[149] & v[153] ^ (v[153] | ~v[148]) & v[151] ^
+                     (v[151] & ~(v[156] ^ result[0]) ^ result[112]) & v[161];
             v[165] = v[151] & ~(v[159] ^ result[15]);
             v[166] = v[5] | result[169];
-            v[167] = result[57] & ~(v[151] & ~((v[155] | v[157]) ^ v[148]) ^ (v[149] & v[153] ^ result[19]) & v[161] ^ v[155]);
+            v[167] = result[57] &
+                     ~(v[151] & ~((v[155] | v[157]) ^ v[148]) ^ (v[149] & v[153] ^ result[19]) & v[161] ^ v[155]);
             v[168] = v[151] & ~v[156] ^ v[150] ^ v[146] & v[153];
             v[169] = v[166] ^ result[107] ^ result[187] & ~v[8] & result[56];
             v[170] = v[164] ^ v[167];
@@ -7612,7 +7744,8 @@ namespace PokemonGo.RocketAPI.Helpers
             v[186] = v[182] & ~(v[170] | v[69]);
             v[187] = ~v[170];
             v[188] = v[69] & result[104];
-            v[189] = result[191] ^ result[133] ^ v[155] ^ v[158] ^ v[151] & ~v[175] ^ result[57] & ~(v[148] ^ result[75] ^ ((v[148] | result[112]) ^ v[148]) & v[151]);
+            v[189] = result[191] ^ result[133] ^ v[155] ^ v[158] ^ v[151] & ~v[175] ^
+                     result[57] & ~(v[148] ^ result[75] ^ ((v[148] | result[112]) ^ v[148]) & v[151]);
             v[190] = v[184] ^ v[170] & v[69];
             v[191] = v[183] ^ v[170] & v[69];
             result[74] = v[191];
@@ -7666,12 +7799,16 @@ namespace PokemonGo.RocketAPI.Helpers
             v[225] = v[216] ^ v[215];
             v[226] = ~result[63];
             v[227] = v[214] & v[207];
-            v[228] = v[219] ^ result[29] ^ v[221] ^ (v[215] & v[207] ^ v[215] ^ v[16] & ~v[219] | result[63]) ^ result[102] & ~((v[221] ^ v[215] & v[207] ^ v[215]) & v[226] ^ (v[216] ^ ~v[198] & v[212]) & v[16] ^ v[216] ^ v[215]);
+            v[228] = v[219] ^ result[29] ^ v[221] ^ (v[215] & v[207] ^ v[215] ^ v[16] & ~v[219] | result[63]) ^
+                     result[102] &
+                     ~((v[221] ^ v[215] & v[207] ^ v[215]) & v[226] ^ (v[216] ^ ~v[198] & v[212]) & v[16] ^ v[216] ^
+                       v[215]);
             v[229] = v[216] ^ v[211] ^ v[212];
             v[230] = v[228] | v[133];
             v[231] = (v[228] | v[133]) ^ v[133] & v[195];
             v[232] = v[16] & ~(v[218] ^ v[211] ^ v[212]);
-            v[233] = (v[214] & v[208] ^ v[211] ^ v[212] ^ (v[224] ^ v[218]) & v[16]) & v[226] ^ v[224] ^ v[218] ^ (v[208] & ~(v[212] & ~v[224]) ^ v[224] | v[16]);
+            v[233] = (v[214] & v[208] ^ v[211] ^ v[212] ^ (v[224] ^ v[218]) & v[16]) & v[226] ^ v[224] ^ v[218] ^
+                     (v[208] & ~(v[212] & ~v[224]) ^ v[224] | v[16]);
             v[234] = v[215] & v[14];
             v[235] = ~v[228];
             v[236] = ~v[228] & v[133];
@@ -7846,7 +7983,8 @@ namespace PokemonGo.RocketAPI.Helpers
             result[13] = ~v[359];
             result[112] ^= v[360];
             v[364] = result[168];
-            v[365] = (v[294] ^ v[324]) & v[140] ^ v[347] ^ (v[189] | v[46] & ~v[321] ^ v[336]) ^ ((v[46] & ~v[321] ^ v[336]) & ~v[189] ^ v[324] | v[363]);
+            v[365] = (v[294] ^ v[324]) & v[140] ^ v[347] ^ (v[189] | v[46] & ~v[321] ^ v[336]) ^
+                     ((v[46] & ~v[321] ^ v[336]) & ~v[189] ^ v[324] | v[363]);
             result[154] = ~v[355];
             result[132] = v[360];
             v[366] = v[133] ^ v[364];
@@ -8043,7 +8181,7 @@ namespace PokemonGo.RocketAPI.Helpers
             // output is 256 bytes / 65 DWORD large at least
             // output's first 256 bytes are entirely rewritten
 
-            uint[] v = new uint[156]; // temporary buffer
+            var v = new uint[156]; // temporary buffer
 
             v[0] = input[18];
             v[1] = input[119];
@@ -8324,5 +8462,8 @@ namespace PokemonGo.RocketAPI.Helpers
             output[63] = input[47];
         }
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate int EncryptDelegate(
+            IntPtr arr, int length, IntPtr iv, int ivsize, IntPtr output, out int outputSize);
     }
 }

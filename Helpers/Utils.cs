@@ -1,7 +1,11 @@
-﻿using System;
+﻿#region using directives
+
+using System;
 using System.Collections.Generic;
 using System.Data.HashFunction;
 using System.Linq;
+
+#endregion
 
 namespace PokemonGo.RocketAPI.Helpers
 {
@@ -15,12 +19,11 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public static int GetTime(bool ms = false)
         {
-            TimeSpan timeSpan = (DateTime.UtcNow - new DateTime(1970, 1, 1));
+            var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1);
 
             if (ms)
-                return (int)Math.Round(timeSpan.TotalMilliseconds);
-            else
-                return (int)Math.Round(timeSpan.TotalSeconds);
+                return (int) Math.Round(timeSpan.TotalMilliseconds);
+            return (int) Math.Round(timeSpan.TotalSeconds);
         }
 
         public static uint GenerateLocation1(byte[] authTicket, double lat, double lng, double alt)

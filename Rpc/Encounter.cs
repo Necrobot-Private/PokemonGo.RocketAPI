@@ -1,15 +1,21 @@
-﻿using System.Threading.Tasks;
+﻿#region using directives
+
+using System.Threading.Tasks;
 using POGOProtos.Enums;
 using POGOProtos.Inventory.Item;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
 
+#endregion
+
 namespace PokemonGo.RocketAPI.Rpc
 {
     public class Encounter : BaseRpc
     {
-        public Encounter(Client client) : base(client) { }
+        public Encounter(Client client) : base(client)
+        {
+        }
 
         public async Task<EncounterResponse> EncounterPokemon(ulong encounterId, string spawnPointGuid)
         {
@@ -17,10 +23,10 @@ namespace PokemonGo.RocketAPI.Rpc
             {
                 EncounterId = encounterId,
                 SpawnPointId = spawnPointGuid,
-                PlayerLatitude = _client.CurrentLatitude,
-                PlayerLongitude = _client.CurrentLongitude
+                PlayerLatitude = Client.CurrentLatitude,
+                PlayerLongitude = Client.CurrentLongitude
             };
-            
+
             return await PostProtoPayload<Request, EncounterResponse>(RequestType.Encounter, message);
         }
 
@@ -32,11 +38,13 @@ namespace PokemonGo.RocketAPI.Rpc
                 ItemId = itemId,
                 SpawnPointId = spawnPointId
             };
-            
+
             return await PostProtoPayload<Request, UseItemCaptureResponse>(RequestType.UseItemCapture, message);
         }
 
-        public async Task<CatchPokemonResponse> CatchPokemon(ulong encounterId, string spawnPointGuid, ItemId pokeballItemId, double normalizedRecticleSize = 1.950, double spinModifier = 1, bool hitPokemon = true, double normalizedHitPos = 1)
+        public async Task<CatchPokemonResponse> CatchPokemon(ulong encounterId, string spawnPointGuid,
+            ItemId pokeballItemId, double normalizedRecticleSize = 1.950, double spinModifier = 1,
+            bool hitPokemon = true, double normalizedHitPos = 1)
         {
             var message = new CatchPokemonMessage
             {
@@ -48,13 +56,13 @@ namespace PokemonGo.RocketAPI.Rpc
                 SpinModifier = spinModifier,
                 NormalizedHitPosition = normalizedHitPos
             };
-            
+
             return await PostProtoPayload<Request, CatchPokemonResponse>(RequestType.CatchPokemon, message);
         }
 
         public async Task<IncenseEncounterResponse> EncounterIncensePokemon(ulong encounterId, string encounterLocation)
         {
-            var message = new IncenseEncounterMessage()
+            var message = new IncenseEncounterMessage
             {
                 EncounterId = encounterId,
                 EncounterLocation = encounterLocation
@@ -65,12 +73,12 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<DiskEncounterResponse> EncounterLurePokemon(ulong encounterId, string fortId)
         {
-            var message = new DiskEncounterMessage()
+            var message = new DiskEncounterMessage
             {
                 EncounterId = encounterId,
                 FortId = fortId,
-                PlayerLatitude = _client.CurrentLatitude,
-                PlayerLongitude = _client.CurrentLongitude
+                PlayerLatitude = Client.CurrentLatitude,
+                PlayerLongitude = Client.CurrentLongitude
             };
 
             return await PostProtoPayload<Request, DiskEncounterResponse>(RequestType.DiskEncounter, message);
@@ -78,12 +86,15 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<EncounterTutorialCompleteResponse> EncounterTutorialComplete(PokemonId pokemonId)
         {
-            var message = new EncounterTutorialCompleteMessage()
+            var message = new EncounterTutorialCompleteMessage
             {
                 PokemonId = pokemonId
             };
 
-            return await PostProtoPayload<Request, EncounterTutorialCompleteResponse>(RequestType.EncounterTutorialComplete, message);
+            return
+                await
+                    PostProtoPayload<Request, EncounterTutorialCompleteResponse>(RequestType.EncounterTutorialComplete,
+                        message);
         }
     }
 }

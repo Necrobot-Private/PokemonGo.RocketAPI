@@ -1,4 +1,8 @@
-﻿using System;
+﻿#region using directives
+
+using System;
+
+#endregion
 
 namespace PokemonGo.RocketAPI.Exceptions
 {
@@ -6,7 +10,6 @@ namespace PokemonGo.RocketAPI.Exceptions
     {
         public GoogleException(string message) : base(message)
         {
-            
         }
     }
 }

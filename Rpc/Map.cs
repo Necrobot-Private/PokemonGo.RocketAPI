@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region using directives
+
+using System;
 using System.Threading.Tasks;
 using Google.Protobuf;
 using PokemonGo.RocketAPI.Extensions;
@@ -7,22 +9,31 @@ using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
 
+#endregion
+
 namespace PokemonGo.RocketAPI.Rpc
 {
     public class Map : BaseRpc
     {
-        public Map(Client client) : base(client) { }
+        public Map(Client client) : base(client)
+        {
+        }
 
-        public async Task<Tuple<GetMapObjectsResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse>> GetMapObjects()
+        public async
+            Task
+                <
+                    Tuple
+                        <GetMapObjectsResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse,
+                            DownloadSettingsResponse>> GetMapObjects()
         {
             #region Messages
 
             var getMapObjectsMessage = new GetMapObjectsMessage
             {
-                CellId = { S2Helper.GetNearbyCellIds(_client.CurrentLongitude, _client.CurrentLatitude) },
-                SinceTimestampMs = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                Latitude = _client.CurrentLatitude,
-                Longitude = _client.CurrentLongitude
+                CellId = {S2Helper.GetNearbyCellIds(Client.CurrentLongitude, Client.CurrentLatitude)},
+                SinceTimestampMs = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                Latitude = Client.CurrentLatitude,
+                Longitude = Client.CurrentLongitude
             };
 
             var getHatchedEggsMessage = new GetHatchedEggsMessage();
@@ -36,7 +47,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var downloadSettingsMessage = new DownloadSettingsMessage
             {
-                Hash = _client.SettingsHash
+                Hash = Client.SettingsHash
             };
 
             #endregion
@@ -65,15 +76,19 @@ namespace PokemonGo.RocketAPI.Rpc
                     RequestMessage = downloadSettingsMessage.ToByteString()
                 });
 
-            return await PostProtoPayload<Request, GetMapObjectsResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse>(request);
+            return
+                await
+                    PostProtoPayload
+                        <Request, GetMapObjectsResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse>(request);
         }
 
         public async Task<GetIncensePokemonResponse> GetIncensePokemons()
         {
-            var message = new GetIncensePokemonMessage()
+            var message = new GetIncensePokemonMessage
             {
-                PlayerLatitude = _client.CurrentLatitude,
-                PlayerLongitude = _client.CurrentLongitude
+                PlayerLatitude = Client.CurrentLatitude,
+                PlayerLongitude = Client.CurrentLongitude
             };
 
             return await PostProtoPayload<Request, GetIncensePokemonResponse>(RequestType.GetIncensePokemon, message);

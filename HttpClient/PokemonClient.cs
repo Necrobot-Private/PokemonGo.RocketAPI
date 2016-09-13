@@ -1,6 +1,10 @@
-﻿using System.Net;
+﻿#region using directives
+
+using System.Net;
 using System.Net.Http;
 using PokemonGo.RocketAPI.Helpers;
+
+#endregion
 
 namespace PokemonGo.RocketAPI.HttpClient
 {

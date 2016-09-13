@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿#region using directives
+
+using System.Collections.Generic;
 using System.Linq;
 using Google.Common.Geometry;
+
+#endregion
 
 namespace PokemonGo.RocketAPI.Helpers
 {

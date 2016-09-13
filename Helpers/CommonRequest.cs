@@ -1,17 +1,19 @@
-﻿using Google.Protobuf;
+﻿#region using directives
+
+using Google.Protobuf;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
-using System.Threading.Tasks;
+
+#endregion
 
 namespace PokemonGo.RocketAPI.Helpers
 {
     public class CommonRequest
     {
-
         public static Request GetDownloadRemoteConfigVersionMessageRequest(Client client)
         {
-            var downloadRemoteConfigVersionMessage = new DownloadRemoteConfigVersionMessage()
+            var downloadRemoteConfigVersionMessage = new DownloadRemoteConfigVersionMessage
             {
                 Platform = client.Platform,
                 AppVersion = client.AppVersion
@@ -25,7 +27,7 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public static Request GetGetAssetDigestMessageRequest(Client client)
         {
-            var getAssetDigestMessage = new GetAssetDigestMessage()
+            var getAssetDigestMessage = new GetAssetDigestMessage
             {
                 Platform = client.Platform,
                 AppVersion = client.AppVersion
@@ -39,7 +41,7 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public static Request GetDownloadSettingsMessageRequest(Client client)
         {
-            var downloadSettingsMessage = new DownloadSettingsMessage()
+            var downloadSettingsMessage = new DownloadSettingsMessage
             {
                 Hash = client.SettingsHash
             };
@@ -52,7 +54,7 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public static Request GetDefaultGetInventoryMessage(Client client)
         {
-            var getInventoryMessage = new GetInventoryMessage()
+            var getInventoryMessage = new GetInventoryMessage
             {
                 LastTimestampMs = client.InventoryLastUpdateTimestamp
             };
@@ -65,7 +67,8 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public static Request[] AppendCheckChallenge(Request request)
         {
-            return new Request[] {
+            return new[]
+            {
                 request,
                 new Request
                 {
@@ -77,7 +80,8 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public static Request[] FillRequest(Request request, Client client)
         {
-            return new Request[] {
+            return new[]
+            {
                 request,
                 new Request
                 {
@@ -101,7 +105,8 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public static Request[] GetCommonRequests(Client client)
         {
-            return new Request[] {
+            return new[]
+            {
                 new Request
                 {
                     RequestType = RequestType.CheckChallenge,

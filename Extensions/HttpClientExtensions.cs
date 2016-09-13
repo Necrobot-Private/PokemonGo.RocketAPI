@@ -1,10 +1,14 @@
-﻿using System;
+﻿#region using directives
+
+using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Google.Protobuf;
 using PokemonGo.RocketAPI.Exceptions;
 using POGOProtos.Networking.Envelopes;
+
+#endregion
 
 namespace PokemonGo.RocketAPI.Extensions
 {
@@ -22,7 +26,7 @@ namespace PokemonGo.RocketAPI.Extensions
 
     public static class HttpClientExtensions
     {
-        public static async Task<IMessage[]> PostProtoPayload<TRequest>(this System.Net.Http.HttpClient client, 
+        public static async Task<IMessage[]> PostProtoPayload<TRequest>(this System.Net.Http.HttpClient client,
             string url, RequestEnvelope requestEnvelope,
             IApiFailureStrategy strategy,
             params Type[] responseTypes) where TRequest : IMessage<TRequest>
@@ -38,12 +42,14 @@ namespace PokemonGo.RocketAPI.Extensions
             }
 
             ResponseEnvelope response;
-            while ((response = await PostProto<TRequest>(client, url, requestEnvelope)).Returns.Count != responseTypes.Length)
+            while ((response = await PostProto<TRequest>(client, url, requestEnvelope)).Returns.Count !=
+                   responseTypes.Length)
             {
                 var operation = await strategy.HandleApiFailure(requestEnvelope, response);
                 if (operation == ApiOperation.Abort)
                 {
-                    throw new InvalidResponseException($"Expected {responseTypes.Length} responses, but got {response.Returns.Count} responses");
+                    throw new InvalidResponseException(
+                        $"Expected {responseTypes.Length} responses, but got {response.Returns.Count} responses");
                 }
             }
 
@@ -57,8 +63,10 @@ namespace PokemonGo.RocketAPI.Extensions
             return result;
         }
 
-        public static async Task<TResponsePayload> PostProtoPayload<TRequest, TResponsePayload>(this System.Net.Http.HttpClient client,
-            string url, RequestEnvelope requestEnvelope, IApiFailureStrategy strategy) where TRequest : IMessage<TRequest>
+        public static async Task<TResponsePayload> PostProtoPayload<TRequest, TResponsePayload>(
+            this System.Net.Http.HttpClient client,
+            string url, RequestEnvelope requestEnvelope, IApiFailureStrategy strategy)
+            where TRequest : IMessage<TRequest>
             where TResponsePayload : IMessage<TResponsePayload>, new()
         {
             Debug.WriteLine($"Requesting {typeof(TResponsePayload).Name}");
@@ -89,7 +97,8 @@ namespace PokemonGo.RocketAPI.Extensions
             return parsedPayload;
         }
 
-        public static async Task<ResponseEnvelope> PostProto<TRequest>(this System.Net.Http.HttpClient client, string url,
+        public static async Task<ResponseEnvelope> PostProto<TRequest>(this System.Net.Http.HttpClient client,
+            string url,
             RequestEnvelope requestEnvelope) where TRequest : IMessage<TRequest>
         {
             //Encode payload and put in envelop, then send

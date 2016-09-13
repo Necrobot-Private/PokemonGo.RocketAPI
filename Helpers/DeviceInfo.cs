@@ -1,9 +1,24 @@
-﻿using System;
+﻿#region using directives
+
+using System;
+
+#endregion
 
 namespace PokemonGo.RocketAPI.Helpers
 {
     public class DeviceInfo
     {
+        public DeviceInfo()
+        {
+            if (DeviceId == null)
+            {
+                if (HardwareManufacturer == "Apple")
+                    DeviceId = GenerateRandomDeviceId(20);
+                else
+                    DeviceId = GenerateRandomDeviceId();
+            }
+        }
+
         public string AndroidBoardName { get; set; }
         public string AndroidBootloader { get; set; }
         public string DeviceBrand { get; set; }
@@ -18,26 +33,15 @@ namespace PokemonGo.RocketAPI.Helpers
         public string HardwareManufacturer { get; set; }
         public string HardwareModel { get; set; }
 
-        public DeviceInfo()
-        {
-            if (DeviceId == null)
-            {
-                if (HardwareManufacturer == "Apple")
-                    DeviceId = GenerateRandomDeviceId(20);
-                else
-                    DeviceId = GenerateRandomDeviceId();
-            }
-        }
-
         private static string BytesToHex(byte[] bytes)
         {
-            char[] hexArray = "0123456789abcdef".ToCharArray();
-            char[] hexChars = new char[bytes.Length * 2];
-            for (int index = 0; index < bytes.Length; index++)
+            var hexArray = "0123456789abcdef".ToCharArray();
+            var hexChars = new char[bytes.Length*2];
+            for (var index = 0; index < bytes.Length; index++)
             {
-                int var = bytes[index] & 0xFF;
-                hexChars[index * 2] = hexArray[(int)((uint)var >> 4)];
-                hexChars[index * 2 + 1] = hexArray[var & 0x0F];
+                var var = bytes[index] & 0xFF;
+                hexChars[index*2] = hexArray[(int) ((uint) var >> 4)];
+                hexChars[index*2 + 1] = hexArray[var & 0x0F];
             }
             return new string(hexChars).ToLower();
         }

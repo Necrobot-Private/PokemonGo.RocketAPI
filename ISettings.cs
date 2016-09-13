@@ -1,5 +1,9 @@
-﻿using Google.Protobuf;
+﻿#region using directives
+
+using Google.Protobuf;
 using PokemonGo.RocketAPI.Enums;
+
+#endregion
 
 namespace PokemonGo.RocketAPI
 {

@@ -1,9 +1,13 @@
+#region using directives
+
 using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+
+#endregion
 
 namespace PokemonGo.RocketAPI.Helpers
 {
@@ -25,7 +29,8 @@ namespace PokemonGo.RocketAPI.Helpers
                 try
                 {
                     var response = await base.SendAsync(request, cancellationToken);
-                    if (response.StatusCode == HttpStatusCode.BadGateway || response.StatusCode == HttpStatusCode.InternalServerError)
+                    if (response.StatusCode == HttpStatusCode.BadGateway ||
+                        response.StatusCode == HttpStatusCode.InternalServerError)
                         throw new Exception(); //todo: proper implementation
 
                     return response;

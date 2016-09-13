@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿#region using directives
+
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+
+#endregion
 
 namespace PokemonGo.RocketAPI.Helpers
 {

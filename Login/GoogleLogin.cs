@@ -1,15 +1,19 @@
-﻿using DankMemes.GPSOAuthSharp;
-using PokemonGo.RocketAPI.Exceptions;
+﻿#region using directives
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DankMemes.GPSOAuthSharp;
+using PokemonGo.RocketAPI.Exceptions;
+
+#endregion
 
 namespace PokemonGo.RocketAPI.Login
 {
     public class GoogleLogin : ILoginType
     {
-        private readonly string password;
         private readonly string email;
+        private readonly string password;
 
         public GoogleLogin(string email, string password)
         {
@@ -31,7 +35,8 @@ namespace PokemonGo.RocketAPI.Login
             {
                 //Fix NullReferenceException in PerformMasterLogin
                 throw new InvalidResponseException();
-            };
+            }
+            ;
 
             if (response.ContainsKey("Error"))
                 throw new GoogleException(response["Error"]);
