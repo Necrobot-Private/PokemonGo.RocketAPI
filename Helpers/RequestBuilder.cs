@@ -37,10 +37,10 @@ namespace PokemonGo.RocketAPI.Helpers
             _latitude = latitude;
             _longitude = longitude;
             _altitude = altitude;
-            if (speed == 0)
-                _speed = (float)Math.Round(GenRandom(4, 8), 7); // Range 4-8
+            if (speed < 1)
+                _speed = (float)Math.Round(GenRandom(1, 3), 7); // Range 1 - 3
             else
-                _speed = speed;
+                _speed = speed + ((float)Math.Round(GenRandom(-1, 1), 7));
             _horizontalAccuracy = (float) Math.Round(GenRandom(50, 250), 7);
             _settings = settings;
             _authTicket = authTicket;
