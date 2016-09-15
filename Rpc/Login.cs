@@ -55,7 +55,7 @@ namespace PokemonGo.RocketAPI.Rpc
         {
             var requests = CommonRequest.FillRequest(request, Client);
 
-            var serverRequest = RequestBuilder.GetInitialRequestEnvelope(requests);
+            var serverRequest = GetRequestBuilder().GetInitialRequestEnvelope(requests);
             var serverResponse = await PostProto<Request>(serverRequest);
 
             if (!string.IsNullOrEmpty(serverResponse.ApiUrl))

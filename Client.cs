@@ -60,6 +60,7 @@ namespace PokemonGo.RocketAPI
         public double CurrentLongitude { get; internal set; }
         public double CurrentAltitude { get; internal set; }
         public double CurrentAccuracy { get; internal set; }
+        public float CurrentSpeed { get; internal set; }
 
         public AuthType AuthType => Settings.AuthType;
         internal string ApiUrl { get; set; }

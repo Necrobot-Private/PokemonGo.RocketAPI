@@ -24,11 +24,12 @@ namespace PokemonGo.RocketAPI.Helpers
         private readonly double _horizontalAccuracy;
         private readonly double _latitude;
         private readonly double _longitude;
+        private readonly float _speed;
         private readonly ISettings _settings;
         private readonly int _startTime;
         private ulong _nextRequestId;
 
-        public RequestBuilder(string authToken, AuthType authType, double latitude, double longitude, double altitude,
+        public RequestBuilder(string authToken, AuthType authType, double latitude, double longitude, double altitude, float speed,
             ISettings settings, AuthTicket authTicket = null)
         {
             _authToken = authToken;
@@ -36,6 +37,10 @@ namespace PokemonGo.RocketAPI.Helpers
             _latitude = latitude;
             _longitude = longitude;
             _altitude = altitude;
+            if (speed == 0)
+                _speed = (float)Math.Round(GenRandom(4, 8), 7); // Range 4-8
+            else
+                _speed = speed;
             _horizontalAccuracy = (float) Math.Round(GenRandom(50, 250), 7);
             _settings = settings;
             _authTicket = authTicket;
@@ -137,18 +142,31 @@ namespace PokemonGo.RocketAPI.Helpers
                 DeviceInfo = deviceInfo
             };
 
-            sig.LocationFix.Add(new Signature.Types.LocationFix
+            Signature.Types.LocationFix locationFix = new Signature.Types.LocationFix
             {
                 Provider = "fused",
-                Latitude = (float) _latitude,
-                Longitude = (float) _longitude,
-                Altitude = (float) _altitude,
-                HorizontalAccuracy = (float) _horizontalAccuracy,
-                VerticalAccuracy = RandomDevice.Next(2, 5),
-                TimestampSnapshot = (ulong) (Utils.GetTime(true) - _startTime - RandomDevice.Next(100, 300)),
+                Latitude = (float)_latitude,
+                Longitude = (float)_longitude,
+                Altitude = (float)_altitude,
+                HorizontalAccuracy = (float)_horizontalAccuracy,
+                TimestampSnapshot = (ulong)(Utils.GetTime(true) - _startTime - RandomDevice.Next(100, 300)),
                 ProviderStatus = 3,
                 LocationType = 1
-            });
+            };
+
+            if (_settings.DevicePlatform.Equals("ios", StringComparison.Ordinal))
+            {
+                // Vertical accuracy is iOS only.
+                locationFix.VerticalAccuracy = RandomDevice.Next(10, 12); // Range is 10-12
+
+                // Course is iOS only.
+                locationFix.Course = (float)Math.Round(GenRandom(0, 360), 7); // Range is 0-360
+
+                // Speed is iOS only.
+                locationFix.Speed = _speed;
+            }
+
+            sig.LocationFix.Add(locationFix);
 
             foreach (var request in requests)
                 sig.RequestHash.Add(Utils.GenerateRequestHash(ticketBytes, request.ToByteArray()));
