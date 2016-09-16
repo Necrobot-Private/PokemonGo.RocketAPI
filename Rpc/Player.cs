@@ -16,7 +16,6 @@ namespace PokemonGo.RocketAPI.Rpc
     {
         public Player(Client client) : base(client)
         {
-            Client = client;
         }
 
         public async Task<PlayerUpdateResponse> UpdatePlayerLocation(double latitude, double longitude, double altitude, float speed)

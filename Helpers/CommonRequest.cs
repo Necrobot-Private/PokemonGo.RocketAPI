@@ -141,7 +141,7 @@ namespace PokemonGo.RocketAPI.Helpers
                         //getInventoryResponse.MergeFrom(data);
 
                         // Update inventory timestamp
-                        client.InventoryLastUpdateTimestamp = Client.GetCurrentTimeMillis();
+                        client.InventoryLastUpdateTimestamp = Utils.GetTime(true);
 
                         break;
                     case RequestType.DownloadSettings:
