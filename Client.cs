@@ -70,12 +70,8 @@ namespace PokemonGo.RocketAPI
         internal long InventoryLastUpdateTimestamp { get; set; }
         internal Platform Platform { get; set; }
         internal uint AppVersion { get; set; }
-
-        public static long GetCurrentTimeMillis()
-        {
-            return DateTime.UtcNow.ToUnixTime();
-        }
-
+        internal long StartTime { get; set; }
+        
         private WebProxy InitProxy()
         {
             if (!Settings.UseProxy) return null;

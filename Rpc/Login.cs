@@ -44,6 +44,7 @@ namespace PokemonGo.RocketAPI.Rpc
         public async Task DoLogin()
         {
             Client.AuthToken = await _login.GetAccessToken().ConfigureAwait(false);
+            Client.StartTime = Utils.GetTime(true);
 
             await
                 FireRequestBlock(CommonRequest.GetDownloadRemoteConfigVersionMessageRequest(Client))
@@ -55,7 +56,7 @@ namespace PokemonGo.RocketAPI.Rpc
         {
             var requests = CommonRequest.FillRequest(request, Client);
 
-            var serverRequest = GetRequestBuilder().GetInitialRequestEnvelope(requests);
+            var serverRequest = GetRequestBuilder().GetRequestEnvelope(requests);
             var serverResponse = await PostProto<Request>(serverRequest);
 
             if (!string.IsNullOrEmpty(serverResponse.ApiUrl))
@@ -100,7 +101,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 {
                     getInventoryResponse.MergeFrom(responses[3]);
 
-                    Client.InventoryLastUpdateTimestamp = Client.GetCurrentTimeMillis();
+                    Client.InventoryLastUpdateTimestamp = Utils.GetTime(true);
                 }
 
                 var downloadSettingsResponse = new DownloadSettingsResponse();
