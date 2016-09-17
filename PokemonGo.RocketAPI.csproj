@@ -117,6 +117,10 @@
       <HintPath>$(SolutionDir)\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PommaLabs.Thrower, Version=3.0.0.0, Culture=neutral, PublicKeyToken=2f204b7110a52060, processorArchitecture=MSIL">
+      <HintPath>..\packages\Thrower.3.0.1\lib\net45\PommaLabs.Thrower.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="S2Geometry, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\S2Geometry.1.0.3\lib\portable-net45+wp8+win8\S2Geometry.dll</HintPath>
       <Private>True</Private>
@@ -168,6 +172,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Troschuetz.Random, Version=4.0.3.0, Culture=neutral, PublicKeyToken=2f204b7110a52060, processorArchitecture=MSIL">
+      <HintPath>..\packages\Troschuetz.Random.4.0.5\lib\net45\Troschuetz.Random.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\GoogleException.cs" />
