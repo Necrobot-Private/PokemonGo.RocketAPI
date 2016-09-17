@@ -233,7 +233,7 @@ namespace PokemonGo.RocketAPI.Helpers
             return encryptedSignature;
         }
 
-        public RequestEnvelope GetRequestEnvelope(params Request[] customRequests)
+        public RequestEnvelope GetRequestEnvelope(Request[] customRequests, bool isInitialRequest = false)
         {
             var e = new RequestEnvelope
             {
@@ -247,9 +247,10 @@ namespace PokemonGo.RocketAPI.Helpers
                 MsSinceLastLocationfix = (long)TRandomDevice.Triangular(300, 30000, 10000) //12
             };
 
-            if (_authTicket != null)
+            if (_authTicket != null && !isInitialRequest)
             {
                 e.AuthTicket = _authTicket;
+                e.PlatformRequests.Add(GenerateSignature(customRequests));
             }
             else
             {
@@ -263,20 +264,17 @@ namespace PokemonGo.RocketAPI.Helpers
                     }
                 }; //10
             }
-
-            if (_authTicket != null)
-                e.PlatformRequests.Add(GenerateSignature(customRequests));
-
+            
             return e;
         }
         
         public RequestEnvelope GetRequestEnvelope(RequestType type, IMessage message)
         {
-            return GetRequestEnvelope(new Request
+            return GetRequestEnvelope(new Request[] { new Request
             {
                 RequestType = type,
                 RequestMessage = message.ToByteString()
-            });
+            } });
         }
 
         public static double GenRandom(double num)
