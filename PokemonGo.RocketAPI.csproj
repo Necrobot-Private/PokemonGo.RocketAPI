@@ -184,6 +184,8 @@
     <Compile Include="Helpers\CommonRequest.cs" />
     <Compile Include="Helpers\Crypt.cs" />
     <Compile Include="Helpers\DeviceInfo.cs" />
+    <Compile Include="Helpers\PokemonMetaRegistry.cs" />
+    <Compile Include="Helpers\PokemonMoveMeta.cs" />
     <Compile Include="HttpClient\PokemonClient.cs" />
     <Compile Include="Enums\AuthType.cs" />
     <Compile Include="Exceptions\AccessTokenExpiredException.cs" />
