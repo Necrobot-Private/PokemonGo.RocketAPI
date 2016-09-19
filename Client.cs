@@ -7,6 +7,7 @@ using PokemonGo.RocketAPI.Extensions;
 using PokemonGo.RocketAPI.HttpClient;
 using PokemonGo.RocketAPI.Rpc;
 using POGOProtos.Enums;
+using PokemonGo.RocketAPI.Api.PlayerModels;
 using POGOProtos.Networking.Envelopes;
 
 #endregion
@@ -18,6 +19,7 @@ namespace PokemonGo.RocketAPI
         public static WebProxy Proxy;
 
         internal readonly PokemonHttpClient PokemonHttpClient;
+        
         public Download Download;
         public Encounter Encounter;
         public Fort Fort;
@@ -26,6 +28,10 @@ namespace PokemonGo.RocketAPI
         public Map Map;
         public Misc Misc;
         public Player Player;
+
+        public Api.InventoryModels.Inventories Inventories;
+        public Api.SettingsModels.ApiSettings ApiSettings;
+        public PlayerProfile PlayerProfile;
 
         public Client(ISettings settings, IApiFailureStrategy apiFailureStrategy)
         {
@@ -44,12 +50,13 @@ namespace PokemonGo.RocketAPI
 
             Player.SetCoordinates(Settings.DefaultLatitude, Settings.DefaultLongitude, Settings.DefaultAltitude);
 
-            InventoryLastUpdateTimestamp = 0;
-
             Platform = settings.DevicePlatform.Equals("ios", StringComparison.Ordinal) ? Platform.Ios : Platform.Android;
 
             AppVersion = 3500;
-            SettingsHash = "";
+
+            Inventories = new Api.InventoryModels.Inventories(this);
+            ApiSettings = new Api.SettingsModels.ApiSettings(this);
+            PlayerProfile = new PlayerProfile(this);
         }
 
         public IApiFailureStrategy ApiFailure { get; set; }

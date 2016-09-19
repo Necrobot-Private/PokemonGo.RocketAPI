@@ -178,6 +178,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\PokemonModels\EvolutionForm.cs" />
+    <Compile Include="Api\PokemonModels\EvolutionInfo.cs" />
     <Compile Include="Exceptions\GoogleException.cs" />
     <Compile Include="Exceptions\GoogleOfflineException.cs" />
     <Compile Include="Exceptions\LoginFailedException.cs" />
@@ -207,10 +209,42 @@
     <Compile Include="Rpc\Encounter.cs" />
     <Compile Include="Rpc\Fort.cs" />
     <Compile Include="Rpc\Inventory.cs" />
+    <Compile Include="Api\InventoryModels\CandyJar.cs" />
+    <Compile Include="Api\InventoryModels\EggIncubator.cs" />
+    <Compile Include="Api\PlayerModels\ContactSettings.cs" />
+    <Compile Include="Api\PlayerModels\DailyBonus.cs" />
+    <Compile Include="Api\PlayerModels\PlayerAvatar.cs" />
+    <Compile Include="Api\PlayerModels\PlayerLevelUpRewards.cs" />
+    <Compile Include="Api\PlayerModels\PlayerLocale.cs" />
+    <Compile Include="Api\PlayerModels\TutorialState.cs" />
+    <Compile Include="Api\PokemonModels\EggPokemon.cs" />
+    <Compile Include="Api\InventoryModels\Hatchery.cs" />
+    <Compile Include="Api\InventoryModels\Inventories.cs" />
+    <Compile Include="Api\InventoryModels\Item.cs" />
+    <Compile Include="Api\InventoryModels\ItemBag.cs" />
+    <Compile Include="Api\InventoryModels\PokeBank.cs" />
+    <Compile Include="Api\InventoryModels\Pokedex.cs" />
+    <Compile Include="Api\InventoryModels\Stats.cs" />
     <Compile Include="Rpc\Login.cs" />
     <Compile Include="Rpc\Map.cs" />
     <Compile Include="Rpc\Misc.cs" />
+    <Compile Include="Api\PlayerModels\PlayerProfile.cs" />
+    <Compile Include="Api\PokemonModels\EvolutionResult.cs" />
+    <Compile Include="Api\PokemonModels\HatchedEgg.cs" />
     <Compile Include="Rpc\Player.cs" />
+    <Compile Include="Api\PokemonModels\MovementType.cs" />
+    <Compile Include="Api\PokemonModels\Pokemon.cs" />
+    <Compile Include="Api\PokemonModels\PokemonClass.cs" />
+    <Compile Include="Api\PokemonModels\PokemonCpUtils.cs" />
+    <Compile Include="Api\PokemonModels\PokemonDetails.cs" />
+    <Compile Include="Api\PokemonModels\PokemonMeta.cs" />
+    <Compile Include="Api\PokemonModels\PokemonMetaRegistry.cs" />
+    <Compile Include="Api\SettingsModels\FortSettings.cs" />
+    <Compile Include="Api\SettingsModels\GpsSettings.cs" />
+    <Compile Include="Api\SettingsModels\InventorySettings.cs" />
+    <Compile Include="Api\SettingsModels\LevelUpSettings.cs" />
+    <Compile Include="Api\SettingsModels\MapSettings.cs" />
+    <Compile Include="Api\SettingsModels\ApiSettings.cs" />
     <None Include="app.config" />
     <Compile Include="Client.cs" />
     <Compile Include="Extensions\HttpClientExtensions.cs" />
@@ -228,6 +262,7 @@
       <Name>POGOProtos</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
