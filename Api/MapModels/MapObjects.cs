@@ -10,20 +10,13 @@ namespace PokemonGo.RocketAPI.Api.MapModels
     public class MapObjects : BaseRpc
     {
 
-        public List<NearbyPokemon> NearbyPokemons = 
-                new List<NearbyPokemon>();
-        public List<MapPokemon> CatchablePokemons =
-                new List<MapPokemon>();
-        public List<WildPokemon> WildPokemons =
-                new List<WildPokemon>();
-        public List<SpawnPoint> DecimatedSpawnPoints =
-                new List<SpawnPoint>();
-        public List<SpawnPoint> SpawnPoints =
-                new List<SpawnPoint>();
-        public List<FortData> Gyms =
-                new List<FortData>();
-        public List<Pokestop> Pokestops =
-                new List<Pokestop>();
+        public List<NearbyPokemon> NearbyPokemons = new List<NearbyPokemon>();
+        public List<MapPokemon> CatchablePokemons = new List<MapPokemon>();
+        public List<WildPokemon> WildPokemons = new List<WildPokemon>();
+        public List<SpawnPoint> DecimatedSpawnPoints = new List<SpawnPoint>();
+        public List<SpawnPoint> SpawnPoints = new List<SpawnPoint>();
+        public List<FortData> Gyms = new List<FortData>();
+        public List<Pokestop> Pokestops = new List<Pokestop>();
         bool complete = false;
 
 
