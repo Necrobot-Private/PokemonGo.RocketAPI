@@ -14,7 +14,7 @@ namespace PokemonGo.RocketAPI.Api.MapModels.FortModels
 {
     public class Pokestop : BaseRpc
     {
-	    public FortData fortData;
+	    public FortData FortData;
         public long cooldownCompleteTimestampMs;
 
         /**
@@ -25,7 +25,7 @@ namespace PokemonGo.RocketAPI.Api.MapModels.FortModels
          */
         public Pokestop(Client client, FortData fortData) : base(client)
         {
-            this.fortData = fortData;
+            this.FortData = fortData;
             this.cooldownCompleteTimestampMs = fortData.CooldownCompleteTimestampMs;
         }
 
@@ -89,17 +89,17 @@ namespace PokemonGo.RocketAPI.Api.MapModels.FortModels
 
         public String GetId()
         {
-            return fortData.Id;
+            return FortData.Id;
         }
 
         public double GetLatitude()
         {
-            return fortData.Latitude;
+            return FortData.Latitude;
         }
 
         public double GetLongitude()
         {
-            return fortData.Longitude;
+            return FortData.Longitude;
         }
 
         /**
@@ -173,7 +173,7 @@ namespace PokemonGo.RocketAPI.Api.MapModels.FortModels
 	    //@Deprecated
         public bool HasLurePokemon()
         {
-            return fortData.LureInfo != null && fortData.LureInfo.LureExpiresTimestampMs > Utils.GetTime(true);
+            return FortData.LureInfo != null && FortData.LureInfo.LureExpiresTimestampMs > Utils.GetTime(true);
         }
 
         /**
@@ -214,7 +214,7 @@ namespace PokemonGo.RocketAPI.Api.MapModels.FortModels
 			    return false;
 		    }
 
-		    return fortData.ActiveFortModifier.Contains(ItemId.ItemTroyDisk);
+		    return FortData.ActiveFortModifier.Contains(ItemId.ItemTroyDisk);
 	    }
     }
 }

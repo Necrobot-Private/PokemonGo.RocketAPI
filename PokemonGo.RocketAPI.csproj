@@ -180,10 +180,13 @@
   <ItemGroup>
     <Compile Include="Api\Exceptions\EncounterFailedException.cs" />
     <Compile Include="Api\Exceptions\NoSuchItemException.cs" />
+    <Compile Include="Api\GymModels\Battle.cs" />
+    <Compile Include="Api\GymModels\Gym.cs" />
     <Compile Include="Api\InventoryModels\Pokeball.cs" />
     <Compile Include="Api\MapModels\FortModels\FortDetails.cs" />
     <Compile Include="Api\MapModels\FortModels\Pokestop.cs" />
     <Compile Include="Api\MapModels\FortModels\PokestopLootResult.cs" />
+    <Compile Include="Api\MapModels\Map.cs" />
     <Compile Include="Api\MapModels\MapObjects.cs" />
     <Compile Include="Api\MapModels\Point.cs" />
     <Compile Include="Api\MapModels\PokemonModels\CatchablePokemon.cs" />
@@ -198,9 +201,12 @@
     <Compile Include="Api\PokemonModels\EvolutionInfo.cs" />
     <Compile Include="Api\SettingsModels\CatchOptions.cs" />
     <Compile Include="Api\Util\MapPoint.cs" />
+    <Compile Include="Api\Util\MapUtil.cs" />
     <Compile Include="Exceptions\GoogleException.cs" />
     <Compile Include="Exceptions\GoogleOfflineException.cs" />
     <Compile Include="Exceptions\LoginFailedException.cs" />
+    <Compile Include="Extensions\BlockingCollectionExtensions.cs" />
+    <Compile Include="Extensions\NumericExtensions.cs" />
     <Compile Include="Helpers\CommonRequest.cs" />
     <Compile Include="Helpers\Crypt.cs" />
     <Compile Include="Helpers\DeviceInfo.cs" />

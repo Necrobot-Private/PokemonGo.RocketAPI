@@ -1,9 +1,12 @@
-﻿using POGOProtos.Map;
+﻿using Google.Protobuf.Collections;
+using POGOProtos.Map;
 using POGOProtos.Map.Fort;
 using POGOProtos.Map.Pokemon;
 using PokemonGo.RocketAPI.Api.MapModels.FortModels;
+using PokemonGo.RocketAPI.Extensions;
 using PokemonGo.RocketAPI.Rpc;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace PokemonGo.RocketAPI.Api.MapModels
 {
@@ -34,9 +37,9 @@ namespace PokemonGo.RocketAPI.Api.MapModels
          *
          * @param NearbyPokemons the nearby pokemons
          */
-        public void AddNearbyPokemons(BlockingCollection<NearbyPokemon> nearbyPokemons)
+        public void AddNearbyPokemons(IEnumerable<NearbyPokemon> nearbyPokemons)
         {
-            if (nearbyPokemons == null || nearbyPokemons.Count == 0)
+            if (nearbyPokemons == null)
             {
                 return;
             }
@@ -51,9 +54,9 @@ namespace PokemonGo.RocketAPI.Api.MapModels
          *
          * @param CatchablePokemons the catchable pokemons
          */
-        public void AddCatchablePokemons(BlockingCollection<MapPokemon> catchablePokemons)
+        public void AddCatchablePokemons(IEnumerable<MapPokemon> catchablePokemons)
         {
-            if (catchablePokemons == null || catchablePokemons.Count == 0)
+            if (catchablePokemons == null)
             {
                 return;
             }
@@ -68,9 +71,9 @@ namespace PokemonGo.RocketAPI.Api.MapModels
          *
          * @param WildPokemons the wild pokemons
          */
-        public void AddWildPokemons(BlockingCollection<WildPokemon> wildPokemons)
+        public void AddWildPokemons(IEnumerable<WildPokemon> wildPokemons)
         {
-            if (wildPokemons == null || wildPokemons.Count == 0)
+            if (wildPokemons == null)
             {
                 return;
             }
@@ -85,9 +88,9 @@ namespace PokemonGo.RocketAPI.Api.MapModels
          *
          * @param DecimatedSpawnPoints the decimated spawn points
          */
-        public void AddDecimatedSpawnPoints(BlockingCollection<SpawnPoint> decimatedSpawnPoints)
+        public void AddDecimatedSpawnPoints(IEnumerable<SpawnPoint> decimatedSpawnPoints)
         {
-            if (decimatedSpawnPoints == null || decimatedSpawnPoints.Count == 0)
+            if (decimatedSpawnPoints == null)
             {
                 return;
             }
@@ -102,9 +105,9 @@ namespace PokemonGo.RocketAPI.Api.MapModels
          *
          * @param SpawnPoints the spawn points
          */
-        public void AddSpawnPoints(BlockingCollection<SpawnPoint> spawnPoints)
+        public void AddSpawnPoints(IEnumerable<SpawnPoint> spawnPoints)
         {
-            if (spawnPoints == null || spawnPoints.Count == 0)
+            if (spawnPoints == null)
             {
                 return;
             }
@@ -119,9 +122,9 @@ namespace PokemonGo.RocketAPI.Api.MapModels
          *
          * @param gyms the gyms
          */
-        public void AddGyms(BlockingCollection<FortData> gyms)
+        public void AddGyms(IEnumerable<FortData> gyms)
         {
-            if (gyms == null || gyms.Count == 0)
+            if (gyms == null)
             {
                 return;
             }
@@ -136,9 +139,9 @@ namespace PokemonGo.RocketAPI.Api.MapModels
          *
          * @param pokestops the pokestops
          */
-        public void AddPokestops(BlockingCollection<FortData> pokestops)
+        public void AddPokestops(IEnumerable<FortData> pokestops)
         {
-            if (pokestops == null || pokestops.Count == 0)
+            if (pokestops == null)
             {
                 return;
             }
@@ -170,49 +173,19 @@ namespace PokemonGo.RocketAPI.Api.MapModels
         public void Update(MapObjects other)
         {
 
-            //NearbyPokemons.Clear();
-            while (NearbyPokemons.Count > 0)
-            {
-                NearbyPokemon item;
-                NearbyPokemons.TryTake(out item);
-            }
-
+            NearbyPokemons.Clear();
             AddNearbyPokemons(other.NearbyPokemons);
 
-            //CatchablePokemons.Clear();
-            while (CatchablePokemons.Count > 0)
-            {
-                MapPokemon item;
-                CatchablePokemons.TryTake(out item);
-            }
-
+            CatchablePokemons.Clear();
             AddCatchablePokemons(other.CatchablePokemons);
 
-            //WildPokemons.Clear();
-            while (WildPokemons.Count > 0)
-            {
-                WildPokemon item;
-                WildPokemons.TryTake(out item);
-            }
-
+            WildPokemons.Clear();
             AddWildPokemons(other.WildPokemons);
 
-            //DecimatedSpawnPoints.Clear();
-            while (DecimatedSpawnPoints.Count > 0)
-            {
-                SpawnPoint item;
-                DecimatedSpawnPoints.TryTake(out item);
-            }
-
+            DecimatedSpawnPoints.Clear();
             AddDecimatedSpawnPoints(other.DecimatedSpawnPoints);
 
-            //SpawnPoints.Clear();
-            while (SpawnPoints.Count > 0)
-            {
-                SpawnPoint item;
-                SpawnPoints.TryTake(out item);
-            }
-
+            SpawnPoints.Clear();
             AddSpawnPoints(other.SpawnPoints);
 
 
