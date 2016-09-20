@@ -365,8 +365,7 @@ namespace PokemonGo.RocketAPI.Api.MapModels.PokemonModels
             // pokemon is caught of flees
             if (response.Status == CatchStatus.CatchFlee || response.Status == CatchStatus.CatchSuccess)
             {
-                // TODO Wire up map
-                //Client.Map.removeCatchable(this);
+                Client.ApiMap.RemoveCatchable(this);
             }
 
             // escapes

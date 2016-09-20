@@ -31,6 +31,7 @@ namespace PokemonGo.RocketAPI
 
         public Api.InventoryModels.Inventories Inventories;
         public Api.SettingsModels.ApiSettings ApiSettings;
+        public Api.MapModels.Map ApiMap;
         public PlayerProfile PlayerProfile;
 
         public Client(ISettings settings, IApiFailureStrategy apiFailureStrategy)
