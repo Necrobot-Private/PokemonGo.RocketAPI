@@ -43,71 +43,36 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task DoLogin()
         {
+            // Always use auth token over auth ticket when logging in.
             Client.AuthToken = await _login.GetAccessToken().ConfigureAwait(false);
+            Client.AuthTicket = null;
             Client.StartTime = Utils.GetTime(true);
-
+            
             await
-                FireRequestBlock(CommonRequest.GetDownloadRemoteConfigVersionMessageRequest(Client))
+                FireRequestBlock(CommonRequest.GetDownloadRemoteConfigVersionMessageRequest(Client), typeof(DownloadRemoteConfigVersionResponse))
                     .ConfigureAwait(false);
             await FireRequestBlockTwo().ConfigureAwait(false);
         }
 
-        private async Task FireRequestBlock(Request request)
+        private async Task FireRequestBlock(Request request, Type requestType)
         {
             var requests = CommonRequest.FillRequest(request, Client);
 
-            var serverRequest = GetRequestBuilder().GetRequestEnvelope(requests, true);
-            var serverResponse = await PostProto<Request>(serverRequest);
-
-            if (!string.IsNullOrEmpty(serverResponse.ApiUrl))
-                Client.ApiUrl = "https://" + serverResponse.ApiUrl + "/rpc";
-
-            if (serverResponse.AuthTicket != null)
-                Client.AuthTicket = serverResponse.AuthTicket;
-
-            switch (serverResponse.StatusCode)
-            {
-                case ResponseEnvelope.Types.StatusCode.InvalidAuthToken:
-                    Client.AuthToken = null;
-                    throw new AccessTokenExpiredException();
-                case ResponseEnvelope.Types.StatusCode.Redirect:
-                    // 53 means that the api_endpoint was not correctly set, should be at this point, though, so redo the request
-                    await FireRequestBlock(request);
-                    return;
-                case ResponseEnvelope.Types.StatusCode.BadRequest:
-                    // Your account may be banned! please try from the official client.
-                    throw new LoginFailedException("Your account may be banned! please try from the official client.");
-                case ResponseEnvelope.Types.StatusCode.Unknown:
-                    break;
-                case ResponseEnvelope.Types.StatusCode.Ok:
-                    break;
-                case ResponseEnvelope.Types.StatusCode.OkRpcUrlInResponse:
-                    break;
-                case ResponseEnvelope.Types.StatusCode.InvalidRequest:
-                    break;
-                case ResponseEnvelope.Types.StatusCode.InvalidPlatformRequest:
-                    break;
-                case ResponseEnvelope.Types.StatusCode.SessionInvalidated:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            var responses = serverResponse.Returns;
+            var serverRequest = GetRequestBuilder().GetRequestEnvelope(requests);
+            IMessage[] responses = await PostProtoPayload<Request>(serverRequest, requestType, typeof(CheckChallengeResponse), typeof(GetHatchedEggsResponse), typeof(GetInventoryResponse), typeof(CheckAwardedBadgesResponse), typeof(DownloadSettingsResponse));
+            
             if (responses != null)
             {
-                var getInventoryResponse = new GetInventoryResponse();
-                if (4 <= responses.Count)
+                if (4 <= responses.Length)
                 {
-                    getInventoryResponse.MergeFrom(responses[3]);
+                    GetInventoryResponse getInventoryResponse = responses[3] as GetInventoryResponse;
 
                     Client.InventoryLastUpdateTimestamp = Utils.GetTime(true);
                 }
-
-                var downloadSettingsResponse = new DownloadSettingsResponse();
-                if (6 <= responses.Count)
+                
+                if (6 <= responses.Length)
                 {
-                    downloadSettingsResponse.MergeFrom(responses[5]);
+                    DownloadSettingsResponse downloadSettingsResponse = responses[5] as DownloadSettingsResponse;
 
                     Client.SettingsHash = downloadSettingsResponse.Hash;
                 }
@@ -116,7 +81,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task FireRequestBlockTwo()
         {
-            await FireRequestBlock(CommonRequest.GetGetAssetDigestMessageRequest(Client));
+            await FireRequestBlock(CommonRequest.GetGetAssetDigestMessageRequest(Client), typeof(GetAssetDigestResponse));
         }
     }
 }

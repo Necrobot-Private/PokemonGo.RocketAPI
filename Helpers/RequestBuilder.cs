@@ -10,6 +10,7 @@ using POGOProtos.Networking.Platform.Requests;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Enums;
 using Troschuetz.Random;
+using static POGOProtos.Networking.Envelopes.RequestEnvelope.Types;
 
 #endregion
 
@@ -110,6 +111,9 @@ namespace PokemonGo.RocketAPI.Helpers
 
         private RequestEnvelope.Types.PlatformRequest GenerateSignature(IEnumerable<IMessage> requests)
         {
+            if (_authTicket == null)
+                return null;
+
             var ticketBytes = _authTicket.ToByteArray();
 
             // Common device info
@@ -233,7 +237,7 @@ namespace PokemonGo.RocketAPI.Helpers
             return encryptedSignature;
         }
 
-        public RequestEnvelope GetRequestEnvelope(Request[] customRequests, bool isInitialRequest = false)
+        public RequestEnvelope GetRequestEnvelope(Request[] customRequests)
         {
             var e = new RequestEnvelope
             {
@@ -243,17 +247,20 @@ namespace PokemonGo.RocketAPI.Helpers
                 Latitude = _latitude, //7
                 Longitude = _longitude, //8
                 Accuracy = _horizontalAccuracy, //9
-                AuthTicket = _authTicket, //11
                 MsSinceLastLocationfix = (long)TRandomDevice.Triangular(300, 30000, 10000) //12
             };
 
-            if (_authTicket != null && !isInitialRequest)
+            if (_authTicket != null)
             {
+                // Found Session Ticket - using this instead of oauth Access Token
                 e.AuthTicket = _authTicket;
-                e.PlatformRequests.Add(GenerateSignature(customRequests));
+                PlatformRequest sig = GenerateSignature(customRequests);
+                if (sig != null)
+                    e.PlatformRequests.Add(sig);
             }
             else
             {
+                // No Session Ticket found - using oauth Access Token
                 e.AuthInfo = new RequestEnvelope.Types.AuthInfo
                 {
                     Provider = _authType == AuthType.Google ? "google" : "ptc",
