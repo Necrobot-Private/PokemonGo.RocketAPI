@@ -10,6 +10,8 @@ using PokemonGo.RocketAPI.Login;
 using POGOProtos.Networking.Envelopes;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Responses;
+using POGOProtos.Data.Player;
+using POGOProtos.Enums;
 
 #endregion
 
@@ -102,6 +104,17 @@ namespace PokemonGo.RocketAPI.Rpc
                     getInventoryResponse.MergeFrom(responses[3]);
 
                     Client.InventoryLastUpdateTimestamp = Utils.GetTime(true);
+                }
+
+                var checkAwardedBadgesResponse = new CheckAwardedBadgesResponse();
+                if (5 <= responses.Count)
+                {
+                    checkAwardedBadgesResponse.MergeFrom(responses[4]);
+                    foreach (BadgeType badgeType in checkAwardedBadgesResponse.AwardedBadges)
+                    {
+                        if (!Client.Player.NewlyAwardedBadgeTypes.Contains(badgeType))
+                            Client.Player.NewlyAwardedBadgeTypes.Add(badgeType);
+                    }
                 }
 
                 var downloadSettingsResponse = new DownloadSettingsResponse();

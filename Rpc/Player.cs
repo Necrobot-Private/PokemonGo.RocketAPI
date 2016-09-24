@@ -7,6 +7,7 @@ using POGOProtos.Enums;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
+using System.Collections.Generic;
 
 #endregion
 
@@ -14,6 +15,10 @@ namespace PokemonGo.RocketAPI.Rpc
 {
     public class Player : BaseRpc
     {
+        public List<BadgeType> NewlyAwardedBadgeTypes = new List<BadgeType>();
+        public List<BadgeType> EquippedBadgeTypes = new List<BadgeType>();
+        public List<EquippedBadge> EquippedBadges = new List<EquippedBadge>();
+
         public Player(Client client) : base(client)
         {
         }
@@ -70,10 +75,18 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<CheckAwardedBadgesResponse> GetNewlyAwardedBadges()
         {
-            return
+            CheckAwardedBadgesResponse checkAwardedBadgesResponse = 
                 await
                     PostProtoPayload<Request, CheckAwardedBadgesResponse>(RequestType.CheckAwardedBadges,
                         new CheckAwardedBadgesMessage());
+
+            foreach (BadgeType badgeType in checkAwardedBadgesResponse.AwardedBadges)
+            {
+                if (!Client.Player.NewlyAwardedBadgeTypes.Contains(badgeType))
+                    Client.Player.NewlyAwardedBadgeTypes.Add(badgeType);
+            }
+            
+            return checkAwardedBadgesResponse;
         }
 
         public async Task<CollectDailyBonusResponse> CollectDailyBonus()
@@ -94,10 +107,22 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<EquipBadgeResponse> EquipBadge(BadgeType type)
         {
-            return
+            if (EquippedBadgeTypes.Contains(type))
+                return new EquipBadgeResponse();
+
+            EquipBadgeResponse equipBadgeResponse =
                 await
                     PostProtoPayload<Request, EquipBadgeResponse>(RequestType.EquipBadge,
                         new EquipBadgeMessage {BadgeType = type});
+
+            EquippedBadge badge = equipBadgeResponse.Equipped;
+            if (badge != null && !EquippedBadges.Contains(badge))
+            {
+                EquippedBadgeTypes.Add(type);
+                EquippedBadges.Add(badge);
+            }
+
+            return equipBadgeResponse;
         }
 
         public async Task<LevelUpRewardsResponse> GetLevelUpRewards(int level)
