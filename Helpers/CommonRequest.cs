@@ -4,6 +4,8 @@ using Google.Protobuf;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
+using PokemonGo.RocketAPI.Exceptions;
+using System;
 
 #endregion
 
@@ -125,6 +127,23 @@ namespace PokemonGo.RocketAPI.Helpers
                 },
                 GetDownloadSettingsMessageRequest(client)
             };
+        }
+
+        public static void ProcessGetInventoryResponse(Client client, GetInventoryResponse getInventoryResponse)
+        {
+            client.InventoryLastUpdateTimestamp = Utils.GetTime(true);
+        }
+
+        public static void ProcessDownloadSettingsResponse(Client client, DownloadSettingsResponse downloadSettingsResponse)
+        {
+            client.SettingsHash = downloadSettingsResponse.Hash;
+
+            if (!string.IsNullOrEmpty(downloadSettingsResponse.Settings.MinimumClientVersion))
+            {
+                client.MinimumClientVersion = new Version(downloadSettingsResponse.Settings.MinimumClientVersion);
+                if (client.CheckCurrentVersionOutdated())
+                    throw new MinimumClientVersionException(client.CurrentApiEmulationVersion, client.MinimumClientVersion);
+            }
         }
 
         public static void Parse(Client client, RequestType requestType, ByteString data)

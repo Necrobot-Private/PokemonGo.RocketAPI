@@ -8,7 +8,6 @@ using PokemonGo.RocketAPI.HttpClient;
 using PokemonGo.RocketAPI.Rpc;
 using POGOProtos.Enums;
 using POGOProtos.Networking.Envelopes;
-using System.Text.RegularExpressions;
 
 #endregion
 

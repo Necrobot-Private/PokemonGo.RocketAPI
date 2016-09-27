@@ -3,7 +3,6 @@
 using System;
 using System.Threading.Tasks;
 using Google.Protobuf;
-using PokemonGo.RocketAPI.Extensions;
 using PokemonGo.RocketAPI.Helpers;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
@@ -23,7 +22,7 @@ namespace PokemonGo.RocketAPI.Rpc
             Task
                 <
                     Tuple
-                        <GetMapObjectsResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse,
+                        <GetMapObjectsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse,
                             DownloadSettingsResponse>> GetMapObjects()
         {
             #region Messages
@@ -40,7 +39,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var getInventoryMessage = new GetInventoryMessage
             {
-                LastTimestampMs = DateTime.UtcNow.ToUnixTime()
+                LastTimestampMs = Client.InventoryLastUpdateTimestamp
             };
 
             var checkAwardedBadgesMessage = new CheckAwardedBadgesMessage();
@@ -52,36 +51,27 @@ namespace PokemonGo.RocketAPI.Rpc
 
             #endregion
 
-            var request = GetRequestBuilder().GetRequestEnvelope(new Request[] {
-                new Request
-                {
-                    RequestType = RequestType.GetMapObjects,
-                    RequestMessage = getMapObjectsMessage.ToByteString()
-                },
-                new Request
-                {
-                    RequestType = RequestType.GetHatchedEggs,
-                    RequestMessage = getHatchedEggsMessage.ToByteString()
-                }, new Request
-                {
-                    RequestType = RequestType.GetInventory,
-                    RequestMessage = getInventoryMessage.ToByteString()
-                }, new Request
-                {
-                    RequestType = RequestType.CheckAwardedBadges,
-                    RequestMessage = checkAwardedBadgesMessage.ToByteString()
-                }, new Request
-                {
-                    RequestType = RequestType.DownloadSettings,
-                    RequestMessage = downloadSettingsMessage.ToByteString()
-                }
-            });
+            var getMapObjectsRequest = new Request
+            {
+                RequestType = RequestType.GetMapObjects,
+                RequestMessage = getMapObjectsMessage.ToByteString()
+            };
+            
+            var request = GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getMapObjectsRequest, Client));
 
-            return
+            Tuple<GetMapObjectsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse> response =
                 await
                     PostProtoPayload
-                        <Request, GetMapObjectsResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                        <Request, GetMapObjectsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse>(request);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+            
+            return response;
         }
 
         public async Task<GetIncensePokemonResponse> GetIncensePokemons()
