@@ -8,6 +8,7 @@ using PokemonGo.RocketAPI.HttpClient;
 using PokemonGo.RocketAPI.Rpc;
 using POGOProtos.Enums;
 using POGOProtos.Networking.Envelopes;
+using System.Text.RegularExpressions;
 
 #endregion
 
@@ -50,6 +51,8 @@ namespace PokemonGo.RocketAPI
 
             AppVersion = 3500;
             SettingsHash = "";
+
+            CurrentApiEmulationVersion = new Version("0.35.0");
         }
 
         public IApiFailureStrategy ApiFailure { get; set; }
@@ -71,7 +74,10 @@ namespace PokemonGo.RocketAPI
         internal Platform Platform { get; set; }
         internal uint AppVersion { get; set; }
         internal long StartTime { get; set; }
-        
+
+        public Version CurrentApiEmulationVersion { get; set; }
+        public Version MinimumClientVersion { get; set; }
+
         private WebProxy InitProxy()
         {
             if (!Settings.UseProxy) return null;
@@ -82,6 +88,11 @@ namespace PokemonGo.RocketAPI
                 prox.Credentials = new NetworkCredential(Settings.UseProxyUsername, Settings.UseProxyPassword);
 
             return prox;
+        }
+
+        public bool CheckCurrentVersionOutdated()
+        {
+            return CurrentApiEmulationVersion < MinimumClientVersion;
         }
     }
 }

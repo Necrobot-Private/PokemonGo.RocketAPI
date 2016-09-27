@@ -49,9 +49,13 @@ namespace PokemonGo.RocketAPI.Rpc
             await
                 FireRequestBlock(CommonRequest.GetDownloadRemoteConfigVersionMessageRequest(Client))
                     .ConfigureAwait(false);
+
+            if (Client.CheckCurrentVersionOutdated())
+                throw new MinimumClientVersionException(Client.CurrentApiEmulationVersion, Client.MinimumClientVersion);
+
             await FireRequestBlockTwo().ConfigureAwait(false);
         }
-
+        
         private async Task FireRequestBlock(Request request)
         {
             var requests = CommonRequest.FillRequest(request, Client);
@@ -110,6 +114,10 @@ namespace PokemonGo.RocketAPI.Rpc
                     downloadSettingsResponse.MergeFrom(responses[5]);
 
                     Client.SettingsHash = downloadSettingsResponse.Hash;
+
+                    // Store the minimum client version.
+                    if (!string.IsNullOrEmpty(downloadSettingsResponse.Settings.MinimumClientVersion))
+                        Client.MinimumClientVersion = new Version(downloadSettingsResponse.Settings.MinimumClientVersion);
                 }
             }
         }

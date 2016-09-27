@@ -181,6 +181,7 @@
     <Compile Include="Exceptions\GoogleException.cs" />
     <Compile Include="Exceptions\GoogleOfflineException.cs" />
     <Compile Include="Exceptions\LoginFailedException.cs" />
+    <Compile Include="Exceptions\MinimumClientVersionException.cs" />
     <Compile Include="Helpers\CommonRequest.cs" />
     <Compile Include="Helpers\Crypt.cs" />
     <Compile Include="Helpers\DeviceInfo.cs" />
