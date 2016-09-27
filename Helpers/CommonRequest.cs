@@ -131,18 +131,39 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public static void ProcessGetInventoryResponse(Client client, GetInventoryResponse getInventoryResponse)
         {
-            client.InventoryLastUpdateTimestamp = Utils.GetTime(true);
+            if (getInventoryResponse == null)
+                return;
+
+            if (getInventoryResponse.Success)
+            {
+                if (getInventoryResponse.InventoryDelta == null)
+                    return;
+
+                if (getInventoryResponse.InventoryDelta.NewTimestampMs >= client.InventoryLastUpdateTimestamp)
+                {
+                    client.InventoryLastUpdateTimestamp = getInventoryResponse.InventoryDelta.NewTimestampMs;
+                }
+            }
         }
 
         public static void ProcessDownloadSettingsResponse(Client client, DownloadSettingsResponse downloadSettingsResponse)
         {
-            client.SettingsHash = downloadSettingsResponse.Hash;
+            if (downloadSettingsResponse == null)
+                return;
 
-            if (!string.IsNullOrEmpty(downloadSettingsResponse.Settings.MinimumClientVersion))
+            if (string.IsNullOrEmpty(downloadSettingsResponse.Error))
             {
-                client.MinimumClientVersion = new Version(downloadSettingsResponse.Settings.MinimumClientVersion);
-                if (client.CheckCurrentVersionOutdated())
-                    throw new MinimumClientVersionException(client.CurrentApiEmulationVersion, client.MinimumClientVersion);
+                if (downloadSettingsResponse.Settings == null)
+                    return;
+
+                client.SettingsHash = downloadSettingsResponse.Hash;
+
+                if (!string.IsNullOrEmpty(downloadSettingsResponse.Settings.MinimumClientVersion))
+                {
+                    client.MinimumClientVersion = new Version(downloadSettingsResponse.Settings.MinimumClientVersion);
+                    if (client.CheckCurrentVersionOutdated())
+                        throw new MinimumClientVersionException(client.CurrentApiEmulationVersion, client.MinimumClientVersion);
+                }
             }
         }
 
