@@ -17,8 +17,8 @@ namespace PokemonGo.RocketAPI.Helpers
 {
     public class RequestBuilder
     {
-        // The next variables are specific to 0.35 client.
-        private static long Client_3500_Unknown25 = 7363665268261373700;
+        // The next variables are specific to 43.3 client.
+        private static long Client_4330_Unknown25 = -8408506833887075802;
         private static int  Client_3500_InitialRequestIdConstant_Android = 1404534344; //0x53B77E48
         private static int  Client_3500_InitialRequestIdConstant_Ios = 16807; //0x000041A7
 
@@ -29,7 +29,7 @@ namespace PokemonGo.RocketAPI.Helpers
         private readonly string _authToken;
         private readonly AuthType _authType;
         private readonly Crypt _crypt;
-        private readonly double _horizontalAccuracy;
+        private readonly int _horizontalAccuracy;
         private readonly double _latitude;
         private readonly double _longitude;
         private readonly float _speed;
@@ -57,7 +57,7 @@ namespace PokemonGo.RocketAPI.Helpers
             if (_speed <= 0)
                 _speed = (float)TRandomDevice.Triangular(0.1, 3.1, .8);
 
-            _horizontalAccuracy = TRandomDevice.Choice(new List<double>(new double[] { 5, 5, 5, 5, 10, 10, 10, 30, 30, 50, 65, GenRandom(66, 80) }));
+            _horizontalAccuracy = TRandomDevice.Choice(new List<int>(new int[] { 5, 5, 5, 5, 10, 10, 10, 30, 30, 50, 65, (int)Math.Round(GenRandom(66, 80)) }));
 
             _settings = settings;
             _authTicket = authTicket;
@@ -138,7 +138,7 @@ namespace PokemonGo.RocketAPI.Helpers
             var sig = new Signature
             {
                 SessionHash = SessionHash,
-                Unknown25 = Client_3500_Unknown25,
+                Unknown25 = Client_4330_Unknown25,
                 Timestamp = (ulong) Utils.GetTime(true),
                 TimestampSinceStart = (ulong) (Utils.GetTime(true) - _client.StartTime),
                 LocationHash1 = Utils.GenerateLocation1(ticketBytes, _latitude, _longitude, _horizontalAccuracy),
@@ -172,7 +172,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 Latitude = (float)_latitude,
                 Longitude = (float)_longitude,
                 Altitude = (float)_altitude,
-                HorizontalAccuracy = (float)_horizontalAccuracy,
+                HorizontalAccuracy = _horizontalAccuracy,
                 TimestampSnapshot = (ulong)(Utils.GetTime(true) - _client.StartTime - RandomDevice.Next(100, 300)),
                 ProviderStatus = 3,
                 LocationType = 1
@@ -180,13 +180,13 @@ namespace PokemonGo.RocketAPI.Helpers
 
             if (_horizontalAccuracy >= 65)
             {
-                locationFix.HorizontalAccuracy = (float)TRandomDevice.Choice(new List<double>(new double[] { _horizontalAccuracy, 65, 65, GenRandom(66, 80), 200 }));
+                locationFix.HorizontalAccuracy = TRandomDevice.Choice(new List<int>(new int[] { _horizontalAccuracy, 65, 65, (int)Math.Round(GenRandom(66, 80)), 200 }));
                 if (_client.Platform == Platform.Ios)
                     locationFix.VerticalAccuracy = (float)TRandomDevice.Triangular(35, 100, 65);
             }
             else
             {
-                locationFix.HorizontalAccuracy = (float)_horizontalAccuracy;
+                locationFix.HorizontalAccuracy = _horizontalAccuracy;
                 if (_client.Platform == Platform.Ios)
                 {
                     if (_horizontalAccuracy > 10)
@@ -226,7 +226,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 Type = PlatformRequestType.SendEncryptedSignature,
                 RequestMessage = new SendEncryptedSignatureRequest
                 {
-                    EncryptedSignature = ByteString.CopyFrom(_crypt.Encrypt(sig.ToByteArray()))
+                    EncryptedSignature = ByteString.CopyFrom(_crypt.Encrypt(sig.ToByteArray(), _client.StartTime))
                 }.ToByteString()
             };
 
