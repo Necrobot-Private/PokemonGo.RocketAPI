@@ -37,7 +37,6 @@ namespace PokemonGo.RocketAPI.Helpers
         private readonly Client _client;
         private readonly ISettings _settings;
         
-        private static long NextRequestId;
         private float _course = RandomDevice.Next(0, 360);
         private int _token2 = RandomDevice.Next(1, 59);
         
@@ -87,26 +86,54 @@ namespace PokemonGo.RocketAPI.Helpers
             SessionHash = ByteString.CopyFrom(hashBytes);
         }
 
-        public ulong GenerateRequestId()
-        {
-            int rand;
-            if (NextRequestId == 0) // Startup
-            {
-                NextRequestId = 1;
+        public uint RequestCount { get; private set; } = 1;
+        private readonly Random _random = new Random(Environment.TickCount);
 
-                if (_client.Platform == Platform.Ios)
-                    rand = Client_3500_InitialRequestIdConstant_Ios;
-                else
-                    rand = Client_3500_InitialRequestIdConstant_Android;
-            }
-            else
+        private long PositiveRandom()
+        {
+            long ret = _random.Next() | (_random.Next() << 32);
+            // lrand48 ensures it's never < 0
+            // So do the same
+            if (ret < 0)
+                ret = -ret;
+            return ret;
+        }
+
+        private void IncrementRequestCount()
+        {
+            // Request counts on android jump more than 1 at a time according to logs
+            // They are fully sequential on iOS though
+            // So mimic that same behavior here.
+            if (_client.Platform == Platform.Android)
+                RequestCount += (uint)_random.Next(2, 15);
+            else if (_client.Platform == Platform.Ios)
+                RequestCount++;
+        }
+
+        private ulong GetNextRequestId()
+        {
+            if (RequestCount == 1)
             {
-                rand = RandomDevice.Next(0, Int32.MaxValue);
+                IncrementRequestCount();
+                if (_client.Platform == Platform.Android)
+                {
+                    // lrand48 is "broken" in that the first run of it will return a static value.
+                    // So the first time we send a request, we need to match that initial value. 
+                    // Note: On android srand(4) is called in .init_array which seeds the initial value.
+                    return 0x53B77E48000000B0;
+                }
+                if (_client.Platform == Platform.Ios)
+                {
+                    // Same as lrand48, iOS uses "rand()" without a pre-seed which always gives the same first value.
+                    return 0x41A700000002;
+                }
             }
-            NextRequestId += 1;
-            var cnt = NextRequestId;
-            var reqId = ((Convert.ToInt64(rand) | ((cnt & -1) >> 31)) << 32) | cnt;
-            return Convert.ToUInt64(reqId);
+
+            // Note that the API expects a "positive" random value here. (At least on Android it does due to lrand48 implementation details)
+            // So we'll just use the same for iOS since it doesn't hurt, and means less code required.
+            ulong r = (((ulong)PositiveRandom() | ((RequestCount + 1) >> 31)) << 32) | (RequestCount + 1);
+            IncrementRequestCount();
+            return r;
         }
 
         private RequestEnvelope.Types.PlatformRequest GenerateSignature(IEnumerable<IMessage> requests)
@@ -242,7 +269,7 @@ namespace PokemonGo.RocketAPI.Helpers
             var e = new RequestEnvelope
             {
                 StatusCode = 2, //1
-                RequestId = GenerateRequestId(), //3
+                RequestId = GetNextRequestId(), //3
                 Requests = {customRequests}, //4
                 Latitude = _latitude, //7
                 Longitude = _longitude, //8
