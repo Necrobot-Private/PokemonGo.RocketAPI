@@ -119,7 +119,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 DeviceId = _settings.DeviceId,
                 DeviceBrand = _settings.DeviceBrand,
                 DeviceModel = _settings.DeviceModel,
-                DeviceCommsModel = _settings.DeviceModelBoot,
+                DeviceModelBoot = _settings.DeviceModelBoot,
                 HardwareManufacturer = _settings.HardwareManufacturer,
                 HardwareModel = _settings.HardwareModel,
                 FirmwareBrand = _settings.FirmwareBrand,
@@ -138,44 +138,43 @@ namespace PokemonGo.RocketAPI.Helpers
 
             var sig = new Signature
             {
-                Field22 = SessionHash,
-                Field25 = unchecked((ulong)-8408506833887075802),//(ulong)Client_4330_Unknown25,
-                EpochTimestampMs = (ulong) Utils.GetTime(true),
-                TimestampMsSinceStart = (Utils.GetTime(true) - _client.StartTime),
-                LocationHashByTokenSeed = (int)Utils.GenerateLocation1(ticketBytes, _latitude, _longitude, _horizontalAccuracy),
-                LocationHash = (int)Utils.GenerateLocation2(_latitude, _longitude, _horizontalAccuracy),
+                SessionHash = SessionHash,
+                Unknown25 = Client_4330_Unknown25,
+                Timestamp = (ulong)Utils.GetTime(true),
+                TimestampSinceStart = (ulong)(Utils.GetTime(true) - _client.StartTime),
+                LocationHash1 = Utils.GenerateLocation1(ticketBytes, _latitude, _longitude, _horizontalAccuracy),
+                LocationHash2 = Utils.GenerateLocation2(_latitude, _longitude, _horizontalAccuracy),
+                SensorInfo = new Signature.Types.SensorInfo
+                {
+                    TimestampSnapshot = (ulong)(Utils.GetTime(true) - _client.StartTime - RandomDevice.Next(100, 500)),
+                    LinearAccelerationX = TRandomDevice.Triangular(-3, 1, 0),
+                    LinearAccelerationY = TRandomDevice.Triangular(-2, 3, 0),
+                    LinearAccelerationZ = TRandomDevice.Triangular(-4, 2, 0),
+                    MagneticFieldX = TRandomDevice.Triangular(-50, 50, 0),
+                    MagneticFieldY = TRandomDevice.Triangular(-60, 50, -5),
+                    MagneticFieldZ = TRandomDevice.Triangular(-60, 40, -30),
+                    RotationVectorX = GenRandom(-47.149471283, 61.8397789001),
+                    RotationVectorY = GenRandom(-47.149471283, 61.8397789001),
+                    RotationVectorZ = GenRandom(-47.149471283, 5),
+                    GyroscopeRawX = GenRandom(0.0729667818829, 0.0729667818829),
+                    GyroscopeRawY = GenRandom(-2.788630499244109, 3.0586791383810468),
+                    GyroscopeRawZ = GenRandom(-0.34825887123552773, 0.19347580173737935),
+                    GravityX = TRandomDevice.Triangular(-1, 1, 0.15),
+                    GravityY = TRandomDevice.Triangular(-1, 1, -.2),
+                    GravityZ = TRandomDevice.Triangular(-1, .7, -0.8),
+                    AccelerometerAxes = 3
+                },
                 DeviceInfo = deviceInfo
             };
 
-            sig.SensorUpdates.Add(new Signature.Types.SensorUpdate
+            Signature.Types.LocationFix locationFix = new Signature.Types.LocationFix
             {
-                Timestamp = (ulong)(Utils.GetTime(true) - _client.StartTime - RandomDevice.Next(100, 500)),
-                AccelerationX = TRandomDevice.Triangular(-3, 1, 0),
-                AccelerationY = TRandomDevice.Triangular(-2, 3, 0),
-                AccelerationZ = TRandomDevice.Triangular(-4, 2, 0),
-                MagneticFieldX = TRandomDevice.Triangular(-50, 50, 0),
-                MagneticFieldY = TRandomDevice.Triangular(-60, 50, -5),
-                MagneticFieldZ = TRandomDevice.Triangular(-60, 40, -30),
-                AttitudePitch = GenRandom(-47.149471283, 61.8397789001),
-                AttitudeYaw = GenRandom(-47.149471283, 61.8397789001),
-                AttitudeRoll = GenRandom(-47.149471283, 5),
-                RotationRateX = GenRandom(0.0729667818829, 0.0729667818829),
-                RotationRateY = GenRandom(-2.788630499244109, 3.0586791383810468),
-                RotationRateZ = GenRandom(-0.34825887123552773, 0.19347580173737935),
-                GravityX = TRandomDevice.Triangular(-1, 1, 0.15),
-                GravityY = TRandomDevice.Triangular(-1, 1, -.2),
-                GravityZ = TRandomDevice.Triangular(-1, .7, -0.8),
-                Status = 3
-            });
-
-            Signature.Types.LocationUpdate locationFix = new Signature.Types.LocationUpdate
-            {
-                Name = "network", //TRandomDevice.Choice(new List<string>(new string[] { "network", "network", "network", "network", "fused" })),
+                Provider = TRandomDevice.Choice(new List<string>(new string[] { "network", "network", "network", "network", "fused" })),
                 Latitude = (float)_latitude,
                 Longitude = (float)_longitude,
                 Altitude = (float)_altitude,
-                //HorizontalAccuracy = _horizontalAccuracy,
-                TimestampMs = (Utils.GetTime(true) - _client.StartTime - RandomDevice.Next(100, 300)),
+                HorizontalAccuracy = _horizontalAccuracy,
+                TimestampSnapshot = (ulong)(Utils.GetTime(true) - _client.StartTime - RandomDevice.Next(100, 300)),
                 ProviderStatus = 3,
                 LocationType = 1
             };
@@ -198,32 +197,33 @@ namespace PokemonGo.RocketAPI.Helpers
                         locationFix.VerticalAccuracy = (float)TRandomDevice.Choice(new List<double>(new double[] { 3, 4, 6, 6, 8, 12, 24 }));
                 }
             }
+            
 
             if (_client.Platform == Platform.Ios)
             {
                 if (RandomDevice.NextDouble() > 0.95)
                 {
                     // No reading for roughly 1 in 20 updates
-                    locationFix.DeviceCourse = -1;
-                    locationFix.DeviceSpeed = -1;
+                    locationFix.Course = -1;
+                    locationFix.Speed = -1;
                 }
                 else
                 {
                     _course = (float)TRandomDevice.Triangular(0, 360, _course);
 
                     // Course is iOS only.
-                    locationFix.DeviceCourse = _course;
+                    locationFix.Course = _course;
 
                     // Speed is iOS only.
-                    locationFix.DeviceSpeed = _speed;
+                    locationFix.Speed = _speed;
                 }
             }
             */
 
-            sig.LocationUpdates.Add(locationFix);
+            sig.LocationFix.Add(locationFix);
 
             foreach (var request in requests)
-                sig.RequestHashes.Add(Utils.GenerateRequestHash(ticketBytes, request.ToByteArray()));
+                sig.RequestHash.Add(Utils.GenerateRequestHash(ticketBytes, request.ToByteArray()));
             
             var encryptedSignature = new RequestEnvelope.Types.PlatformRequest
             {
@@ -246,7 +246,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 Requests = {customRequests}, //4
                 Latitude = _latitude, //7
                 Longitude = _longitude, //8
-                Accuracy = _horizontalAccuracy, //9
+                Accuracy = (int)_horizontalAccuracy, //9
                 AuthTicket = _authTicket, //11
                 MsSinceLastLocationfix = (long)TRandomDevice.Triangular(300, 30000, 10000) //12
             };
