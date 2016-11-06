@@ -58,7 +58,7 @@ namespace PokemonGo.RocketAPI.Helpers
             if (_speed <= 0)
                 _speed = (float)TRandomDevice.Triangular(0.1, 3.1, .8);
 
-            _horizontalAccuracy = TRandomDevice.Choice(new List<int>(new int[] { 5, 5, 5, 5, 10, 10, 10 }));
+            _horizontalAccuracy = 10; // TRandomDevice.Choice(new List<int>(new int[] { 5, 5, 5, 5, 10, 10, 10 }));
 
             _settings = settings;
             _authTicket = authTicket;
@@ -80,7 +80,7 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public void GenerateNewHash()
         {
-            var hashBytes = new byte[16];
+            var hashBytes = new byte[32];
 
             RandomDevice.NextBytes(hashBytes);
 
@@ -139,7 +139,7 @@ namespace PokemonGo.RocketAPI.Helpers
             var sig = new Signature
             {
                 Field22 = SessionHash,
-                Field25 = (ulong)Client_4330_Unknown25,
+                Field25 = unchecked((ulong)-8408506833887075802),//(ulong)Client_4330_Unknown25,
                 EpochTimestampMs = (ulong) Utils.GetTime(true),
                 TimestampMsSinceStart = (Utils.GetTime(true) - _client.StartTime),
                 LocationHashByTokenSeed = (int)Utils.GenerateLocation1(ticketBytes, _latitude, _longitude, _horizontalAccuracy),
@@ -170,16 +170,17 @@ namespace PokemonGo.RocketAPI.Helpers
 
             Signature.Types.LocationUpdate locationFix = new Signature.Types.LocationUpdate
             {
-                Name = TRandomDevice.Choice(new List<string>(new string[] { "network", "network", "network", "network", "fused" })),
+                Name = "network", //TRandomDevice.Choice(new List<string>(new string[] { "network", "network", "network", "network", "fused" })),
                 Latitude = (float)_latitude,
                 Longitude = (float)_longitude,
                 Altitude = (float)_altitude,
-                HorizontalAccuracy = _horizontalAccuracy,
+                //HorizontalAccuracy = _horizontalAccuracy,
                 TimestampMs = (Utils.GetTime(true) - _client.StartTime - RandomDevice.Next(100, 300)),
                 ProviderStatus = 3,
                 LocationType = 1
             };
 
+            /*
             if (_horizontalAccuracy >= 65)
             {
                 locationFix.HorizontalAccuracy = TRandomDevice.Choice(new List<int>(new int[] { _horizontalAccuracy, 65, 65, (int)Math.Round(GenRandom(66, 80)), 200 }));
@@ -217,6 +218,7 @@ namespace PokemonGo.RocketAPI.Helpers
                     locationFix.DeviceSpeed = _speed;
                 }
             }
+            */
 
             sig.LocationUpdates.Add(locationFix);
 
