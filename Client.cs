@@ -48,7 +48,7 @@ namespace PokemonGo.RocketAPI
 
             Platform = settings.DevicePlatform.Equals("ios", StringComparison.Ordinal) ? Platform.Ios : Platform.Android;
 
-            AppVersion = 4300;
+            AppVersion = 4303;
             SettingsHash = "";
 
             CurrentApiEmulationVersion = new Version("0.43.3");
