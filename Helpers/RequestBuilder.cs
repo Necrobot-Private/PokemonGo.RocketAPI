@@ -10,6 +10,7 @@ using POGOProtos.Networking.Platform.Requests;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Enums;
 using Troschuetz.Random;
+using System.Text;
 
 #endregion
 
@@ -110,7 +111,7 @@ namespace PokemonGo.RocketAPI.Helpers
 
         private RequestEnvelope.Types.PlatformRequest GenerateSignature(IEnumerable<IMessage> requests)
         {
-            var ticketBytes = _authTicket.ToByteArray();
+            byte[] ticketBytes = _authTicket != null ? _authTicket.ToByteArray() : Encoding.UTF8.GetBytes(_authToken);
 
             // Common device info
             Signature.Types.DeviceInfo deviceInfo = new Signature.Types.DeviceInfo
@@ -227,7 +228,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 Type = PlatformRequestType.SendEncryptedSignature,
                 RequestMessage = new SendEncryptedSignatureRequest
                 {
-                    EncryptedSignature = ByteString.CopyFrom(_crypt.Encrypt(sig.ToByteArray(), _client.StartTime))
+                    EncryptedSignature = ByteString.CopyFrom(PCrypt.Encrypt(sig.ToByteArray(), (uint)_client.StartTime))
                 }.ToByteString()
             };
 
