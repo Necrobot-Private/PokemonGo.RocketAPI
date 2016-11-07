@@ -11,6 +11,7 @@ using POGOProtos.Networking.Requests;
 using POGOProtos.Enums;
 using Troschuetz.Random;
 using System.Text;
+using static POGOProtos.Networking.Envelopes.Signature.Types;
 
 #endregion
 
@@ -20,8 +21,6 @@ namespace PokemonGo.RocketAPI.Helpers
     {
         // The next variables are specific to 43.3 client.
         private static long Client_4330_Unknown25 = -8408506833887075802;
-        private static int  Client_3500_InitialRequestIdConstant_Android = 1404534344; //0x53B77E48
-        private static int  Client_3500_InitialRequestIdConstant_Ios = 16807; //0x000041A7
 
         private static readonly Random RandomDevice = new Random();
         private static readonly TRandom TRandomDevice = new TRandom();
@@ -57,7 +56,7 @@ namespace PokemonGo.RocketAPI.Helpers
             if (_speed <= 0)
                 _speed = (float)TRandomDevice.Triangular(0.1, 3.1, .8);
 
-            _horizontalAccuracy = 10; // TRandomDevice.Choice(new List<int>(new int[] { 5, 5, 5, 5, 10, 10, 10 }));
+            _horizontalAccuracy = TRandomDevice.Choice(new List<int>(new int[] { 5, 5, 5, 5, 10, 10, 10 }));
 
             _settings = settings;
             _authTicket = authTicket;
@@ -171,28 +170,30 @@ namespace PokemonGo.RocketAPI.Helpers
                 TimestampSinceStart = (ulong)(Utils.GetTime(true) - _client.StartTime),
                 LocationHash1 = Utils.GenerateLocation1(ticketBytes, _latitude, _longitude, _horizontalAccuracy),
                 LocationHash2 = Utils.GenerateLocation2(_latitude, _longitude, _horizontalAccuracy),
-                SensorInfo = new Signature.Types.SensorInfo
-                {
-                    TimestampSnapshot = (ulong)(Utils.GetTime(true) - _client.StartTime - RandomDevice.Next(100, 500)),
-                    LinearAccelerationX = TRandomDevice.Triangular(-3, 1, 0),
-                    LinearAccelerationY = TRandomDevice.Triangular(-2, 3, 0),
-                    LinearAccelerationZ = TRandomDevice.Triangular(-4, 2, 0),
-                    MagneticFieldX = TRandomDevice.Triangular(-50, 50, 0),
-                    MagneticFieldY = TRandomDevice.Triangular(-60, 50, -5),
-                    MagneticFieldZ = TRandomDevice.Triangular(-60, 40, -30),
-                    RotationVectorX = GenRandom(-47.149471283, 61.8397789001),
-                    RotationVectorY = GenRandom(-47.149471283, 61.8397789001),
-                    RotationVectorZ = GenRandom(-47.149471283, 5),
-                    GyroscopeRawX = GenRandom(0.0729667818829, 0.0729667818829),
-                    GyroscopeRawY = GenRandom(-2.788630499244109, 3.0586791383810468),
-                    GyroscopeRawZ = GenRandom(-0.34825887123552773, 0.19347580173737935),
-                    GravityX = TRandomDevice.Triangular(-1, 1, 0.15),
-                    GravityY = TRandomDevice.Triangular(-1, 1, -.2),
-                    GravityZ = TRandomDevice.Triangular(-1, .7, -0.8),
-                    AccelerometerAxes = 3
-                },
                 DeviceInfo = deviceInfo
             };
+
+            sig.SensorInfo.Add(new SensorInfo()
+            {
+                TimestampSnapshot = (ulong)(Utils.GetTime(true) - _client.StartTime - RandomDevice.Next(100, 500)),
+                LinearAccelerationX = TRandomDevice.Triangular(-3, 1, 0),
+                LinearAccelerationY = TRandomDevice.Triangular(-2, 3, 0),
+                LinearAccelerationZ = TRandomDevice.Triangular(-4, 2, 0),
+                MagneticFieldX = TRandomDevice.Triangular(-50, 50, 0),
+                MagneticFieldY = TRandomDevice.Triangular(-60, 50, -5),
+                MagneticFieldZ = TRandomDevice.Triangular(-60, 40, -30),
+                AttitudePitch = GenRandom(-47.149471283, 61.8397789001),
+                AttitudeYaw = GenRandom(-47.149471283, 61.8397789001),
+                AttitudeRoll = GenRandom(-47.149471283, 5),
+                RotationRateX = GenRandom(0.0729667818829, 0.0729667818829),
+                RotationRateY = GenRandom(-2.788630499244109, 3.0586791383810468),
+                RotationRateZ = GenRandom(-0.34825887123552773, 0.19347580173737935),
+                GravityX = TRandomDevice.Triangular(-1, 1, 0.15),
+                GravityY = TRandomDevice.Triangular(-1, 1, -.2),
+                GravityZ = TRandomDevice.Triangular(-1, .7, -0.8),
+                MagneticFieldAccuracy = -1,
+                Status = 3
+            });
 
             Signature.Types.LocationFix locationFix = new Signature.Types.LocationFix
             {
@@ -205,8 +206,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 ProviderStatus = 3,
                 LocationType = 1
             };
-
-            /*
+            
             if (_horizontalAccuracy >= 65)
             {
                 locationFix.HorizontalAccuracy = TRandomDevice.Choice(new List<int>(new int[] { _horizontalAccuracy, 65, 65, (int)Math.Round(GenRandom(66, 80)), 200 }));
@@ -245,7 +245,6 @@ namespace PokemonGo.RocketAPI.Helpers
                     locationFix.Speed = _speed;
                 }
             }
-            */
 
             sig.LocationFix.Add(locationFix);
 
