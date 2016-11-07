@@ -185,6 +185,7 @@
     <Compile Include="Helpers\CommonRequest.cs" />
     <Compile Include="Helpers\Crypt.cs" />
     <Compile Include="Helpers\DeviceInfo.cs" />
+    <Compile Include="Helpers\DeviceInfoHelper.cs" />
     <Compile Include="Helpers\HashBuilder.cs" />
     <Compile Include="Helpers\PCrypt.cs" />
     <Compile Include="Helpers\PokemonMetaRegistry.cs" />

@@ -8,6 +8,7 @@ using PokemonGo.RocketAPI.HttpClient;
 using PokemonGo.RocketAPI.Rpc;
 using POGOProtos.Enums;
 using POGOProtos.Networking.Envelopes;
+using PokemonGo.RocketAPI.Helpers;
 
 #endregion
 
@@ -49,12 +50,36 @@ namespace PokemonGo.RocketAPI
 
             Platform = settings.DevicePlatform.Equals("ios", StringComparison.Ordinal) ? Platform.Ios : Platform.Android;
 
+            // We can no longer emulate Android so for now just overwrite settings with randomly generated iOS device info.
+            if (Platform == Platform.Android)
+            {
+                DeviceInfo iosInfo = DeviceInfoHelper.GetRandomIosDevice();
+                settings.DeviceId = iosInfo.DeviceId;
+                settings.DeviceBrand = iosInfo.DeviceBrand;
+                settings.DeviceModel = iosInfo.DeviceModel;
+                settings.DeviceModelBoot = iosInfo.DeviceModelBoot;
+                settings.HardwareManufacturer = iosInfo.HardwareManufacturer;
+                settings.HardwareModel = iosInfo.HardwareModel;
+                settings.FirmwareBrand = iosInfo.FirmwareBrand;
+                settings.FirmwareType = iosInfo.FirmwareType;
+
+                // Clear out the android fields.
+                settings.AndroidBoardName = "";
+                settings.AndroidBootloader = "";
+                settings.DeviceModelIdentifier = "";
+                settings.FirmwareTags = "";
+                settings.FirmwareFingerprint = "";
+
+                // Now set the client platform to ios
+                Platform = Platform.Ios;
+            }
+
             AppVersion = 4303;
             SettingsHash = "";
 
             CurrentApiEmulationVersion = new Version("0.43.3");
         }
-
+        
         public void SetCaptchaToken(string token)
         {
             CaptchaToken = token;

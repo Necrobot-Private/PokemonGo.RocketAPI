@@ -32,25 +32,12 @@ namespace PokemonGo.RocketAPI.Helpers
         public string FirmwareType { get; set; }
         public string HardwareManufacturer { get; set; }
         public string HardwareModel { get; set; }
-
-        private static string BytesToHex(byte[] bytes)
-        {
-            var hexArray = "0123456789abcdef".ToCharArray();
-            var hexChars = new char[bytes.Length*2];
-            for (var index = 0; index < bytes.Length; index++)
-            {
-                var var = bytes[index] & 0xFF;
-                hexChars[index*2] = hexArray[(int) ((uint) var >> 4)];
-                hexChars[index*2 + 1] = hexArray[var & 0x0F];
-            }
-            return new string(hexChars).ToLower();
-        }
-
-        public static string GenerateRandomDeviceId(long numBytes = 16)
+        
+        private static string GenerateRandomDeviceId(long numBytes = 16)
         {
             var bytes = new byte[numBytes];
             new Random().NextBytes(bytes);
-            return BytesToHex(bytes);
+            return DeviceInfoHelper.BytesToHex(bytes);
         }
     }
 }
