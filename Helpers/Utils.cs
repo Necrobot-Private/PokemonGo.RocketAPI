@@ -3,7 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.HashFunction;
+using System.IO;
 using System.Linq;
+using System.Net;
 
 #endregion
 
@@ -25,37 +27,28 @@ namespace PokemonGo.RocketAPI.Helpers
                 return (long)Math.Round(timeSpan.TotalMilliseconds);
             return (long)Math.Round(timeSpan.TotalSeconds);
         }
-
+        
         public static uint GenerateLocation1(byte[] authTicket, double lat, double lng, double alt)
         {
-            var seed = BitConverter.ToUInt32(new xxHash(32, 0x1B845238).ComputeHash(authTicket), 0);
-            var xxh32 = new xxHash(32, seed);
+            byte[] locationBytes = BitConverter.GetBytes(lat).Reverse()
+                .Concat(BitConverter.GetBytes(lng).Reverse())
+                .Concat(BitConverter.GetBytes(alt).Reverse()).ToArray();
 
-            var locationBytes = new List<byte>();
-            locationBytes.AddRange(BitConverter.GetBytes(lat).Reverse());
-            locationBytes.AddRange(BitConverter.GetBytes(lng).Reverse());
-            locationBytes.AddRange(BitConverter.GetBytes(alt).Reverse());
-
-            return BitConverter.ToUInt32(xxh32.ComputeHash(locationBytes.ToArray()), 0);
+            return HashBuilder.Hash32Salt(locationBytes, HashBuilder.Hash32(authTicket));
         }
-
+        
         public static uint GenerateLocation2(double lat, double lng, double alt)
         {
-            var xxh32 = new xxHash(32, 0x1B845238);
-
-            var locationBytes = new List<byte>();
-            locationBytes.AddRange(BitConverter.GetBytes(lat).Reverse());
-            locationBytes.AddRange(BitConverter.GetBytes(lng).Reverse());
-            locationBytes.AddRange(BitConverter.GetBytes(alt).Reverse());
-
-            return BitConverter.ToUInt32(xxh32.ComputeHash(locationBytes.ToArray()), 0);
+            byte[] locationBytes = BitConverter.GetBytes(lat).Reverse()
+                .Concat(BitConverter.GetBytes(lng).Reverse())
+                .Concat(BitConverter.GetBytes(alt).Reverse()).ToArray();
+            return HashBuilder.Hash32(locationBytes);
         }
 
-        public static ulong GenerateRequestHash(byte[] authTicket, byte[] request)
+        public static ulong GenerateRequestHash(byte[] authTicket, byte[] hashRequest)
         {
-            var seed = BitConverter.ToUInt64(new xxHash(64, 0x1B845238).ComputeHash(authTicket), 0);
-            var xxh64 = new xxHash(64, seed);
-            return BitConverter.ToUInt64(xxh64.ComputeHash(request), 0);
+            ulong seed = HashBuilder.Hash64(authTicket);
+            return HashBuilder.Hash64Salt64(hashRequest, seed);
         }
     }
 }

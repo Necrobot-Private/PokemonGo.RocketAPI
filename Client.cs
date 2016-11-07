@@ -13,7 +13,7 @@ using POGOProtos.Networking.Envelopes;
 
 namespace PokemonGo.RocketAPI
 {
-    public class Client
+    public class Client : ICaptchaResponseHandler
     {
         public static WebProxy Proxy;
 
@@ -26,6 +26,7 @@ namespace PokemonGo.RocketAPI
         public Map Map;
         public Misc Misc;
         public Player Player;
+        string CaptchaToken;
 
         public Client(ISettings settings, IApiFailureStrategy apiFailureStrategy)
         {
@@ -48,10 +49,15 @@ namespace PokemonGo.RocketAPI
 
             Platform = settings.DevicePlatform.Equals("ios", StringComparison.Ordinal) ? Platform.Ios : Platform.Android;
 
-            AppVersion = 3500;
+            AppVersion = 4303;
             SettingsHash = "";
 
-            CurrentApiEmulationVersion = new Version("0.35.0");
+            CurrentApiEmulationVersion = new Version("0.43.3");
+        }
+
+        public void SetCaptchaToken(string token)
+        {
+            CaptchaToken = token;
         }
 
         public IApiFailureStrategy ApiFailure { get; set; }
@@ -72,7 +78,7 @@ namespace PokemonGo.RocketAPI
         internal long InventoryLastUpdateTimestamp { get; set; }
         internal Platform Platform { get; set; }
         internal uint AppVersion { get; set; }
-        internal long StartTime { get; set; }
+        public long StartTime { get; set; }
 
         public Version CurrentApiEmulationVersion { get; set; }
         public Version MinimumClientVersion { get; set; }

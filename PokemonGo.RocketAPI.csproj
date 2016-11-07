@@ -57,8 +57,8 @@
       <HintPath>$(SolutionDir)\packages\C5.2.4.5947.17249\lib\net45\C5.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Google.Protobuf, Version=3.0.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)\packages\Google.Protobuf.3.0.0\lib\net45\Google.Protobuf.dll</HintPath>
+    <Reference Include="Google.Protobuf, Version=3.1.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\Google.Protobuf.3.1.0\lib\net45\Google.Protobuf.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="GPSOAuthSharp, Version=0.0.5.0, Culture=neutral, processorArchitecture=MSIL">
@@ -185,8 +185,13 @@
     <Compile Include="Helpers\CommonRequest.cs" />
     <Compile Include="Helpers\Crypt.cs" />
     <Compile Include="Helpers\DeviceInfo.cs" />
+    <Compile Include="Helpers\HashBuilder.cs" />
+    <Compile Include="Helpers\PCrypt.cs" />
     <Compile Include="Helpers\PokemonMetaRegistry.cs" />
     <Compile Include="Helpers\PokemonMoveMeta.cs" />
+    <Compile Include="Helpers\Shuffle\Shuffles.cs" />
+    <Compile Include="Helpers\Shuffle\UnShuffle.cs" />
+    <Compile Include="Helpers\Shuffle\UnShuffle2.cs" />
     <Compile Include="HttpClient\PokemonClient.cs" />
     <Compile Include="Enums\AuthType.cs" />
     <Compile Include="Exceptions\AccessTokenExpiredException.cs" />
