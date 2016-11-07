@@ -13,7 +13,7 @@ using POGOProtos.Networking.Envelopes;
 
 namespace PokemonGo.RocketAPI
 {
-    public class Client
+    public class Client : ICaptchaResponseHandler
     {
         public static WebProxy Proxy;
 
@@ -26,6 +26,7 @@ namespace PokemonGo.RocketAPI
         public Map Map;
         public Misc Misc;
         public Player Player;
+        string CaptchaToken;
 
         public Client(ISettings settings, IApiFailureStrategy apiFailureStrategy)
         {
@@ -52,6 +53,11 @@ namespace PokemonGo.RocketAPI
             SettingsHash = "";
 
             CurrentApiEmulationVersion = new Version("0.43.3");
+        }
+
+        public void SetCaptchaToken(string token)
+        {
+            CaptchaToken = token;
         }
 
         public IApiFailureStrategy ApiFailure { get; set; }

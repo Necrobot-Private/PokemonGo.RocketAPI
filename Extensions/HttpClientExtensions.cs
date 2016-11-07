@@ -24,6 +24,13 @@ namespace PokemonGo.RocketAPI.Extensions
     {
         Task<ApiOperation> HandleApiFailure(RequestEnvelope request, ResponseEnvelope response);
         void HandleApiSuccess(RequestEnvelope request, ResponseEnvelope response);
+
+        void HandleCaptcha(string challengeUrl, ICaptchaResponseHandler captchaResponseHandler);
+    }
+
+    public interface ICaptchaResponseHandler
+    {
+        void SetCaptchaToken(string captchaToken);
     }
 
     public static class HttpClientExtensions

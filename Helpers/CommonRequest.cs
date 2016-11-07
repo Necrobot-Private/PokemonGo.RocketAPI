@@ -167,6 +167,15 @@ namespace PokemonGo.RocketAPI.Helpers
             }
         }
 
+        public static void ProcessCheckChallengeResponse(Client client, CheckChallengeResponse checkChallengeResponse)
+        {
+            if (checkChallengeResponse == null)
+                return;
+
+            if (checkChallengeResponse.ShowChallenge)
+                client.ApiFailure.HandleCaptcha(checkChallengeResponse.ChallengeUrl, client);
+        }
+
         public static void Parse(Client client, RequestType requestType, ByteString data)
         {
             try
