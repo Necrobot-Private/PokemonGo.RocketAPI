@@ -97,6 +97,14 @@ namespace PokemonGo.RocketAPI.Rpc
             var responses = serverResponse.Returns;
             if (responses != null)
             {
+                var checkChallengeResponse = new CheckChallengeResponse();
+                if (2 <= responses.Count)
+                {
+                    checkChallengeResponse.MergeFrom(responses[1]);
+
+                    CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+                }
+
                 var getInventoryResponse = new GetInventoryResponse();
                 if (4 <= responses.Count)
                 {
