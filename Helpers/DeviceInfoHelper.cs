@@ -65,8 +65,8 @@ namespace PokemonGo.RocketAPI.Helpers
         {
             DeviceInfo deviceInfo = new DeviceInfo();
 
-            // iOS device id (UDID) are 20 bytes long.
-            var bytes = new byte[20];
+            // iOS device id (UDID) are 16 bytes long.
+            var bytes = new byte[16];
             new Random().NextBytes(bytes);
             var deviceId = BytesToHex(bytes);
 
