@@ -168,8 +168,8 @@ namespace PokemonGo.RocketAPI.Helpers
                 Unknown25 = Client_4330_Unknown25,
                 Timestamp = (ulong)Utils.GetTime(true),
                 TimestampSinceStart = (ulong)(Utils.GetTime(true) - _client.StartTime),
-                LocationHash1 = Utils.GenerateLocation1(ticketBytes, _latitude, _longitude, _horizontalAccuracy),
-                LocationHash2 = Utils.GenerateLocation2(_latitude, _longitude, _horizontalAccuracy),
+                LocationHash1 = (int)Utils.GenerateLocation1(ticketBytes, _latitude, _longitude, _horizontalAccuracy),
+                LocationHash2 = (int)Utils.GenerateLocation2(_latitude, _longitude, _horizontalAccuracy),
                 DeviceInfo = deviceInfo
             };
 
