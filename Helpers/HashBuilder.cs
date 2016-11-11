@@ -4,7 +4,7 @@ namespace PokemonGo.RocketAPI.Helpers
 {
     public static class HashBuilder
     {
-        /* IOS 1.13.3 */
+        /* IOS 1.15.0 */
         static ulong[] magic_table = {
             0x2dd7caaefcf073eb, 0xa9209937349cfe9c,
             0xb84bfc934b0e60ef, 0xff709c157b26e477,
