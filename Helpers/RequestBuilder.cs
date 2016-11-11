@@ -20,7 +20,7 @@ namespace PokemonGo.RocketAPI.Helpers
     public class RequestBuilder
     {
         // The next variables are specific to 45.0 client.
-        private static long Client_4500_Unknown25 = 1553869577012279119;
+        private static long Client_4500_Unknown25 = -1553869577012279119;
 
         private static readonly Random RandomDevice = new Random();
         private static readonly TRandom TRandomDevice = new TRandom();
