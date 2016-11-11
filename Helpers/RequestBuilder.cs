@@ -20,7 +20,7 @@ namespace PokemonGo.RocketAPI.Helpers
     public class RequestBuilder
     {
         // The next variables are specific to 45.0 client.
-        private static long Client_4500_Unknown25 = -8408506833887075802;
+        private static ulong Client_4500_Unknown25 = 16892874496697272497; //1553869577012279119;
 
         private static readonly Random RandomDevice = new Random();
         private static readonly TRandom TRandomDevice = new TRandom();
@@ -78,7 +78,7 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public void GenerateNewHash()
         {
-            var hashBytes = new byte[32];
+            var hashBytes = new byte[16];
 
             RandomDevice.NextBytes(hashBytes);
 
@@ -168,8 +168,8 @@ namespace PokemonGo.RocketAPI.Helpers
                 Unknown25 = Client_4500_Unknown25,
                 Timestamp = (ulong)Utils.GetTime(true),
                 TimestampSinceStart = (ulong)(Utils.GetTime(true) - _client.StartTime),
-                LocationHash1 = (int)Utils.GenerateLocation1(ticketBytes, _latitude, _longitude, _horizontalAccuracy),
-                LocationHash2 = (int)Utils.GenerateLocation2(_latitude, _longitude, _horizontalAccuracy),
+                LocationHash1 = (uint)Utils.GenerateLocation1(ticketBytes, _latitude, _longitude, _horizontalAccuracy),
+                LocationHash2 = (uint)Utils.GenerateLocation2(_latitude, _longitude, _horizontalAccuracy),
                 DeviceInfo = deviceInfo
             };
 
