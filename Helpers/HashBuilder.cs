@@ -19,7 +19,7 @@ namespace PokemonGo.RocketAPI.Helpers
         static UInt128 ROUND_MAGIC = new UInt128(0xe3f0d44988bcdfab, 0x081570afdd535ec3);
         static ulong FINAL_MAGIC0 = 0xce7c4801d683e824;
         static ulong FINAL_MAGIC1 = 0x6823775b1daad522;
-        static UInt32 HASH_SEED = 0x61247FBF;
+        static UInt32 HASH_SEED = 0x46e945f8;
 
         private static ulong read_int64(byte[] p, int offset) { return BitConverter.ToUInt64(p, offset); }
 
