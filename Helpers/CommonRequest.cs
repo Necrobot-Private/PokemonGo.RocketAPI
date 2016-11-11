@@ -101,7 +101,12 @@ namespace PokemonGo.RocketAPI.Helpers
                     RequestType = RequestType.CheckAwardedBadges,
                     RequestMessage = new CheckAwardedBadgesMessage().ToByteString()
                 },
-                GetDownloadSettingsMessageRequest(client)
+                GetDownloadSettingsMessageRequest(client),
+                new Request
+                {
+                    RequestType = RequestType.GetBuddyWalked,
+                    RequestMessage = new GetBuddyWalkedMessage().ToByteString()
+                }
             };
         }
 
