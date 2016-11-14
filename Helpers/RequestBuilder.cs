@@ -12,6 +12,7 @@ using POGOProtos.Enums;
 using Troschuetz.Random;
 using System.Text;
 using static POGOProtos.Networking.Envelopes.Signature.Types;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -25,8 +26,6 @@ namespace PokemonGo.RocketAPI.Helpers
         private static readonly Random RandomDevice = new Random();
         private static readonly TRandom TRandomDevice = new TRandom();
         private readonly double _altitude;
-        private readonly AuthTicket _authTicket;
-        private readonly string _authToken;
         private readonly AuthType _authType;
         private readonly Crypt _crypt;
         private readonly int _horizontalAccuracy;
@@ -39,11 +38,10 @@ namespace PokemonGo.RocketAPI.Helpers
         private float _course = RandomDevice.Next(0, 360);
         private int _token2 = RandomDevice.Next(1, 59);
         
-        public RequestBuilder(Client client, string authToken, AuthType authType, double latitude, double longitude, double altitude, float speed,
-            ISettings settings, AuthTicket authTicket = null)
+        public RequestBuilder(Client client, AuthType authType, double latitude, double longitude, double altitude, float speed,
+            ISettings settings)
         {
             _client = client;
-            _authToken = authToken;
             _authType = authType;
             _latitude = latitude;
             _longitude = longitude;
@@ -59,7 +57,6 @@ namespace PokemonGo.RocketAPI.Helpers
             _horizontalAccuracy = TRandomDevice.Choice(new List<int>(new int[] { 5, 5, 5, 5, 10, 10, 10 }));
 
             _settings = settings;
-            _authTicket = authTicket;
 
             if (SessionHash == null)
             {
@@ -85,7 +82,7 @@ namespace PokemonGo.RocketAPI.Helpers
             SessionHash = ByteString.CopyFrom(hashBytes);
         }
 
-        public uint RequestCount { get; private set; } = 1;
+        public static uint RequestCount { get; private set; } = 1;
         private readonly Random _random = new Random(Environment.TickCount);
 
         private long PositiveRandom()
@@ -97,6 +94,11 @@ namespace PokemonGo.RocketAPI.Helpers
                 ret = -ret;
             return ret;
         }
+
+        public static void Reset()
+        {
+            RequestCount = 0;
+        } 
 
         private void IncrementRequestCount()
         {
@@ -135,9 +137,9 @@ namespace PokemonGo.RocketAPI.Helpers
             return r;
         }
 
-        private RequestEnvelope.Types.PlatformRequest GenerateSignature(IEnumerable<IMessage> requests)
+        private RequestEnvelope.Types.PlatformRequest GenerateSignature(RequestEnvelope requestEnvelope)
         {
-            byte[] ticketBytes = _authTicket != null ? _authTicket.ToByteArray() : Encoding.UTF8.GetBytes(_authToken);
+            byte[] ticketBytes = requestEnvelope.AuthTicket != null ? requestEnvelope.AuthTicket.ToByteArray() : requestEnvelope.AuthInfo.ToByteArray();
 
             // Common device info
             Signature.Types.DeviceInfo deviceInfo = new Signature.Types.DeviceInfo
@@ -248,7 +250,7 @@ namespace PokemonGo.RocketAPI.Helpers
 
             sig.LocationFix.Add(locationFix);
 
-            foreach (var request in requests)
+            foreach (var request in requestEnvelope.Requests)
                 sig.RequestHash.Add(Utils.GenerateRequestHash(ticketBytes, request.ToByteArray()));
             
             var encryptedSignature = new RequestEnvelope.Types.PlatformRequest
@@ -263,44 +265,50 @@ namespace PokemonGo.RocketAPI.Helpers
             return encryptedSignature;
         }
 
-        public RequestEnvelope GetRequestEnvelope(Request[] customRequests, bool isInitialRequest = false)
+        public async Task<RequestEnvelope> GetRequestEnvelope(Request[] customRequests)
         {
             var e = new RequestEnvelope
             {
                 StatusCode = 2, //1
                 RequestId = GetNextRequestId(), //3
-                Requests = {customRequests}, //4
                 Latitude = _latitude, //7
                 Longitude = _longitude, //8
                 Accuracy = (int)_horizontalAccuracy, //9
-                AuthTicket = _authTicket, //11
                 MsSinceLastLocationfix = (long)TRandomDevice.Triangular(300, 30000, 10000) //12
             };
 
-            if (_authTicket != null && !isInitialRequest)
+            e.Requests.AddRange(customRequests);
+            
+            if (_client.AccessToken.AuthTicket == null || _client.AccessToken.IsExpired)
             {
-                e.AuthTicket = _authTicket;
-                e.PlatformRequests.Add(GenerateSignature(customRequests));
+                if (_client.AccessToken.IsExpired)
+                {
+                    await Rpc.Login.Reauthenticate(_client);
+                }
+
+                e.AuthInfo = new RequestEnvelope.Types.AuthInfo
+                {
+                    Provider = _client.AccessToken.ProviderID,
+                    Token = new RequestEnvelope.Types.AuthInfo.Types.JWT
+                    {
+                        Contents = _client.AccessToken.Token,
+                        Unknown2 = 59
+                    }
+                };
             }
             else
             {
-                e.AuthInfo = new RequestEnvelope.Types.AuthInfo
-                {
-                    Provider = _authType == AuthType.Google ? "google" : "ptc",
-                    Token = new RequestEnvelope.Types.AuthInfo.Types.JWT
-                    {
-                        Contents = _authToken,
-                        Unknown2 = _token2
-                    }
-                }; //10
+                e.AuthTicket = _client.AccessToken.AuthTicket;
             }
-            
+
+            e.PlatformRequests.Add(GenerateSignature(e));
+
             return e;
         }
         
-        public RequestEnvelope GetRequestEnvelope(RequestType type, IMessage message)
+        public async Task<RequestEnvelope> GetRequestEnvelope(RequestType type, IMessage message)
         {
-            return GetRequestEnvelope(new Request[] { new Request
+            return await GetRequestEnvelope(new Request[] { new Request
             {
                 RequestType = type,
                 RequestMessage = message.ToByteString()
