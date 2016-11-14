@@ -82,7 +82,7 @@ namespace PokemonGo.RocketAPI.Helpers
             SessionHash = ByteString.CopyFrom(hashBytes);
         }
 
-        public uint RequestCount { get; private set; } = 1;
+        public static uint RequestCount { get; private set; } = 1;
         private readonly Random _random = new Random(Environment.TickCount);
 
         private long PositiveRandom()
@@ -94,6 +94,11 @@ namespace PokemonGo.RocketAPI.Helpers
                 ret = -ret;
             return ret;
         }
+
+        public static void Reset()
+        {
+            RequestCount = 0;
+        } 
 
         private void IncrementRequestCount()
         {
