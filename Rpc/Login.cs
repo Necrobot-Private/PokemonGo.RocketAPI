@@ -6,10 +6,15 @@ using Google.Protobuf;
 using PokemonGo.RocketAPI.Enums;
 using PokemonGo.RocketAPI.Exceptions;
 using PokemonGo.RocketAPI.Helpers;
-using PokemonGo.RocketAPI.Login;
 using POGOProtos.Networking.Envelopes;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Responses;
+using System.IO;
+using Newtonsoft.Json;
+using System.Threading;
+using POGOLib.Official.LoginProviders;
+using POGOLib.Official.Net;
+using POGOLib.Official.Net.Authentication.Data;
 
 #endregion
 
@@ -19,31 +24,116 @@ namespace PokemonGo.RocketAPI.Rpc
 
     public class Login : BaseRpc
     {
-        //public event GoogleDeviceCodeDelegate GoogleDeviceCodeEvent;
-        private readonly ILoginType _login;
-
+        private static Semaphore ReauthenticateMutex { get; } = new Semaphore(1, 1);
         public Login(Client client) : base(client)
         {
-            _login = SetLoginType(client.Settings);
+            Client.LoginProvider = SetLoginType(client.Settings);
             Client.ApiUrl = Resources.RpcUrl;
         }
 
-        private static ILoginType SetLoginType(ISettings settings)
+        private static ILoginProvider SetLoginType(ISettings settings)
         {
             switch (settings.AuthType)
             {
                 case AuthType.Google:
-                    return new GoogleLogin(settings.GoogleUsername, settings.GooglePassword);
+                    return new GoogleLoginProvider(settings.GoogleUsername, settings.GooglePassword);
                 case AuthType.Ptc:
-                    return new PtcLogin(settings.PtcUsername, settings.PtcPassword, settings);
+                    return new PtcLoginProvider(settings.PtcUsername, settings.PtcPassword);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(settings.AuthType), "Unknown AuthType");
             }
         }
 
+        private static async Task<AccessToken> LoadAccessToken(ILoginProvider loginProvider, Client client, bool mayCache = false)
+        {
+            var cacheDir = Path.Combine(Directory.GetCurrentDirectory(), "Cache");
+            var fileName = Path.Combine(cacheDir, $"{loginProvider.UserId}-{loginProvider.ProviderId}.json");
+            
+            if (mayCache)
+            {
+                if (!Directory.Exists(cacheDir))
+                    Directory.CreateDirectory(cacheDir);
+
+                if (File.Exists(fileName))
+                {
+                    var accessToken = JsonConvert.DeserializeObject<AccessToken>(File.ReadAllText(fileName));
+
+                    if (!accessToken.IsExpired)
+                    {
+                        client.AccessToken = accessToken;
+                        return accessToken;
+                    }
+                }
+            }
+
+            await Reauthenticate(client);
+
+            if (mayCache)
+                SaveAccessToken(client.AccessToken);
+
+            return client.AccessToken;
+        }
+
+        private static void SessionOnAccessTokenUpdated(object sender, EventArgs eventArgs)
+        {
+            var session = (Session)sender;
+
+            SaveAccessToken(session.AccessToken);
+        }
+
+        public static void SaveAccessToken(AccessToken accessToken)
+        {
+            if (accessToken == null || string.IsNullOrEmpty(accessToken.Uid))
+                return;
+
+            var fileName = Path.Combine(Directory.GetCurrentDirectory(), "Cache", $"{accessToken.Uid}.json");
+
+            File.WriteAllText(fileName, JsonConvert.SerializeObject(accessToken, Formatting.Indented));
+        }
+
+        public static async Task Reauthenticate(Client client)
+        {
+            try
+            {
+                ReauthenticateMutex.WaitOne();
+
+                var tries = 0;
+                while (null == client.AccessToken || client.AccessToken.IsExpired || client.AccessToken.Token == null)
+                {
+                    try
+                    {
+                        client.AccessToken = await client.LoginProvider.GetAccessToken();
+                    }
+                    catch (Exception)
+                    {
+                        //Logger.Error($"Reauthenticate exception was catched: {exception}");
+                    }
+                    finally
+                    {
+                        if (client.AccessToken == null || client.AccessToken.Token == null)
+                        {
+                            var sleepSeconds = Math.Min(60, ++tries * 5);
+                            //Logger.Error($"Reauthentication failed, trying again in {sleepSeconds} seconds.");
+                            await Task.Delay(TimeSpan.FromMilliseconds(sleepSeconds * 1000));
+                        }
+
+                        if (tries == 10)
+                        {
+                            throw new LoginFailedException("Error refreshing access token.");
+                        }
+                    }
+                }
+                SaveAccessToken(client.AccessToken);
+            }
+            finally
+            {
+                ReauthenticateMutex.Release();
+            }
+        }
+
         public async Task DoLogin()
         {
-            Client.AuthToken = await _login.GetAccessToken().ConfigureAwait(false);
+            await Login.LoadAccessToken(Client.LoginProvider, Client, true);
             Client.StartTime = Utils.GetTime(true);
 
             await
@@ -57,43 +147,9 @@ namespace PokemonGo.RocketAPI.Rpc
         {
             var requests = CommonRequest.FillRequest(request, Client);
 
-            var serverRequest = GetRequestBuilder().GetRequestEnvelope(requests, true);
+            var serverRequest = await GetRequestBuilder().GetRequestEnvelope(requests);
             var serverResponse = await PostProto<Request>(serverRequest);
-
-            if (!string.IsNullOrEmpty(serverResponse.ApiUrl))
-                Client.ApiUrl = "https://" + serverResponse.ApiUrl + "/rpc";
-
-            if (serverResponse.AuthTicket != null)
-                Client.AuthTicket = serverResponse.AuthTicket;
-
-            switch (serverResponse.StatusCode)
-            {
-                case ResponseEnvelope.Types.StatusCode.InvalidAuthToken:
-                    Client.AuthToken = null;
-                    throw new AccessTokenExpiredException();
-                case ResponseEnvelope.Types.StatusCode.Redirect:
-                    // 53 means that the api_endpoint was not correctly set, should be at this point, though, so redo the request
-                    await FireRequestBlock(request);
-                    return;
-                case ResponseEnvelope.Types.StatusCode.BadRequest:
-                    // Your account may be banned! please try from the official client.
-                    throw new LoginFailedException("Your account may be banned! please try from the official client.");
-                case ResponseEnvelope.Types.StatusCode.Unknown:
-                    break;
-                case ResponseEnvelope.Types.StatusCode.Ok:
-                    break;
-                case ResponseEnvelope.Types.StatusCode.OkRpcUrlInResponse:
-                    break;
-                case ResponseEnvelope.Types.StatusCode.InvalidRequest:
-                    break;
-                case ResponseEnvelope.Types.StatusCode.InvalidPlatformRequest:
-                    break;
-                case ResponseEnvelope.Types.StatusCode.SessionInvalidated:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
+            
             var responses = serverResponse.Returns;
             if (responses != null)
             {
