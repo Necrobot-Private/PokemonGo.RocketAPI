@@ -80,6 +80,18 @@ namespace PokemonGo.RocketAPI.Helpers
             };
         }
 
+        public static Request GetVerifyChallenge(string token)
+        {
+            return new Request
+            {
+                RequestType = RequestType.VerifyChallenge,
+                RequestMessage = new VerifyChallengeMessage()
+                {
+                    Token = token
+                }.ToByteString()
+            };
+        }
+
         public static Request[] FillRequest(Request request, Client client)
         {
             return new[]

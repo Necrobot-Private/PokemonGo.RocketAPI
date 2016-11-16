@@ -164,5 +164,10 @@ namespace PokemonGo.RocketAPI.Rpc
                         Team = teamColor
                     });
         }
+
+        public async Task<VerifyChallengeResponse> VerifyChallenge(string token)
+        {
+            return await PostProtoPayload<Request, VerifyChallengeResponse>(RequestType.VerifyChallenge, CommonRequest.GetVerifyChallenge(token));
+        }
     }
 }
