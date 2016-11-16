@@ -146,7 +146,7 @@ namespace PokemonGo.RocketAPI.Rpc
         
         private async Task FireRequestBlock(Request request)
         {
-            var requests = CommonRequest.FillRequest(request, Client);
+            var requests = CommonRequest.FillRequest(request, Client, false); // Do not send GetBuddyWalked
 
             var serverRequest = await GetRequestBuilder().GetRequestEnvelope(requests);
             var serverResponse = await PostProto<Request>(serverRequest);
