@@ -137,6 +137,8 @@ namespace PokemonGo.RocketAPI.Rpc
             Client.StartTime = Utils.GetTime(true);
             RequestBuilder.Reset();
 
+            await Client.Player.GetPlayer();
+
             await
                 FireRequestBlock(CommonRequest.GetDownloadRemoteConfigVersionMessageRequest(Client))
                     .ConfigureAwait(false);
