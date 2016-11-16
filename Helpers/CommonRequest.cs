@@ -6,6 +6,7 @@ using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
 using PokemonGo.RocketAPI.Exceptions;
 using System;
+using System.Collections.Generic;
 
 #endregion
 
@@ -80,9 +81,9 @@ namespace PokemonGo.RocketAPI.Helpers
             };
         }
 
-        public static Request[] FillRequest(Request request, Client client)
+        public static Request[] FillRequest(Request request, Client client, bool getBuddyWalked = true)
         {
-            return new[]
+            List<Request> requests = new List<Request>(new[]
             {
                 request,
                 new Request
@@ -101,13 +102,18 @@ namespace PokemonGo.RocketAPI.Helpers
                     RequestType = RequestType.CheckAwardedBadges,
                     RequestMessage = new CheckAwardedBadgesMessage().ToByteString()
                 },
-                GetDownloadSettingsMessageRequest(client),
-                new Request
+                GetDownloadSettingsMessageRequest(client)
+            });
+
+            if (getBuddyWalked)
+            {
+                requests.Add(new Request
                 {
                     RequestType = RequestType.GetBuddyWalked,
                     RequestMessage = new GetBuddyWalkedMessage().ToByteString()
-                }
-            };
+                });
+            }
+            return requests.ToArray();
         }
 
         public static Request[] GetCommonRequests(Client client)
