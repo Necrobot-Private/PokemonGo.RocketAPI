@@ -78,6 +78,10 @@ namespace PokemonGo.RocketAPI.Extensions
             Client apiClient,
             RequestEnvelope requestEnvelope) where TRequest : IMessage<TRequest>
         {
+            // Check killswitch from url before making API calls.
+            if (apiClient.CheckCurrentVersionOutdated())
+                throw new MinimumClientVersionException(apiClient.CurrentApiEmulationVersion, apiClient.MinimumClientVersion);
+
             //Encode payload and put in envelop, then send
             var data = requestEnvelope.ToByteString();
             var result = await client.PostAsync(apiClient.ApiUrl, new ByteArrayContent(data.ToByteArray()));

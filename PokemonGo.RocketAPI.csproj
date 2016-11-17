@@ -208,6 +208,7 @@
     <Compile Include="Helpers\DeviceInfo.cs" />
     <Compile Include="Helpers\DeviceInfoHelper.cs" />
     <Compile Include="Helpers\HashBuilder.cs" />
+    <Compile Include="Helpers\KillSwitchTask.cs" />
     <Compile Include="Helpers\PCrypt.cs" />
     <Compile Include="Helpers\PokemonMetaRegistry.cs" />
     <Compile Include="Helpers\PokemonMoveMeta.cs" />
