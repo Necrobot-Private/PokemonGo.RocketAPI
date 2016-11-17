@@ -28,7 +28,8 @@ namespace PokemonGo.RocketAPI
         public Misc Misc;
         public Player Player;
         string CaptchaToken;
-
+        public KillSwitchTask KillswitchTask;
+        
         public Client(ISettings settings)
         {
             Settings = settings;
@@ -42,6 +43,7 @@ namespace PokemonGo.RocketAPI
             Fort = new Fort(this);
             Encounter = new Encounter(this);
             Misc = new Misc(this);
+            KillswitchTask = new KillSwitchTask(this);
 
             Player.SetCoordinates(Settings.DefaultLatitude, Settings.DefaultLongitude, Settings.DefaultAltitude);
 
@@ -104,7 +106,7 @@ namespace PokemonGo.RocketAPI
         public long StartTime { get; set; }
 
         public Version CurrentApiEmulationVersion { get; set; }
-        public Version MinimumClientVersion { get; set; }
+        public Version MinimumClientVersion { get; set; }        // This is version from DownloadSettings, but after login is updated from https://pgorelease.nianticlabs.com/plfe/version
 
         //public POGOLib.Net.Session AuthSession { get; set; }
         public POGOLib.Official.LoginProviders.ILoginProvider LoginProvider { get; set; }
@@ -124,7 +126,26 @@ namespace PokemonGo.RocketAPI
 
         public bool CheckCurrentVersionOutdated()
         {
+            if (MinimumClientVersion == null)
+                return false;
+
             return CurrentApiEmulationVersion < MinimumClientVersion;
+        }
+
+        public static Version GetMinimumRequiredVersionFromUrl()
+        {
+            try
+            {
+                var client = new WebClient();
+                client.Encoding = System.Text.Encoding.UTF8;
+
+                var version = client.DownloadString("https://pgorelease.nianticlabs.com/plfe/version").Replace("\u0006", "").Replace("\n", "");
+                return new Version(version);
+            }
+            catch(Exception)
+            {
+            }
+            return null;
         }
     }
 }

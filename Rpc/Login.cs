@@ -133,6 +133,8 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task DoLogin()
         {
+            await Client.KillswitchTask.Start();
+
             await Login.LoadAccessToken(Client.LoginProvider, Client, true);
             Client.StartTime = Utils.GetTime(true);
             RequestBuilder.Reset();
