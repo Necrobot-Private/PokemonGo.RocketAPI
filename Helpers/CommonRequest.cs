@@ -1,11 +1,14 @@
 ﻿#region using directives
 
 using Google.Protobuf;
+using POGOProtos.Networking.Envelopes;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
 using PokemonGo.RocketAPI.Exceptions;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 #endregion
 
@@ -58,7 +61,7 @@ namespace PokemonGo.RocketAPI.Helpers
         {
             var getInventoryMessage = new GetInventoryMessage
             {
-                LastTimestampMs = client.InventoryLastUpdateTimestamp
+                LastTimestampMs = client.Inventory.LastInventoryTimestampMs
             };
             return new Request
             {
@@ -113,12 +116,7 @@ namespace PokemonGo.RocketAPI.Helpers
                     RequestType = RequestType.CheckAwardedBadges,
                     RequestMessage = new CheckAwardedBadgesMessage().ToByteString()
                 },
-                GetDownloadSettingsMessageRequest(client),
-                new Request
-                {
-                    RequestType = RequestType.GetBuddyWalked,
-                    RequestMessage = new GetBuddyWalkedMessage().ToByteString()
-                }
+                GetDownloadSettingsMessageRequest(client)
             };
         }
 
@@ -153,12 +151,14 @@ namespace PokemonGo.RocketAPI.Helpers
 
             if (getInventoryResponse.Success)
             {
-                if (getInventoryResponse.InventoryDelta == null)
-                    return;
-
-                if (getInventoryResponse.InventoryDelta.NewTimestampMs >= client.InventoryLastUpdateTimestamp)
+                if (getInventoryResponse.InventoryDelta.NewTimestampMs >= client.Inventory.LastInventoryTimestampMs)
                 {
-                    client.InventoryLastUpdateTimestamp = getInventoryResponse.InventoryDelta.NewTimestampMs;
+                    client.Inventory.LastInventoryTimestampMs = getInventoryResponse.InventoryDelta.NewTimestampMs;
+
+                    if (getInventoryResponse.InventoryDelta?.InventoryItems?.Count > 0)
+                    {
+                        client.Inventory.UpdateInventoryItems(getInventoryResponse.InventoryDelta);
+                    }
                 }
             }
         }
@@ -193,40 +193,114 @@ namespace PokemonGo.RocketAPI.Helpers
                 throw new CaptchaException(checkChallengeResponse.ChallengeUrl);
         }
 
-        public static void Parse(Client client, RequestType requestType, ByteString data)
+        public static void HandleResponseEnvelope(Client client, RequestEnvelope requestEnvelope, ResponseEnvelope responseEnvelope)
         {
-            try
+            if (responseEnvelope.Returns.Count != requestEnvelope.Requests.Count)
+                throw new InvalidResponseException();
+
+            var responseIndex = 0;
+            foreach(var request in requestEnvelope.Requests)
             {
-                switch (requestType)
+                var bytes = responseEnvelope.Returns[responseIndex];
+                switch (request.RequestType)
                 {
-                    case RequestType.GetInventory:
-                        //TODO Update inventory
-                        //client..getInventories().updateInventories(GetInventoryResponse.parseFrom(data));
-
-                        //var getInventoryResponse = new GetInventoryResponse();
-                        //getInventoryResponse.MergeFrom(data);
-
-                        // Update inventory timestamp
-                        client.InventoryLastUpdateTimestamp = Utils.GetTime(true);
-
+                    case RequestType.GetHatchedEggs: // Get_Hatched_Eggs
+                        var hatchedEggs = GetHatchedEggsResponse.Parser.ParseFrom(bytes);
+                        if (hatchedEggs.Success)
+                        {
+                            // TODO: Throw event, wrap in an object.
+                        }
                         break;
-                    case RequestType.DownloadSettings:
-                        //TODO Update settings
-                        //api.getSettings().updateSettings(DownloadSettingsResponse.parseFrom(data));
 
-                        // Update settings hash
-                        var downloadSettingsResponse = new DownloadSettingsResponse();
-                        downloadSettingsResponse.MergeFrom(data);
-                        client.SettingsHash = downloadSettingsResponse.Hash;
-
+                    case RequestType.GetInventory: // Get_Inventory
+                        GetInventoryResponse inventoryResponse = GetInventoryResponse.Parser.ParseFrom(bytes);
+                        ProcessGetInventoryResponse(client, inventoryResponse);
                         break;
-                    default:
+
+                    case RequestType.ReleasePokemon:
+                        var releaseResponse = ReleasePokemonResponse.Parser.ParseFrom(bytes);
+                        if (releaseResponse.Result == ReleasePokemonResponse.Types.Result.Success ||
+                            releaseResponse.Result == ReleasePokemonResponse.Types.Result.Failed)
+                        {
+                            var releaseMessage = ReleasePokemonMessage.Parser.ParseFrom(request.RequestMessage);
+                            var pokemonId = releaseMessage.PokemonId;
+                            var pokemons = client.Inventory.InventoryItems.Where(i => i?.InventoryItemData?.PokemonData != null && i.InventoryItemData.PokemonData.Id.Equals(pokemonId));
+                            client.Inventory.RemoveInventoryItems(pokemons);
+                        }
+                        break;
+
+                    case RequestType.EvolvePokemon:
+                        var evolveResponse = EvolvePokemonResponse.Parser.ParseFrom(bytes);
+                        if (evolveResponse.Result == EvolvePokemonResponse.Types.Result.Success ||
+                            evolveResponse.Result == EvolvePokemonResponse.Types.Result.FailedPokemonMissing)
+                        {
+                            var releaseMessage = ReleasePokemonMessage.Parser.ParseFrom(request.RequestMessage);
+                            var pokemonId = releaseMessage.PokemonId;
+                            var pokemons = client.Inventory.InventoryItems.Where(i => i?.InventoryItemData?.PokemonData != null && i.InventoryItemData.PokemonData.Id.Equals(pokemonId));
+                            client.Inventory.RemoveInventoryItems(pokemons);
+                        }
+                        break;
+
+                    case RequestType.CheckAwardedBadges: // Check_Awarded_Badges
+                        var awardedBadges = CheckAwardedBadgesResponse.Parser.ParseFrom(bytes);
+                        if (awardedBadges.Success)
+                        {
+                            // TODO: Throw event, wrap in an object.
+                        }
+                        break;
+
+                    case RequestType.DownloadSettings: // Download_Settings
+                        DownloadSettingsResponse downloadSettings = DownloadSettingsResponse.Parser.ParseFrom(bytes);
+                        ProcessDownloadSettingsResponse(client, downloadSettings);
+                        break;
+
+                    case RequestType.CheckChallenge:
+                        CheckChallengeResponse checkChallenge = CheckChallengeResponse.Parser.ParseFrom(bytes);
+                        CommonRequest.ProcessCheckChallengeResponse(client, checkChallenge);
                         break;
                 }
+                responseIndex++;
             }
-            catch (InvalidProtocolBufferException e)
+        }
+        
+
+        public static void HandleInventoryResponses(Client client, Request request, ByteString requestResponse)
+        {
+            ulong pokemonId = 0;
+            switch (request.RequestType)
             {
-                throw e;
+                case RequestType.ReleasePokemon:
+                    var releaseResponse = ReleasePokemonResponse.Parser.ParseFrom(requestResponse);
+                    if (releaseResponse.Result == ReleasePokemonResponse.Types.Result.Success ||
+                        releaseResponse.Result == ReleasePokemonResponse.Types.Result.Failed)
+                    {
+                        var releaseMessage = ReleasePokemonMessage.Parser.ParseFrom(request.RequestMessage);
+                        pokemonId = releaseMessage.PokemonId;
+                    }
+                    break;
+
+                case RequestType.EvolvePokemon:
+                    var evolveResponse = EvolvePokemonResponse.Parser.ParseFrom(requestResponse);
+                    if (evolveResponse.Result == EvolvePokemonResponse.Types.Result.Success ||
+                        evolveResponse.Result == EvolvePokemonResponse.Types.Result.FailedPokemonMissing)
+                    {
+                        var releaseMessage = ReleasePokemonMessage.Parser.ParseFrom(request.RequestMessage);
+                        pokemonId = releaseMessage.PokemonId;
+                    }
+                    break;
+
+                default:
+                    // If not one of the above cases, just return.
+                    return;
+            }
+
+            if (pokemonId > 0)
+            {
+                var pokemons = client.Inventory.InventoryItems.Where(
+                    i =>
+                        i?.InventoryItemData?.PokemonData != null &&
+                        i.InventoryItemData.PokemonData.Id.Equals(pokemonId));
+                client.Inventory.RemoveInventoryItems(pokemons);
             }
         }
     }

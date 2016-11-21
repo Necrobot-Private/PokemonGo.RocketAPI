@@ -152,36 +152,10 @@ namespace PokemonGo.RocketAPI.Rpc
         {
             var requests = CommonRequest.FillRequest(request, Client);
 
-            var serverRequest = await GetRequestBuilder().GetRequestEnvelope(requests);
-            var serverResponse = await PostProto<Request>(serverRequest);
-            
-            var responses = serverResponse.Returns;
-            if (responses != null)
-            {
-                var checkChallengeResponse = new CheckChallengeResponse();
-                if (2 <= responses.Count)
-                {
-                    checkChallengeResponse.MergeFrom(responses[1]);
+            RequestEnvelope serverRequest = await GetRequestBuilder().GetRequestEnvelope(requests);
+            ResponseEnvelope serverResponse = await PostProto<Request>(serverRequest);
 
-                    CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-                }
-
-                var getInventoryResponse = new GetInventoryResponse();
-                if (4 <= responses.Count)
-                {
-                    getInventoryResponse.MergeFrom(responses[3]);
-
-                    CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
-                }
-
-                var downloadSettingsResponse = new DownloadSettingsResponse();
-                if (6 <= responses.Count)
-                {
-                    downloadSettingsResponse.MergeFrom(responses[5]);
-
-                    CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
-                }
-            }
+            CommonRequest.HandleResponseEnvelope(Client, serverRequest, serverResponse);
         }
 
         public async Task FireRequestBlockTwo()

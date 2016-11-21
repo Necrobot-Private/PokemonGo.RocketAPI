@@ -46,9 +46,7 @@ namespace PokemonGo.RocketAPI
             KillswitchTask = new KillSwitchTask(this);
 
             Player.SetCoordinates(Settings.DefaultLatitude, Settings.DefaultLongitude, Settings.DefaultAltitude);
-
-            InventoryLastUpdateTimestamp = 0;
-
+            
             Platform = settings.DevicePlatform.Equals("ios", StringComparison.Ordinal) ? Platform.Ios : Platform.Android;
 
             // We can no longer emulate Android so for now just overwrite settings with randomly generated iOS device info.
@@ -100,7 +98,6 @@ namespace PokemonGo.RocketAPI
         internal AuthTicket AuthTicket { get; set; }
 
         internal string SettingsHash { get; set; }
-        internal long InventoryLastUpdateTimestamp { get; set; }
         internal Platform Platform { get; set; }
         internal uint AppVersion { get; set; }
         public long StartTime { get; set; }

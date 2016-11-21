@@ -9,6 +9,7 @@ using PokemonGo.RocketAPI.Exceptions;
 using POGOProtos.Networking.Envelopes;
 using System.Collections.Concurrent;
 using System.Threading;
+using PokemonGo.RocketAPI.Helpers;
 
 #endregion
 
@@ -41,14 +42,12 @@ namespace PokemonGo.RocketAPI.Extensions
                 }
             }
 
-            ResponseEnvelope response = await PerformThrottledRemoteProcedureCall<TRequest>(client, apiClient, requestEnvelope);
-
-            if (response.Returns.Count != requestEnvelope.Requests.Count)
-                throw new InvalidResponseException();
-
+            ResponseEnvelope responseEnvelope = await PerformThrottledRemoteProcedureCall<TRequest>(client, apiClient, requestEnvelope);
+            CommonRequest.HandleResponseEnvelope(apiClient, requestEnvelope, responseEnvelope);
+            
             for (var i = 0; i < responseTypes.Length; i++)
             {
-                var payload = response.Returns[i];
+                var payload = responseEnvelope.Returns[i];
                 result[i].MergeFrom(payload);
             }
             return result;
@@ -60,14 +59,10 @@ namespace PokemonGo.RocketAPI.Extensions
             where TRequest : IMessage<TRequest>
             where TResponsePayload : IMessage<TResponsePayload>, new()
         {
-            ResponseEnvelope response = await PerformThrottledRemoteProcedureCall<TRequest>(client, apiClient, requestEnvelope);
-
-            if (response.Returns.Count != requestEnvelope.Requests.Count)
-                throw new InvalidResponseException();
-
-            //Decode payload
-            //todo: multi-payload support
-            var payload = response.Returns[0];
+            ResponseEnvelope responseEnvelope = await PerformThrottledRemoteProcedureCall<TRequest>(client, apiClient, requestEnvelope);
+            CommonRequest.HandleResponseEnvelope(apiClient, requestEnvelope, responseEnvelope);
+            
+            var payload = responseEnvelope.Returns[0];
             var parsedPayload = new TResponsePayload();
             parsedPayload.MergeFrom(payload);
 
