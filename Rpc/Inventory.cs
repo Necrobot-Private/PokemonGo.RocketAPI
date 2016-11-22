@@ -167,12 +167,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
             return await PostProtoPayload<Request, UpgradePokemonResponse>(RequestType.UpgradePokemon, message);
         }
-
-        public RepeatedField<InventoryItem> GetInventory()
-        {
-            return InventoryItems;
-        }
-
+        
         public async Task<RecycleInventoryItemResponse> RecycleItem(ItemId itemId, int amount)
         {
             var message = new RecycleInventoryItemMessage
