@@ -210,7 +210,7 @@
     <Compile Include="Helpers\HashBuilder.cs" />
     <Compile Include="Helpers\KillSwitchTask.cs" />
     <Compile Include="Helpers\PCrypt.cs" />
-    <Compile Include="Helpers\PokemonMetaRegistry.cs" />
+    <Compile Include="Helpers\PokemonMoveMetaRegistry.cs" />
     <Compile Include="Helpers\PokemonMoveMeta.cs" />
     <Compile Include="Helpers\Shuffle\Shuffles.cs" />
     <Compile Include="Helpers\Shuffle\UnShuffle.cs" />
