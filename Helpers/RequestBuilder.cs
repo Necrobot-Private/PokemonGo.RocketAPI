@@ -285,9 +285,13 @@ namespace PokemonGo.RocketAPI.Helpers
             if (addGetBuddyWalked)
                 e.Requests.Add(CommonRequest.GetBuddyWalked());
 
-            if (_client.AccessToken.AuthTicket == null || 
-                (_client.AccessToken.AuthTicket != null && _client.AccessToken.AuthTicket.ExpireTimestampMs < (ulong)Utils.GetTime(true) - (60000 * 10)) || // Check AuthTicket expiration (with 10 minute buffer)
-                _client.AccessToken.IsExpired)
+            if (_client.AccessToken.AuthTicket != null && _client.AccessToken.AuthTicket.ExpireTimestampMs < (ulong)Utils.GetTime(true) - (60000 * 10))
+            {
+                // Check AuthTicket expiration (with 10 minute buffer). We need to null out the AuthTicket otherwise it may still be used.
+                _client.AccessToken.AuthTicket = null;
+            }
+
+            if (_client.AccessToken.AuthTicket == null || _client.AccessToken.IsExpired)
             {
                 if (_client.AccessToken.IsExpired)
                 {
