@@ -265,7 +265,7 @@ namespace PokemonGo.RocketAPI.Helpers
             return encryptedSignature;
         }
 
-        public async Task<RequestEnvelope> GetRequestEnvelope(Request[] customRequests)
+        public async Task<RequestEnvelope> GetRequestEnvelope(IEnumerable<Request> customRequests, bool addCommonRequests, bool addGetBuddyWalked)
         {
             var e = new RequestEnvelope
             {
@@ -278,7 +278,13 @@ namespace PokemonGo.RocketAPI.Helpers
             };
 
             e.Requests.AddRange(customRequests);
-            
+
+            if (addCommonRequests)
+                e.Requests.AddRange(CommonRequest.GetCommonRequests(_client));
+
+            if (addGetBuddyWalked)
+                e.Requests.Add(CommonRequest.GetBuddyWalked());
+
             if (_client.AccessToken.AuthTicket == null || 
                 (_client.AccessToken.AuthTicket != null && _client.AccessToken.AuthTicket.ExpireTimestampMs < (ulong)Utils.GetTime(true) - (60000 * 10)) || // Check AuthTicket expiration (with 10 minute buffer)
                 _client.AccessToken.IsExpired)
@@ -308,15 +314,6 @@ namespace PokemonGo.RocketAPI.Helpers
             return e;
         }
         
-        public async Task<RequestEnvelope> GetRequestEnvelope(RequestType type, IMessage message)
-        {
-            return await GetRequestEnvelope(new Request[] { new Request
-            {
-                RequestType = type,
-                RequestMessage = message.ToByteString()
-            } });
-        }
-
         public static double GenRandom(double num)
         {
             const float randomFactor = 0.3f;

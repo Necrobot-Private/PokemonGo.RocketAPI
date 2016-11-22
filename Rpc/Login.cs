@@ -139,28 +139,9 @@ namespace PokemonGo.RocketAPI.Rpc
             Client.StartTime = Utils.GetTime(true);
             RequestBuilder.Reset();
 
-            await Client.Player.GetPlayer();
-
-            await
-                FireRequestBlock(CommonRequest.GetDownloadRemoteConfigVersionMessageRequest(Client))
-                    .ConfigureAwait(false);
-
-            await FireRequestBlockTwo().ConfigureAwait(false);
-        }
-        
-        private async Task FireRequestBlock(Request request)
-        {
-            var requests = CommonRequest.FillRequest(request, Client);
-
-            RequestEnvelope serverRequest = await GetRequestBuilder().GetRequestEnvelope(requests);
-            ResponseEnvelope serverResponse = await PostProto<Request>(serverRequest);
-
-            CommonRequest.HandleResponseEnvelope(Client, serverRequest, serverResponse);
-        }
-
-        public async Task FireRequestBlockTwo()
-        {
-            await FireRequestBlock(CommonRequest.GetGetAssetDigestMessageRequest(Client));
+            await Client.Player.GetPlayer().ConfigureAwait(false);
+            await Client.Download.GetRemoteConfigVersion(Client.AppVersion, Client.Platform).ConfigureAwait(false);
+            await Client.Download.GetAssetDigest(Client.AppVersion, Client.Platform).ConfigureAwait(false);
         }
     }
 }

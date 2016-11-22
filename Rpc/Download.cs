@@ -6,6 +6,7 @@ using POGOProtos.Enums;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
+using PokemonGo.RocketAPI.Helpers;
 
 #endregion
 
@@ -21,7 +22,7 @@ namespace PokemonGo.RocketAPI.Rpc
         {
             var message = new DownloadSettingsMessage
             {
-                Hash = "54b359c97e46900f87211ef6e6dd0b7f2a3ea1f5"
+                Hash = Client.SettingsHash
             };
 
             return await PostProtoPayload<Request, DownloadSettingsResponse>(RequestType.DownloadSettings, message);
@@ -35,8 +36,7 @@ namespace PokemonGo.RocketAPI.Rpc
                         new DownloadItemTemplatesMessage());
         }
 
-        public async Task<DownloadRemoteConfigVersionResponse> GetRemoteConfigVersion(uint appVersion,
-            string deviceManufacturer, string deviceModel, string locale, Platform platform)
+        public async Task<DownloadRemoteConfigVersionResponse> GetRemoteConfigVersion(uint appVersion, Platform platform)
         {
             return
                 await
@@ -44,15 +44,11 @@ namespace PokemonGo.RocketAPI.Rpc
                         RequestType.DownloadRemoteConfigVersion, new DownloadRemoteConfigVersionMessage
                         {
                             AppVersion = appVersion,
-                            DeviceManufacturer = deviceManufacturer,
-                            DeviceModel = deviceModel,
-                            Locale = locale,
                             Platform = platform
                         });
         }
 
-        public async Task<GetAssetDigestResponse> GetAssetDigest(uint appVersion, string deviceManufacturer,
-            string deviceModel, string locale, Platform platform)
+        public async Task<GetAssetDigestResponse> GetAssetDigest(uint appVersion, Platform platform)
         {
             return
                 await
@@ -60,9 +56,6 @@ namespace PokemonGo.RocketAPI.Rpc
                         new GetAssetDigestMessage
                         {
                             AppVersion = appVersion,
-                            DeviceManufacturer = deviceManufacturer,
-                            DeviceModel = deviceModel,
-                            Locale = locale,
                             Platform = platform
                         });
         }

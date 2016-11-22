@@ -31,15 +31,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 Longitude = Client.CurrentLongitude
             };
 
-            var updatePlayerLocationRequestEnvelope = await GetRequestBuilder().GetRequestEnvelope(new Request[] {
-                new Request
-                {
-                    RequestType = RequestType.PlayerUpdate,
-                    RequestMessage = message.ToByteString()
-                }
-            });
-
-            return await PostProtoPayload<Request, PlayerUpdateResponse>(updatePlayerLocationRequestEnvelope);
+            return await PostProtoPayload<Request, PlayerUpdateResponse>(RequestType.PlayerUpdate, message);
         }
 
         internal void SetCoordinates(double lat, double lng, double altitude)
@@ -62,15 +54,8 @@ namespace PokemonGo.RocketAPI.Rpc
                 RequestMessage = new GetPlayerMessage().ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getPlayerRequest, Client));
-
-            Tuple<GetPlayerResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
-                    PostProtoPayload
-                        <Request, GetPlayerResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
-            
-            return response.Item1;
+            GetPlayerResponse response = await PostProtoPayload<Request, GetPlayerResponse>(RequestType.GetPlayer, getPlayerRequest);
+            return response;
         }
 
         public async Task<GetPlayerProfileResponse> GetPlayerProfile(string playerName)

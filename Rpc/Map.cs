@@ -18,12 +18,7 @@ namespace PokemonGo.RocketAPI.Rpc
         {
         }
 
-        public async
-            Task
-                <
-                    Tuple
-                        <GetMapObjectsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse,
-                            DownloadSettingsResponse, GetBuddyWalkedResponse>> GetMapObjects()
+        public async Task<GetMapObjectsResponse> GetMapObjects()
         {
             var getMapObjectsMessage = new GetMapObjectsMessage
             {
@@ -32,30 +27,8 @@ namespace PokemonGo.RocketAPI.Rpc
                 Latitude = Client.CurrentLatitude,
                 Longitude = Client.CurrentLongitude
             };
-            
-            var getMapObjectsRequest = new Request
-            {
-                RequestType = RequestType.GetMapObjects,
-                RequestMessage = getMapObjectsMessage.ToByteString()
-            };
-            
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getMapObjectsRequest, Client));
-
-            Tuple<GetMapObjectsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
-                    PostProtoPayload
-                        <Request, GetMapObjectsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
-
-            GetInventoryResponse getInventoryResponse = response.Item4;
-            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
-
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
-            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
-
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-            
+                        
+            GetMapObjectsResponse response = await PostProtoPayload<Request, GetMapObjectsResponse>(RequestType.GetMapObjects, getMapObjectsMessage, true, true); // Also add GetBuddyWalked
             return response;
         }
 
