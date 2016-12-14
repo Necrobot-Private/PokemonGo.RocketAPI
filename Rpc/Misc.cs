@@ -28,27 +28,39 @@ namespace PokemonGo.RocketAPI.Rpc
                             Codename = codename
                         });
         }
-//TODO: Removed from POGOProtos.NetStandard1
-/* 
-        public async Task<CheckCodenameAvailableResponse> CheckCodenameAvailable(string codename)
-        {
-            return
-                await
-                    PostProtoPayload<Request, CheckCodenameAvailableResponse>(RequestType.CheckCodenameAvailable,
-                        new CheckCodenameAvailableMessage
-                        {
-                            Codename = codename
-                        });
-        }
+        //TODO: Removed from POGOProtos.NetStandard1
+        /* 
+                public async Task<CheckCodenameAvailableResponse> CheckCodenameAvailable(string codename)
+                {
+                    return
+                        await
+                            PostProtoPayload<Request, CheckCodenameAvailableResponse>(RequestType.CheckCodenameAvailable,
+                                new CheckCodenameAvailableMessage
+                                {
+                                    Codename = codename
+                                });
+                }
 
-        public async Task<GetSuggestedCodenamesResponse> GetSuggestedCodenames()
-        {
-            return
-                await
-                    PostProtoPayload<Request, GetSuggestedCodenamesResponse>(RequestType.GetSuggestedCodenames,
-                        new GetSuggestedCodenamesMessage());
-        }
-*/
+                public async Task<GetSuggestedCodenamesResponse> GetSuggestedCodenames()
+                {
+                    return
+                        await
+                            PostProtoPayload<Request, GetSuggestedCodenamesResponse>(RequestType.GetSuggestedCodenames,
+                                new GetSuggestedCodenamesMessage());
+                }
+        */
+        //TODO: ADD in POGOProtos.NetStandad1
+        /*
+          AvatarCustomization
+          AvatarItem
+          PlayerAvatarType
+          PokemonDisplay
+          Filter
+          Slot
+          ListAvatarCustomizationsMessage
+          ListAvatarCustomizationsResponse
+          AvatarCustomizationSettings
+         */
         public async Task<EchoResponse> SendEcho()
         {
             return await PostProtoPayload<Request, EchoResponse>(RequestType.Echo, new EchoMessage());
