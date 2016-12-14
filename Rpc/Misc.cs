@@ -28,7 +28,8 @@ namespace PokemonGo.RocketAPI.Rpc
                             Codename = codename
                         });
         }
-
+//TODO: Removed from POGOProtos.NetStandard1
+/* 
         public async Task<CheckCodenameAvailableResponse> CheckCodenameAvailable(string codename)
         {
             return
@@ -47,7 +48,7 @@ namespace PokemonGo.RocketAPI.Rpc
                     PostProtoPayload<Request, GetSuggestedCodenamesResponse>(RequestType.GetSuggestedCodenames,
                         new GetSuggestedCodenamesMessage());
         }
-
+*/
         public async Task<EchoResponse> SendEcho()
         {
             return await PostProtoPayload<Request, EchoResponse>(RequestType.Echo, new EchoMessage());
