@@ -48,9 +48,7 @@ namespace PokemonGo.RocketAPI.Rpc
                             PostProtoPayload<Request, GetSuggestedCodenamesResponse>(RequestType.GetSuggestedCodenames,
                                 new GetSuggestedCodenamesMessage());
                 }
-        */
-        //TODO: ADD in POGOProtos.NetStandad1
-        /*
+      Add or moved in to AeonLucid/POGOProtos.NetStandard1 2.3.0:
           AvatarCustomization
           AvatarItem
           PlayerAvatarType
