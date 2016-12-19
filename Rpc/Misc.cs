@@ -48,16 +48,17 @@ namespace PokemonGo.RocketAPI.Rpc
                             PostProtoPayload<Request, GetSuggestedCodenamesResponse>(RequestType.GetSuggestedCodenames,
                                 new GetSuggestedCodenamesMessage());
                 }
+
       Add or moved in to AeonLucid/POGOProtos.NetStandard1 2.3.0:
-          AvatarCustomization
-          AvatarItem
-          PlayerAvatarType
-          PokemonDisplay
-          Filter
-          Slot
-          ListAvatarCustomizationsMessage
-          ListAvatarCustomizationsResponse
-          AvatarCustomizationSettings
+         * AvatarCustomization
+         * AvatarItem
+         * PlayerAvatarType
+         * PokemonDisplay
+         * Filter
+         * Slot
+         * ListAvatarCustomizationsMessage
+         * ListAvatarCustomizationsResponse
+         * AvatarCustomizationSettings
          */
         public async Task<EchoResponse> SendEcho()
         {
