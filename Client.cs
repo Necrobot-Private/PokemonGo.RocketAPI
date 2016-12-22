@@ -78,8 +78,8 @@ namespace PokemonGo.RocketAPI
              * AppVersion = 4500;
              * CurrentApiEmulationVersion = new Version("0.45.0");
              * New Values */
-            AppVersion = 4500;
-            CurrentApiEmulationVersion = new Version("0.45.0");
+            AppVersion = 5100;
+            CurrentApiEmulationVersion = new Version("0.51.0");
             SettingsHash = "";
         }
 
