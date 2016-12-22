@@ -74,13 +74,15 @@ namespace PokemonGo.RocketAPI
                 // Now set the client platform to ios
                 Platform = Platform.Ios;
             }
-
+            /* Old values
+             * AppVersion = 4500;
+             * CurrentApiEmulationVersion = new Version("0.45.0");
+             * New Values */
             AppVersion = 4500;
-            SettingsHash = "";
-
             CurrentApiEmulationVersion = new Version("0.45.0");
+            SettingsHash = "";
         }
-        
+
         public void SetCaptchaToken(string token)
         {
             CaptchaToken = token;
