@@ -4,7 +4,26 @@ namespace PokemonGo.RocketAPI.Helpers
 {
     public static class HashBuilder
     {
-        /* IOS 1.15.0 */
+            /* Old Values
+             * //IOS 1.15.0 
+             * static ulong[] magic_table = {
+             * 0x2dd7caaefcf073eb, 0xa9209937349cfe9c,
+             * 0xb84bfc934b0e60ef, 0xff709c157b26e477,
+             * 0x3936fd8735455112, 0xca141bf22338d331,
+             * 0xdd40e749cb64fd02, 0x5e268f564b0deb26,
+             * 0x658239596bdea9ec, 0x31cedf33ac38c624,
+             * 0x12f56816481b0cfd, 0x94e9de155f40f095,
+             * 0x5089c907844c6325, 0xdf887e97d73c50e3,
+             * 0xae8870787ce3c11d, 0xa6767d18c58d2117,
+             * };
+             * 
+             * static UInt128 ROUND_MAGIC = new UInt128(0xe3f0d44988bcdfab, 0x081570afdd535ec3);
+             * static ulong FINAL_MAGIC0 = 0xce7c4801d683e824;
+             * static ulong FINAL_MAGIC1 = 0x6823775b1daad522;
+             * static UInt32 HASH_SEED = 0x46e945f8;
+             * New Values */
+
+        // IOS  1.21.0
         static ulong[] magic_table = {
             0x2dd7caaefcf073eb, 0xa9209937349cfe9c,
             0xb84bfc934b0e60ef, 0xff709c157b26e477,

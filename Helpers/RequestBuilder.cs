@@ -20,9 +20,11 @@ namespace PokemonGo.RocketAPI.Helpers
 {
     public class RequestBuilder
     {
-        // The next variables are specific to 45.0 client.
-        private static long Client_4500_Unknown25 = -1553869577012279119;
-
+        /* The next variables are specific to 51.0 client.
+         * /!\ old 
+         * private static long Client_4500_Unknown25 = -1553869577012279119;
+         * /!\ New */
+        private static long Client_5100_Unknown25 = -1553869577012279119;
         private static readonly Random RandomDevice = new Random();
         private static readonly TRandom TRandomDevice = new TRandom();
         private readonly double _altitude;
@@ -167,7 +169,7 @@ namespace PokemonGo.RocketAPI.Helpers
             var sig = new Signature
             {
                 SessionHash = SessionHash,
-                Unknown25 = Client_4500_Unknown25,
+                Unknown25 = Client_5100_Unknown25,
                 Timestamp = (ulong)Utils.GetTime(true),
                 TimestampSinceStart = (ulong)(Utils.GetTime(true) - _client.StartTime),
                 LocationHash1 = (int)Utils.GenerateLocation1(ticketBytes, _latitude, _longitude, _horizontalAccuracy),
