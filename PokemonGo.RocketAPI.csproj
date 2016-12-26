@@ -134,7 +134,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="POGOLib.Official, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\POGOLib.Official.1.2.1\lib\net45\POGOLib.Official.dll</HintPath>
+      <HintPath>$(SolutionDir)\packages\POGOLib.Official.1.2.1\lib\net45\POGOLib.Official.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="POGOLib.Official.Google, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -142,7 +142,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="POGOProtos.NetStandard1, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\POGOProtos.NetStandard1.2.4.0\lib\net45\POGOProtos.NetStandard1.dll</HintPath>
+      <HintPath>$(SolutionDir)\packages\POGOProtos.NetStandard1.2.4.0\lib\net45\POGOProtos.NetStandard1.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PommaLabs.Thrower, Version=3.0.0.0, Culture=neutral, PublicKeyToken=2f204b7110a52060, processorArchitecture=MSIL">
