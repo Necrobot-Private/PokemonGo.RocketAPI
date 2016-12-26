@@ -311,10 +311,15 @@ namespace PokemonGo.RocketAPI.Helpers
             };
 
             e.Requests.AddRange(customRequests);
+<<<<<<< HEAD
 
+            if (_client.AccessToken.AuthTicket == null || _client.AccessToken.IsExpired)
+=======
+            
             if (_client.AccessToken.AuthTicket == null || 
                 (_client.AccessToken.AuthTicket != null && _client.AccessToken.AuthTicket.ExpireTimestampMs < (ulong)Utils.GetTime(true) - (60000 * 10)) || // Check AuthTicket expiration (with 10 minute buffer)
                 _client.AccessToken.IsExpired)
+>>>>>>> 0c7379cecf56540d5e56bda93c3563a6940a6a07
             {
                 if (_client.AccessToken.IsExpired)
                 {
