@@ -29,24 +29,24 @@ namespace PokemonGo.RocketAPI.Rpc
                         });
         }
 
-        public async Task<CheckCodenameAvailableResponse> CheckCodenameAvailable(string codename)
-        {
-            return
-                await
-                    PostProtoPayload<Request, CheckCodenameAvailableResponse>(RequestType.CheckCodenameAvailable,
-                        new CheckCodenameAvailableMessage
-                        {
-                            Codename = codename
-                        });
-        }
+        //public async Task<CheckCodenameAvailableResponse> CheckCodenameAvailable(string codename)
+        //{
+        //    return
+        //        await
+        //            PostProtoPayload<Request, CheckCodenameAvailableResponse>(RequestType.CheckCodenameAvailable,
+        //                new CheckCodenameAvailableMessage
+        //                {
+        //                    Codename = codename
+        //                });
+        //}
 
-        public async Task<GetSuggestedCodenamesResponse> GetSuggestedCodenames()
-        {
-            return
-                await
-                    PostProtoPayload<Request, GetSuggestedCodenamesResponse>(RequestType.GetSuggestedCodenames,
-                        new GetSuggestedCodenamesMessage());
-        }
+        //public async Task<GetSuggestedCodenamesResponse> GetSuggestedCodenames()
+        //{
+        //    return
+        //        await
+        //            PostProtoPayload<Request, GetSuggestedCodenamesResponse>(RequestType.GetSuggestedCodenames,
+        //                new GetSuggestedCodenamesMessage());
+        //}
 
         public async Task<EchoResponse> SendEcho()
         {

@@ -28,7 +28,8 @@ namespace PokemonGo.RocketAPI.Rpc
             var message = new PlayerUpdateMessage
             {
                 Latitude = Client.CurrentLatitude,
-                Longitude = Client.CurrentLongitude
+                Longitude = Client.CurrentLongitude    ,
+                
             };
 
             var updatePlayerLocationRequestEnvelope = await GetRequestBuilder().GetRequestEnvelope(new Request[] {
@@ -167,7 +168,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<VerifyChallengeResponse> VerifyChallenge(string token)
         {
-            return await PostProtoPayload<Request, VerifyChallengeResponse>(RequestType.VerifyChallenge, CommonRequest.GetVerifyChallenge(token));
+            return await PostProtoPayload<Request, VerifyChallengeResponse>(RequestType.VerifyChallenge, new VerifyChallengeMessage() { Token = token });
         }
     }
 }

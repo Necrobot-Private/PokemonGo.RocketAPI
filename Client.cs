@@ -9,6 +9,10 @@ using PokemonGo.RocketAPI.Rpc;
 using POGOProtos.Enums;
 using POGOProtos.Networking.Envelopes;
 using PokemonGo.RocketAPI.Helpers;
+using POGOLib.Official.Util.Hash;
+using PokemonGo.RocketAPI.Hash;
+using PokemonGo.RocketAPI.Encrypt;
+using PokemonGo.RocketAPI.Exceptions;
 
 #endregion
 
@@ -29,9 +33,32 @@ namespace PokemonGo.RocketAPI
         public Player Player;
         string CaptchaToken;
         public KillSwitchTask KillswitchTask;
-        
+        public Hash.IHasher Hasher;
+        public ICrypt Cryptor;
         public Client(ISettings settings)
         {
+            if (settings.UsePogoDevHashServer )
+            {
+                if (string.IsNullOrEmpty(settings.AuthAPIKey)) throw new AuthConfigException("You selected Pogodev API but not provide proper API Key");
+                Hasher = new PokefamerHasher(settings.AuthAPIKey);
+                Cryptor = new Crypt();
+
+            }
+            else
+            if (settings.UseLegacyAPI)
+            {
+                Hasher = new LegacyHashser();
+                Cryptor = new LegacyCrypt();
+
+            }
+            else
+            {
+                throw new AuthConfigException("No API method being select in your auth.json");
+            }
+
+            //Hasher = new LegacyHashser();
+
+
             Settings = settings;
             Proxy = InitProxy();
             PokemonHttpClient = new PokemonHttpClient();

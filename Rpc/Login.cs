@@ -104,20 +104,23 @@ namespace PokemonGo.RocketAPI.Rpc
                     {
                         client.AccessToken = await client.LoginProvider.GetAccessToken();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        
+                        Console.WriteLine(ex.Message);
+                        if (ex.Message.Contains("You have to log into an browser")) throw ex;
                         //Logger.Error($"Reauthenticate exception was catched: {exception}");
                     }
                     finally
                     {
                         if (client.AccessToken == null || client.AccessToken.Token == null)
                         {
-                            var sleepSeconds = Math.Min(60, ++tries * 5);
+                            var sleepSeconds = 3000;// Math.Min(60, ++tries * 5);
                             //Logger.Error($"Reauthentication failed, trying again in {sleepSeconds} seconds.");
                             await Task.Delay(TimeSpan.FromMilliseconds(sleepSeconds * 1000));
                         }
 
-                        if (tries == 10)
+                        if (tries == 5)
                         {
                             throw new LoginFailedException("Error refreshing access token.");
                         }
