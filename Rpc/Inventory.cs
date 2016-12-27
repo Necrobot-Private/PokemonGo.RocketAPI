@@ -5,6 +5,7 @@ using POGOProtos.Inventory.Item;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
+using System.Collections.Generic;
 
 #endregion
 
@@ -20,12 +21,24 @@ namespace PokemonGo.RocketAPI.Rpc
         {
             var message = new ReleasePokemonMessage
             {
+                
                 PokemonId = pokemonId
             };
 
+
             return await PostProtoPayload<Request, ReleasePokemonResponse>(RequestType.ReleasePokemon, message);
         }
+        public async Task<ReleasePokemonResponse> TransferPokemons(List<ulong> pokemonIds)
+        {
+            var message = new ReleasePokemonMessage
+            {
+                //PokemonIds = new Google.Protobuf.Collections.RepeatedField<ulong>() 
+            };
 
+            message.PokemonIds.AddRange(pokemonIds);
+
+            return await PostProtoPayload<Request, ReleasePokemonResponse>(RequestType.ReleasePokemon, message);
+        }
         public async Task<EvolvePokemonResponse> EvolvePokemon(ulong pokemonId)
         {
             var message = new EvolvePokemonMessage
