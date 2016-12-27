@@ -102,10 +102,10 @@ namespace PokemonGo.RocketAPI
                 Platform = Platform.Ios;
             }
 
-            AppVersion = 4500;
+            AppVersion = 4910;
             SettingsHash = "";
 
-            CurrentApiEmulationVersion = new Version("0.45.0");
+            CurrentApiEmulationVersion = new Version("0.49.1");
         }
         
         public void SetCaptchaToken(string token)
