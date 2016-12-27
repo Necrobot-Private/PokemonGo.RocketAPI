@@ -43,12 +43,17 @@ namespace PokemonGo.RocketAPI
                 Hasher = new PokefamerHasher(settings.AuthAPIKey);
                 Cryptor = new Crypt();
 
+                // These constants need to change if we update the hashing server API version that is used.
+                AppVersion = 5120;
+                CurrentApiEmulationVersion = new Version("0.51.2"); 
             }
             else
             if (settings.UseLegacyAPI)
             {
                 Hasher = new LegacyHashser();
                 Cryptor = new LegacyCrypt();
+                AppVersion = 4500;
+                CurrentApiEmulationVersion = new Version("0.45.0");
 
             }
             else
@@ -101,11 +106,7 @@ namespace PokemonGo.RocketAPI
                 // Now set the client platform to ios
                 Platform = Platform.Ios;
             }
-
-            AppVersion = 4500;
             SettingsHash = "";
-
-            CurrentApiEmulationVersion = new Version("0.45.0");
         }
         
         public void SetCaptchaToken(string token)

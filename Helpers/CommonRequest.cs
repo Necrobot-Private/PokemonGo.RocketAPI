@@ -179,8 +179,11 @@ namespace PokemonGo.RocketAPI.Helpers
                 if (!string.IsNullOrEmpty(downloadSettingsResponse.Settings.MinimumClientVersion))
                 {
                     client.MinimumClientVersion = new Version(downloadSettingsResponse.Settings.MinimumClientVersion);
-                   // if (client.CheckCurrentVersionOutdated())
-                   //     throw new MinimumClientVersionException(client.CurrentApiEmulationVersion, client.MinimumClientVersion);
+                    if (!client.Settings.UseLegacyAPI)
+                    {
+                        if (client.CheckCurrentVersionOutdated())
+                            throw new MinimumClientVersionException(client.CurrentApiEmulationVersion, client.MinimumClientVersion);
+                    }
                 }
             }
         }
