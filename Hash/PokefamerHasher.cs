@@ -71,7 +71,7 @@ namespace PokemonGo.RocketAPI.Hash
                     // You should queue up your requests, and retry in a second.
                     case (HttpStatusCode)429:
                         Console.WriteLine($"Your request has been limited. {await response.Content.ReadAsStringAsync()}");
-                        await Task.Delay(60 * 1000);
+                        await Task.Delay(2 * 1000);  //stop for 2 sec
                         return await RequestHashesAsync(request);
                         break;
                 }
