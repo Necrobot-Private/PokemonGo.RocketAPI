@@ -209,6 +209,7 @@
     <Compile Include="Encrypt\ICrypt.cs" />
     <Compile Include="Encrypt\Crypt.cs" />
     <Compile Include="Encrypt\LegacyCrypt.cs" />
+    <Compile Include="Exceptions\APIBadRequestExceltion.cs" />
     <Compile Include="Exceptions\AuthConfigException.cs" />
     <Compile Include="Exceptions\CaptchaException.cs" />
     <Compile Include="Exceptions\GoogleException.cs" />
