@@ -306,7 +306,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 RequestId = GetNextRequestId(), //3
                 Latitude = _latitude, //7
                 Longitude = _longitude, //8
-                Accuracy = _altitude,// (int)_horizontalAccuracy, //9
+                Altitude = _altitude,// (int)_horizontalAccuracy, //9
                 MsSinceLastLocationfix = (long)TRandomDevice.Triangular(300, 30000, 10000) //12
             };
 
