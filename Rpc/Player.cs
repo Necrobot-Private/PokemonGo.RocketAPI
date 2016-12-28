@@ -166,6 +166,11 @@ namespace PokemonGo.RocketAPI.Rpc
                     });
         }
 
+        public async Task<CheckChallengeResponse> CheckChallenge()
+        {
+            return await PostProtoPayload<Request, CheckChallengeResponse>(RequestType.CheckChallenge, new CheckChallengeMessage() { });
+        }
+
         public async Task<VerifyChallengeResponse> VerifyChallenge(string token)
         {
             return await PostProtoPayload<Request, VerifyChallengeResponse>(RequestType.VerifyChallenge, new VerifyChallengeMessage() { Token = token });
