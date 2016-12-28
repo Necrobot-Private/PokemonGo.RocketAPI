@@ -30,7 +30,6 @@ namespace PokemonGo.RocketAPI.Extensions
                 var pokemon = InventoryItems.FirstOrDefault(p => p.InventoryItemData?.PokemonData?.Id == deletedItem.DeletedItem.PokemonId);
                 if(pokemon != null)
                 {
-                    Console.WriteLine($"Remove pokemon from cache");
                     InventoryItems.Remove(pokemon);
                 }
                 InventoryItems.Remove(deletedItem);
