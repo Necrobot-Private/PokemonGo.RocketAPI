@@ -216,6 +216,7 @@
     <Compile Include="Exceptions\GoogleOfflineException.cs" />
     <Compile Include="Exceptions\LoginFailedException.cs" />
     <Compile Include="Exceptions\MinimumClientVersionException.cs" />
+    <Compile Include="Extensions\GetInventoryExtensions.cs" />
     <Compile Include="Hash\PokefamerHasher.cs" />
     <Compile Include="Hash\IHasher.cs" />
     <Compile Include="Hash\LegacyHashser.cs" />
