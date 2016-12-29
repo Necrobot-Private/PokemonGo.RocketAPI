@@ -122,7 +122,12 @@ namespace PokemonGo.RocketAPI.Rpc
 
                         if (tries == 5)
                         {
-                            throw new LoginFailedException("Error refreshing access token.");
+
+                            var cacheDir = Path.Combine(Directory.GetCurrentDirectory(), "Cache");
+                            var fileName = Path.Combine(cacheDir, $"{client.AccessToken?.Uid}-{client.LoginProvider.ProviderId}.json");
+                            File.Delete(fileName);
+
+                            throw new TokenRefreshException("Error refreshing access token.");
                         }
                     }
                 }
