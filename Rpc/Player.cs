@@ -9,6 +9,7 @@ using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
 using System;
 using PokemonGo.RocketAPI.Helpers;
+using PokemonGo.RocketAPI.Exceptions;
 
 #endregion
 
@@ -37,10 +38,21 @@ namespace PokemonGo.RocketAPI.Rpc
                 {
                     RequestType = RequestType.PlayerUpdate,
                     RequestMessage = message.ToByteString()
+                },
+                new Request
+                {
+                    RequestType = RequestType.CheckChallenge,
+                    RequestMessage = (new CheckChallengeMessage()).ToByteString() 
                 }
             });
 
-            return await PostProtoPayload<Request, PlayerUpdateResponse>(updatePlayerLocationRequestEnvelope);
+            var tuple = await PostProtoPayload<Request, PlayerUpdateResponse, CheckChallengeResponse>(updatePlayerLocationRequestEnvelope);
+            if (tuple.Item2.ShowChallenge && string.IsNullOrEmpty(tuple.Item2.ChallengeUrl))
+            {
+                throw new CaptchaException(tuple.Item2.ChallengeUrl);
+            }
+
+            return tuple.Item1;
         }
 
         internal void SetCoordinates(double lat, double lng, double altitude)
