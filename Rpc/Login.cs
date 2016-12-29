@@ -115,7 +115,7 @@ namespace PokemonGo.RocketAPI.Rpc
                     {
                         if (client.AccessToken == null || client.AccessToken.Token == null)
                         {
-                            var sleepSeconds = 3000;// Math.Min(60, ++tries * 5);
+                            var sleepSeconds =  Math.Min(60, ++tries * 5);
                             //Logger.Error($"Reauthentication failed, trying again in {sleepSeconds} seconds.");
                             await Task.Delay(TimeSpan.FromMilliseconds(sleepSeconds * 1000));
                         }

@@ -161,9 +161,11 @@ namespace PokemonGo.RocketAPI.Helpers
                 {
                     client.InventoryLastUpdateTimestamp = getInventoryResponse.InventoryDelta.NewTimestampMs;
                 }
+
+                client.LastGetInvenrotyResponse = getInventoryResponse;
             }
         }
-
+                                            
         public static void ProcessDownloadSettingsResponse(Client client, DownloadSettingsResponse downloadSettingsResponse)
         {
             if (downloadSettingsResponse == null)
