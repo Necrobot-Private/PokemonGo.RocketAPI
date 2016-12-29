@@ -9,6 +9,7 @@ using PokemonGo.RocketAPI.Exceptions;
 using POGOProtos.Networking.Envelopes;
 using System.Collections.Concurrent;
 using System.Threading;
+using Newtonsoft.Json;
 
 #endregion
 
@@ -113,7 +114,7 @@ namespace PokemonGo.RocketAPI.Extensions
                     return await PerformRemoteProcedureCall<TRequest>(client, apiClient, requestEnvelope);
                 case ResponseEnvelope.Types.StatusCode.BadRequest:
                     // Your account may be banned! please try from the official client.
-                    throw new LoginFailedException("Your account may be banned! please try from the official client.");
+                    throw new APIBadRequestException("BAD REQUEST \r\n" + JsonConvert.SerializeObject(requestEnvelope));
                 case ResponseEnvelope.Types.StatusCode.Unknown:
                     break;
                 case ResponseEnvelope.Types.StatusCode.Ok:

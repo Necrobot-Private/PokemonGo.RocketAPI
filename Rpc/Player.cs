@@ -38,7 +38,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 {
                     RequestType = RequestType.PlayerUpdate,
                     RequestMessage = message.ToByteString()
-                }   ,
+                },
                 new Request
                 {
                     RequestType = RequestType.CheckChallenge,
@@ -46,8 +46,8 @@ namespace PokemonGo.RocketAPI.Rpc
                 }
             });
 
-            var tuple = await PostProtoPayload<Request, PlayerUpdateResponse,CheckChallengeResponse>(updatePlayerLocationRequestEnvelope);
-            if(tuple.Item2.ShowChallenge && string.IsNullOrEmpty(tuple.Item2.ChallengeUrl))
+            var tuple = await PostProtoPayload<Request, PlayerUpdateResponse, CheckChallengeResponse>(updatePlayerLocationRequestEnvelope);
+            if (tuple.Item2.ShowChallenge && string.IsNullOrEmpty(tuple.Item2.ChallengeUrl))
             {
                 throw new CaptchaException(tuple.Item2.ChallengeUrl);
             }
