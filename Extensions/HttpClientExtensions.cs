@@ -44,7 +44,7 @@ namespace PokemonGo.RocketAPI.Extensions
 
             ResponseEnvelope response = await PerformThrottledRemoteProcedureCall<TRequest>(client, apiClient, requestEnvelope);
 
-            if (response.Returns.Count != requestEnvelope.Requests.Count)
+            if (response== null || (response.Returns.Count != requestEnvelope.Requests.Count))
                 throw new InvalidResponseException();
 
             for (var i = 0; i < responseTypes.Length; i++)
