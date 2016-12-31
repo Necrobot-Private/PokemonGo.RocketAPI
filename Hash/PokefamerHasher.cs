@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PokemonGo.RocketAPI.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +21,38 @@ namespace PokemonGo.RocketAPI.Hash
         }
         public async Task<HashResponseContent> RequestHashesAsync(HashRequestContent request)
         {
+            int retry = 3;
+            do {
+                try
+                {
+                    return await InternalRequestHashesAsync(request);
+                }
+                catch (HasherException hashEx)
+                {
+                    throw hashEx;
+                }
+                catch (Exception ex)
+                {
+
+                }
+                finally
+                {
+                    retry--;
+                }
+                await Task.Delay(1000);
+            } while (retry > 0);
+
+            throw new HasherException("Pokefamer Hash API server might down");
+
+        }
+        private  async Task<HashResponseContent> InternalRequestHashesAsync(HashRequestContent request)
+        {
             // This value will determine which version of hashing you receive.
             // Currently supported versions:
             // v119 -> Pogo iOS 1.19
             // v121 -> Pogo iOS 1.21
-            const string endpoint = "api/v122/hash";
+            // v121_2 => IOS 1.22
+            const string endpoint = "api/v121_2/hash";
 
             // NOTE: This is really bad. Don't create new HttpClient's all the time.
             // Use a single client per-thread if you need one.
@@ -57,14 +85,14 @@ namespace PokemonGo.RocketAPI.Hash
                     // Returned when something in your request is "invalid". Also when X-AuthToken is not set.
                     // See the error message for why it is bad.
                     case HttpStatusCode.BadRequest:
-                        Console.WriteLine($"Bad request sent to the hashing server! {await response.Content.ReadAsStringAsync()}");
+                        string responseText = await response.Content.ReadAsStringAsync();
+                        if (responseText.Contains("Unauthorized")) throw new HasherException($"Your pokefamer API key is incorrect or expired, please check auth.json (Pokefamer message : {responseText})");
+                        Console.WriteLine($"Bad request sent to the hashing server! {responseText}");
                         break;
 
                     // This error code is returned when your "key" is not in a valid state. (Expired, invalid, etc)
                     case HttpStatusCode.Unauthorized:
-                        Console.WriteLine("You are not authorized to use this service. please check you api key correct");
-                        Console.ReadKey();
-                        Environment.Exit(0); //TODO need logic layer to handle this error , maybe validation when first start
+                        throw new  HasherException("You are not authorized to use this service. please check you apinew  key correct");
                         break;
 
                     // This error code is returned when you have exhausted your current "hashes per second" value
@@ -74,6 +102,8 @@ namespace PokemonGo.RocketAPI.Hash
                         await Task.Delay(2 * 1000);  //stop for 2 sec
                         return await RequestHashesAsync(request);
                         break;
+                    default:
+                        throw new HasherException($"Pokefamer Hash API ({client.BaseAddress}{endpoint}) might down!");
                 }
             }
 
