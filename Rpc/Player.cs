@@ -55,7 +55,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return tuple.Item1;
         }
 
-        internal void SetCoordinates(double lat, double lng, double altitude)
+        public void SetCoordinates(double lat, double lng, double altitude)
         {
             Client.CurrentLatitude = lat;
             Client.CurrentLongitude = lng;
