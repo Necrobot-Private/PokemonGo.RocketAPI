@@ -67,7 +67,8 @@ namespace PokemonGo.RocketAPI.Rpc
                 LastRetrievedAction = lastRetrievedAction,
                 PlayerLatitude = Client.CurrentLatitude,
                 PlayerLongitude = Client.CurrentLongitude,
-                AttackActions = {battleActions}
+                
+                AttackActions = { } // {battleActions}    ,
             };
 
             message.AttackActions.AddRange(battleActions);

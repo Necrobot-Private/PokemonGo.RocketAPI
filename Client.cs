@@ -45,7 +45,7 @@ namespace PokemonGo.RocketAPI
             if (settings.UsePogoDevHashServer )
             {
                 if (string.IsNullOrEmpty(settings.AuthAPIKey)) throw new AuthConfigException("You selected Pogodev API but not provide proper API Key");
-                Hasher = new PokefamerHasher(settings.AuthAPIKey);
+                Hasher = new PokefamerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog);
                 Cryptor = new Crypt();
 
                 // These constants need to change if we update the hashing server API version that is used.
