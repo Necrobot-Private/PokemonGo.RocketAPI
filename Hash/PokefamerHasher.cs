@@ -2,6 +2,7 @@
 using PokemonGo.RocketAPI.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -13,16 +14,25 @@ namespace PokemonGo.RocketAPI.Hash
 {
     public class PokefamerHasher : IHasher
     {
+        public class Stat
+        {
+            public DateTime Timestamp { get; set; }
+            public long ResponseTime { get; set; }
+        }
         public long Client_Unknown25 => -8832040574896607694;
         private string apiKey;
-        public PokefamerHasher(string apiKey)
+        public bool VerboseLog { get; set; }
+        private List<Stat> statistics = new List<Stat>();
+        public PokefamerHasher(string apiKey, bool log)
         {
+            this.VerboseLog = log;
             this.apiKey = apiKey;
         }
         public async Task<HashResponseContent> RequestHashesAsync(HashRequestContent request)
         {
             int retry = 3;
-            do {
+            do
+            {
                 try
                 {
                     return await InternalRequestHashesAsync(request);
@@ -31,9 +41,13 @@ namespace PokemonGo.RocketAPI.Hash
                 {
                     throw hashEx;
                 }
+                catch (TimeoutException)
+                {
+                    throw new HasherException("Pokefamer Hasher server might down - timeout out");
+                }
                 catch (Exception ex)
                 {
-
+                    Debug.Write(ex.Message);
                 }
                 finally
                 {
@@ -45,7 +59,9 @@ namespace PokemonGo.RocketAPI.Hash
             throw new HasherException("Pokefamer Hash API server might down");
 
         }
-        private  async Task<HashResponseContent> InternalRequestHashesAsync(HashRequestContent request)
+        private DateTime lastPrintVerbose = DateTime.Now;
+
+        private async Task<HashResponseContent> InternalRequestHashesAsync(HashRequestContent request)
         {
             // This value will determine which version of hashing you receive.
             // Currently supported versions:
@@ -73,7 +89,36 @@ namespace PokemonGo.RocketAPI.Hash
                 // An odd bug with HttpClient. You need to set the content type again.
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-                var response = await client.PostAsync(endpoint, content);
+                Stopwatch watcher = new Stopwatch();
+                HttpResponseMessage response = null;
+                watcher.Start();
+                Stat stat = new Stat() { Timestamp = DateTime.Now };
+                try
+                {
+                    response = await client.PostAsync(endpoint, content);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    watcher.Stop();
+                    stat.ResponseTime = watcher.ElapsedMilliseconds;
+                    statistics.Add(stat);
+                    statistics.RemoveAll(x => x.Timestamp < DateTime.Now.AddMinutes(-1));
+                    if (VerboseLog && lastPrintVerbose.AddSeconds(15) < DateTime.Now)
+                    {
+
+                        if (statistics.Count > 0)
+                        {
+                            lastPrintVerbose = DateTime.Now;
+                            double agv = statistics.Sum(x => x.ResponseTime) / statistics.Count;
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.WriteLine($"[{ DateTime.Now.ToString("hh:mm:ss")}] (HASH SERVER)  in last 1 minute  {statistics.Count} request/min , AVG: {agv:0.00} ms/request , Fastest : {statistics.Min(t=>t.ResponseTime)}, Slowest: {statistics.Max(t => t.ResponseTime)}");
+                        }
+                    }
+                }
 
                 // TODO: Fix this up with proper retry-after when we get rate limited.
                 switch (response.StatusCode)
@@ -92,7 +137,7 @@ namespace PokemonGo.RocketAPI.Hash
 
                     // This error code is returned when your "key" is not in a valid state. (Expired, invalid, etc)
                     case HttpStatusCode.Unauthorized:
-                        throw new  HasherException("You are not authorized to use this service. please check you apinew  key correct");
+                        throw new HasherException("You are not authorized to use this service. please check you apinew  key correct");
                         break;
 
                     // This error code is returned when you have exhausted your current "hashes per second" value

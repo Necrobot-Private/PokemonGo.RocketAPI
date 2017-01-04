@@ -43,5 +43,6 @@ namespace PokemonGo.RocketAPI
         bool UsePogoDevHashServer { get; set; }
         bool UseLegacyAPI { get; set; }
         string AuthAPIKey { get; set; }
+        bool DisplayVerboseLog { get; set; }
     }
 }
