@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PokemonGo.RocketAPI.Exceptions;
+using PokemonGo.RocketAPI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -144,9 +145,25 @@ namespace PokemonGo.RocketAPI.Hash
                     // You should queue up your requests, and retry in a second.
                     case (HttpStatusCode)429:
                         Console.WriteLine($"Your request has been limited. {await response.Content.ReadAsStringAsync()}");
-                        await Task.Delay(2 * 1000);  //stop for 2 sec
+                        long ratePeriodEndsAtTimestamp;
+                        IEnumerable<string> ratePeriodEndHeaderValues;
+                        if (response.Headers.TryGetValues("X-RatePeriodEnd", out ratePeriodEndHeaderValues))
+                        {
+                            // Get the rate-limit period ends at timestamp in seconds.
+                            ratePeriodEndsAtTimestamp = Convert.ToInt64(ratePeriodEndHeaderValues.First());
+                        }
+                        else
+                        {
+                            // If for some reason we couldn't get the timestamp, just default to 2 second wait.
+                            ratePeriodEndsAtTimestamp = Utils.GetTime(false) + 2;
+                        }
+                        
+                        long timeToWaitInSeconds = ratePeriodEndsAtTimestamp - Utils.GetTime(false);
+
+                        if (timeToWaitInSeconds > 0)
+                            await Task.Delay((int)(timeToWaitInSeconds * 1000));  // Wait until next rate-limit period begins.
+
                         return await RequestHashesAsync(request);
-                        break;
                     default:
                         throw new HasherException($"Pokefamer Hash API ({client.BaseAddress}{endpoint}) might down!");
                 }
