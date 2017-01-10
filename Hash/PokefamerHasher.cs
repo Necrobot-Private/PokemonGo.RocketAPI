@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PokemonGo.RocketAPI.Exceptions;
+using PokemonGo.RocketAPI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -131,24 +132,39 @@ namespace PokemonGo.RocketAPI.Hash
                     // See the error message for why it is bad.
                     case HttpStatusCode.BadRequest:
                         string responseText = await response.Content.ReadAsStringAsync();
-                        if (responseText.Contains("Unauthorized")) throw new HasherException($"Your pokefamer API key is incorrect or expired, please check auth.json (Pokefamer message : {responseText})");
+                        if (responseText.Contains("Unauthorized")) throw new HasherException($"Your API key is incorrect or expired, please check auth.json (Pokefamer message : {responseText})");
                         Console.WriteLine($"Bad request sent to the hashing server! {responseText}");
                         break;
 
                     // This error code is returned when your "key" is not in a valid state. (Expired, invalid, etc)
                     case HttpStatusCode.Unauthorized:
-                        throw new HasherException("You are not authorized to use this service. please check you apinew  key correct");
-                        break;
+                        throw new HasherException("You are not authorized to use this service.  Please check that your API key is correct.");
 
                     // This error code is returned when you have exhausted your current "hashes per second" value
                     // You should queue up your requests, and retry in a second.
                     case (HttpStatusCode)429:
                         Console.WriteLine($"Your request has been limited. {await response.Content.ReadAsStringAsync()}");
-                        await Task.Delay(2 * 1000);  //stop for 2 sec
+                        long ratePeriodEndsAtTimestamp;
+                        IEnumerable<string> ratePeriodEndHeaderValues;
+                        if (response.Headers.TryGetValues("X-RatePeriodEnd", out ratePeriodEndHeaderValues))
+                        {
+                            // Get the rate-limit period ends at timestamp in seconds.
+                            ratePeriodEndsAtTimestamp = Convert.ToInt64(ratePeriodEndHeaderValues.First());
+                        }
+                        else
+                        {
+                            // If for some reason we couldn't get the timestamp, just default to 2 second wait.
+                            ratePeriodEndsAtTimestamp = Utils.GetTime(false) + 2;
+                        }
+                        
+                        long timeToWaitInSeconds = ratePeriodEndsAtTimestamp - Utils.GetTime(false);
+
+                        if (timeToWaitInSeconds > 0)
+                            await Task.Delay((int)(timeToWaitInSeconds * 1000));  // Wait until next rate-limit period begins.
+
                         return await RequestHashesAsync(request);
-                        break;
                     default:
-                        throw new HasherException($"Pokefamer Hash API ({client.BaseAddress}{endpoint}) might down!");
+                        throw new HasherException($"Hash API server ({client.BaseAddress}{endpoint}) might down!");
                 }
             }
 
