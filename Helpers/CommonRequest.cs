@@ -147,6 +147,7 @@ namespace PokemonGo.RocketAPI.Helpers
             };
         }
 
+        private static object locker = new object();
         public static void ProcessGetInventoryResponse(Client client, GetInventoryResponse getInventoryResponse)
         {
             if (getInventoryResponse == null)
@@ -157,12 +158,15 @@ namespace PokemonGo.RocketAPI.Helpers
                 if (getInventoryResponse.InventoryDelta == null)
                     return;
                  
-                if (getInventoryResponse.InventoryDelta.NewTimestampMs >= client.InventoryLastUpdateTimestamp)
+                lock(locker)
                 {
-                    client.InventoryLastUpdateTimestamp = getInventoryResponse.InventoryDelta.NewTimestampMs;
-                }
+                    if (getInventoryResponse.InventoryDelta.NewTimestampMs >= client.InventoryLastUpdateTimestamp)
+                    {
+                        client.InventoryLastUpdateTimestamp = getInventoryResponse.InventoryDelta.NewTimestampMs;
+                    }
 
-                client.LastGetInvenrotyResponse = getInventoryResponse;
+                    client.LastGetInvenrotyResponse = getInventoryResponse;
+                }
             }
         }
                                             
