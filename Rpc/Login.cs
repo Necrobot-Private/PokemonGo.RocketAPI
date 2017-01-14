@@ -138,7 +138,7 @@ namespace PokemonGo.RocketAPI.Rpc
             }
         }
 
-        public async Task DoLogin()
+        public async Task<GetPlayerResponse> DoLogin()
         {
             await Client.KillswitchTask.Start();
 
@@ -146,13 +146,15 @@ namespace PokemonGo.RocketAPI.Rpc
             Client.StartTime = Utils.GetTime(true);
             RequestBuilder.Reset();
 
-            await Client.Player.GetPlayer();
+            var player = await Client.Player.GetPlayer();
 
             await
                 FireRequestBlock(CommonRequest.GetDownloadRemoteConfigVersionMessageRequest(Client))
                     .ConfigureAwait(false);
 
             await FireRequestBlockTwo().ConfigureAwait(false);
+
+            return player;
         }
         
         private async Task FireRequestBlock(Request request)
