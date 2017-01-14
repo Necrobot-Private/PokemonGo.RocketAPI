@@ -2,6 +2,7 @@ version: 1.0.0.{build}
 skip_tags: true
 configuration: Release
 platform: x86
+clone_folder: c:\projects\FeroxRev
 environment:
   SolutionDirectory: .
 before_build:
@@ -10,8 +11,8 @@ before_build:
 
     nuget restore -OutputDirectory packages
     
-    git clone -q --branch=master https://github.com/Necrobot-Private/POGOProtos.git POGOProtos
+    git clone -q --branch=master https://github.com/Necrobot-Private/POGOProtos.git c:\projects\POGOProtos
     
-    sed -i "s#$(SolutionDir)#..#g" POGOProtos/POGOProtos.csproj
+    sed -i "s#$(SolutionDir)#..#g" c:\projects\POGOProtos\POGOProtos.csproj
 build:
   verbosity: minimal
