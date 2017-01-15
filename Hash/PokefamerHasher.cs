@@ -116,7 +116,7 @@ namespace PokemonGo.RocketAPI.Hash
                             lastPrintVerbose = DateTime.Now;
                             double agv = statistics.Sum(x => x.ResponseTime) / statistics.Count;
                             Console.ForegroundColor = ConsoleColor.White;
-                            Console.WriteLine($"[{ DateTime.Now.ToString("hh:mm:ss")}] (HASH SERVER)  in last 1 minute  {statistics.Count} request/min , AVG: {agv:0.00} ms/request , Fastest : {statistics.Min(t=>t.ResponseTime)}, Slowest: {statistics.Max(t => t.ResponseTime)}");
+                            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] (HASH SERVER)  in last 1 minute  {statistics.Count} request/min , AVG: {agv:0.00} ms/request , Fastest : {statistics.Min(t=>t.ResponseTime)}, Slowest: {statistics.Max(t => t.ResponseTime)}");
                         }
                     }
                 }

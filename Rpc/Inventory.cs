@@ -171,7 +171,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 PokemonId = (long) pokemonId,
                 IsFavorite = isFavorite
             };
-
+           
             return await PostProtoPayload<Request, SetFavoritePokemonResponse>(RequestType.SetFavoritePokemon, message);
         }
     }
