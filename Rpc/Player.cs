@@ -10,6 +10,7 @@ using POGOProtos.Networking.Responses;
 using System;
 using PokemonGo.RocketAPI.Helpers;
 using PokemonGo.RocketAPI.Exceptions;
+using POGOProtos.Data;
 
 #endregion
 
@@ -53,6 +54,23 @@ namespace PokemonGo.RocketAPI.Rpc
             }
 
             return tuple.Item1;
+        }
+
+        public async Task<SetBuddyPokemonResponse> SelectBuddy(ulong pokemonId)
+        {
+            var setBuddyRequestEnvelope = await GetRequestBuilder().GetRequestEnvelope(new Request[] {
+                new Request
+                {
+                    RequestType = RequestType.SetBuddyPokemon,
+                    RequestMessage = (new SetBuddyPokemonMessage() {
+                              PokemonId = pokemonId
+                    }).ToByteString()
+                }
+            });
+
+            var tuple = await PostProtoPayload<Request, SetBuddyPokemonResponse>(setBuddyRequestEnvelope);
+
+            return tuple;
         }
 
         public void SetCoordinates(double lat, double lng, double altitude)
