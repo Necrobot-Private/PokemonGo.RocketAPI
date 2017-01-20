@@ -253,6 +253,8 @@
     <Compile Include="Helpers\DeviceInfoHelper.cs" />
     <Compile Include="Helpers\HashBuilder.cs" />
     <Compile Include="Helpers\KillSwitchTask.cs" />
+    <Compile Include="Helpers\PokemonCpUtils.cs" />
+    <Compile Include="Helpers\PokemonMeta.cs" />
     <Compile Include="Helpers\PokemonMetaRegistry.cs" />
     <Compile Include="Helpers\PokemonMoveMeta.cs" />
     <Compile Include="Helpers\Shuffle\Shuffles.cs" />
