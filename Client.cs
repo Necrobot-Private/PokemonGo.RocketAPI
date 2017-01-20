@@ -49,8 +49,8 @@ namespace PokemonGo.RocketAPI
                 Cryptor = new Crypt();
 
                 // These constants need to change if we update the hashing server API version that is used.
-                AppVersion = 5102;
-                CurrentApiEmulationVersion = new Version("0.51.2"); 
+                AppVersion = 5301;
+                CurrentApiEmulationVersion = new Version("0.53.1"); 
             }
             else
             if (settings.UseLegacyAPI)

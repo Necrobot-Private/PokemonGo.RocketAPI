@@ -69,7 +69,7 @@ namespace PokemonGo.RocketAPI.Hash
             // v119 -> Pogo iOS 1.19
             // v121 -> Pogo iOS 1.21
             // v121_2 => IOS 1.22
-            const string endpoint = "api/v121_2/hash";
+            const string endpoint = "api/v123_1/hash";
 
             // NOTE: This is really bad. Don't create new HttpClient's all the time.
             // Use a single client per-thread if you need one.
