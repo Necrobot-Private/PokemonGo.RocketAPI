@@ -20,7 +20,8 @@ namespace PokemonGo.RocketAPI.Hash
             public DateTime Timestamp { get; set; }
             public long ResponseTime { get; set; }
         }
-        public long Client_Unknown25 => -8832040574896607694;
+        public long Client_Unknown25 => -76506539888958491;
+        //0.51 UK25- 8832040574896607694;
         private string apiKey;
         public bool VerboseLog { get; set; }
         private List<Stat> statistics = new List<Stat>();
