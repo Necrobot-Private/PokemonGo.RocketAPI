@@ -121,7 +121,7 @@ namespace PokemonGo.RocketAPI.Authentication
                     {
                         accessToken = await LoginProvider.GetAccessToken();
                     }
-                    catch (Exception exception)
+                    catch (Exception )
                     {
                        // Logger.Error($"Reauthenticate exception was catched: {exception}");
                     }
