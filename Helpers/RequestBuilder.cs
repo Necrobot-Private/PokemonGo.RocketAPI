@@ -333,12 +333,14 @@ namespace PokemonGo.RocketAPI.Helpers
                 e.AuthTicket = _client.AccessToken.AuthTicket;
             }
 
-            e.PlatformRequests.Add(GenerateSignature(e));
-            if(customRequests.Any(x=>x.RequestType == RequestType.GetMapObjects  || x.RequestType == RequestType.GetPlayer))
+            //Chat with  SLxTnT -  this is required for all request and need befor ethe main envelop.
+
+            //if(customRequests.Any(x=>x.RequestType == RequestType.GetMapObjects  || x.RequestType == RequestType.GetPlayer))
             e.PlatformRequests.Add(new RequestEnvelope.Types.PlatformRequest()
             {
                 Type = PlatformRequestType.UnknownPtr8
             });
+            e.PlatformRequests.Add(GenerateSignature(e));
 
             return e;
         }
