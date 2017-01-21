@@ -334,6 +334,11 @@ namespace PokemonGo.RocketAPI.Helpers
             }
 
             e.PlatformRequests.Add(GenerateSignature(e));
+            if(customRequests.Any(x=>x.RequestType == RequestType.GetMapObjects  || x.RequestType == RequestType.GetPlayer))
+            e.PlatformRequests.Add(new RequestEnvelope.Types.PlatformRequest()
+            {
+                Type = PlatformRequestType.UnknownPtr8
+            });
 
             return e;
         }

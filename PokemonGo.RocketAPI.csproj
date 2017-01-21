@@ -158,18 +158,6 @@
       <HintPath>$(SolutionDir)\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="POGOLib.Official, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)\packages\POGOLib.Official.1.2.1\lib\net45\POGOLib.Official.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="POGOLib.Official.Google, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)\packages\POGOLib.Official.Google.1.0.0\lib\net45\POGOLib.Official.Google.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="POGOProtos.NetStandard1, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)\packages\POGOProtos.NetStandard1.2.4.2\lib\net45\POGOProtos.NetStandard1.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="PommaLabs.Thrower, Version=3.0.0.0, Culture=neutral, PublicKeyToken=2f204b7110a52060, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\Thrower.3.0.1\lib\net45\PommaLabs.Thrower.dll</HintPath>
       <Private>True</Private>
@@ -231,6 +219,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authentication\Data\AccessToken.cs" />
+    <Compile Include="Authentication\Data\LoginData.cs" />
+    <Compile Include="Authentication\Exceptions\WrongCredentialsException.cs" />
+    <Compile Include="Authentication\Login.cs" />
+    <Compile Include="Authentication\Session.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Encrypt\ICrypt.cs" />
     <Compile Include="Encrypt\Crypt.cs" />
     <Compile Include="Encrypt\LegacyCrypt.cs" />
@@ -243,6 +237,7 @@
     <Compile Include="Exceptions\LoginFailedException.cs" />
     <Compile Include="Exceptions\MinimumClientVersionException.cs" />
     <Compile Include="Extensions\GetInventoryExtensions.cs" />
+    <Compile Include="Extensions\RandomExtension.cs" />
     <Compile Include="Hash\PokefamerHasher.cs" />
     <Compile Include="Hash\IHasher.cs" />
     <Compile Include="Hash\LegacyHashser.cs" />
@@ -251,6 +246,7 @@
     <Content Include="Helpers\Crypt.cs" />
     <Compile Include="Helpers\DeviceInfo.cs" />
     <Compile Include="Helpers\DeviceInfoHelper.cs" />
+    <Compile Include="Helpers\DeviceInfoUtil.cs" />
     <Compile Include="Helpers\HashBuilder.cs" />
     <Compile Include="Helpers\KillSwitchTask.cs" />
     <Compile Include="Helpers\PokemonCpUtils.cs" />
@@ -260,6 +256,7 @@
     <Compile Include="Helpers\Shuffle\Shuffles.cs" />
     <Compile Include="Helpers\Shuffle\UnShuffle.cs" />
     <Compile Include="Helpers\Shuffle\UnShuffle2.cs" />
+    <Compile Include="Helpers\TimeUtil.cs" />
     <Compile Include="HttpClient\PokemonClient.cs" />
     <Compile Include="Enums\AuthType.cs" />
     <Compile Include="Exceptions\AccessTokenExpiredException.cs" />
@@ -273,6 +270,9 @@
     <Compile Include="Helpers\S2Helper.cs" />
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="ISettings.cs" />
+    <Compile Include="LoginProviders\GoogleLoginProvider.cs" />
+    <Compile Include="LoginProviders\ILoginProvider.cs" />
+    <Compile Include="LoginProviders\PtcLoginProvider.cs" />
     <Compile Include="Rpc\BaseRpc.cs" />
     <Compile Include="Rpc\Download.cs" />
     <Compile Include="Rpc\Encounter.cs" />
@@ -292,6 +292,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\POGOProtos\POGOProtos.csproj">
+      <Project>{a03a7bb2-4f0b-467b-84b2-9a76e6aae6fb}</Project>
+      <Name>POGOProtos</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

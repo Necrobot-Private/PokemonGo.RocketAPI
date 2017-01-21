@@ -12,9 +12,9 @@ using POGOProtos.Networking.Responses;
 using System.IO;
 using Newtonsoft.Json;
 using System.Threading;
-using POGOLib.Official.LoginProviders;
-using POGOLib.Official.Net;
-using POGOLib.Official.Net.Authentication.Data;
+using PokemonGo.RocketAPI.LoginProviders;
+using PokemonGo.RocketAPI.Authentication.Data;
+using PokemonGo.RocketAPI.Authentication;
 
 #endregion
 
