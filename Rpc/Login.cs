@@ -12,9 +12,9 @@ using POGOProtos.Networking.Responses;
 using System.IO;
 using Newtonsoft.Json;
 using System.Threading;
-using POGOLib.Official.LoginProviders;
-using POGOLib.Official.Net;
-using POGOLib.Official.Net.Authentication.Data;
+using PokemonGo.RocketAPI.LoginProviders;
+using PokemonGo.RocketAPI.Authentication.Data;
+using PokemonGo.RocketAPI.Authentication;
 
 #endregion
 
@@ -108,7 +108,7 @@ namespace PokemonGo.RocketAPI.Rpc
                     {
                         
                         Console.WriteLine(ex.Message);
-                        if (ex.Message.Contains("You have to log into an browser")) throw ex;
+                        if (ex.Message.Contains("You have to log into an browser")) throw new GoogleTwoFactorException(ex.Message);
                         //Logger.Error($"Reauthenticate exception was catched: {exception}");
                     }
                     finally

@@ -9,11 +9,12 @@ using PokemonGo.RocketAPI.Rpc;
 using POGOProtos.Enums;
 using POGOProtos.Networking.Envelopes;
 using PokemonGo.RocketAPI.Helpers;
-using POGOLib.Official.Util.Hash;
 using PokemonGo.RocketAPI.Hash;
 using PokemonGo.RocketAPI.Encrypt;
 using PokemonGo.RocketAPI.Exceptions;
 using POGOProtos.Networking.Responses;
+using PokemonGo.RocketAPI.Authentication.Data;
+using PokemonGo.RocketAPI.LoginProviders;
 
 #endregion
 
@@ -50,7 +51,7 @@ namespace PokemonGo.RocketAPI
 
                 // These constants need to change if we update the hashing server API version that is used.
                 AppVersion = 5301;
-                CurrentApiEmulationVersion = new Version("0.53.1"); 
+                CurrentApiEmulationVersion = new Version("0.53.0"); 
             }
             else
             if (settings.UseLegacyAPI)
@@ -130,7 +131,7 @@ namespace PokemonGo.RocketAPI
 
         public AuthType AuthType => Settings.AuthType;
         internal string ApiUrl { get; set; }
-        internal AuthTicket AuthTicket { get; set; }
+        internal AuthTicket AuthTicket { get; set; }                
 
         internal string SettingsHash { get; set; }
         internal long InventoryLastUpdateTimestamp { get; set; }
@@ -142,8 +143,8 @@ namespace PokemonGo.RocketAPI
         public Version MinimumClientVersion { get; set; }        // This is version from DownloadSettings, but after login is updated from https://pgorelease.nianticlabs.com/plfe/version
 
         //public POGOLib.Net.Session AuthSession { get; set; }
-        public POGOLib.Official.LoginProviders.ILoginProvider LoginProvider { get; set; }
-        public POGOLib.Official.Net.Authentication.Data.AccessToken AccessToken { get; set; }
+        public ILoginProvider LoginProvider { get; set; }
+        public AccessToken AccessToken { get; set; }
         public GetInventoryResponse LastGetInvenrotyResponse { get { return inventory; }
             set {
                 if (inventory == null)
