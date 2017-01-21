@@ -108,7 +108,7 @@ namespace PokemonGo.RocketAPI.Rpc
                     {
                         
                         Console.WriteLine(ex.Message);
-                        if (ex.Message.Contains("You have to log into an browser")) throw ex;
+                        if (ex.Message.Contains("You have to log into an browser")) throw new GoogleTwoFactorException(ex.Message);
                         //Logger.Error($"Reauthenticate exception was catched: {exception}");
                     }
                     finally

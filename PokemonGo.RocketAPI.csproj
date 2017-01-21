@@ -231,6 +231,7 @@
     <Compile Include="Exceptions\APIBadRequestExceltion.cs" />
     <Compile Include="Exceptions\AuthConfigException.cs" />
     <Compile Include="Exceptions\CaptchaException.cs" />
+    <Compile Include="Exceptions\GoogleTwoFactorException.cs" />
     <Compile Include="Exceptions\GoogleException.cs" />
     <Compile Include="Exceptions\GoogleOfflineException.cs" />
     <Compile Include="Exceptions\HasherException.cs" />
