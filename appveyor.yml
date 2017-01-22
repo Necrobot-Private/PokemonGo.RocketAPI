@@ -2,6 +2,7 @@ version: 1.0.0.{build}
 skip_tags: true
 configuration: Release
 platform: x86
+# environment variables
 environment:
   SolutionDirectory: .
 before_build:
