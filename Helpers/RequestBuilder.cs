@@ -1,6 +1,5 @@
 ﻿#region using directives
 
-using System.Linq;
 using System;
 using System.Collections.Generic;
 using Google.Protobuf;
@@ -11,7 +10,6 @@ using POGOProtos.Networking.Platform.Requests;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Enums;
 using Troschuetz.Random;
-using System.Text;
 using static POGOProtos.Networking.Envelopes.Signature.Types;
 using System.Threading.Tasks;
 using PokemonGo.RocketAPI.Hash;
@@ -30,7 +28,6 @@ namespace PokemonGo.RocketAPI.Helpers
         //private readonly Crypt _crypt;
         private readonly double _latitude;
         private readonly double _longitude;
-        private readonly float _speed;
         private readonly Client _client;
         private readonly ISettings _settings;
 
@@ -234,7 +231,7 @@ namespace PokemonGo.RocketAPI.Helpers
                     locationFix.Course = _course;
 
                     // Speed is iOS only.
-                    locationFix.Speed = (float)TRandomDevice.Triangular(0.2, 4.25, 1); ;
+                    locationFix.Speed = (float)TRandomDevice.Triangular(0.2, 4.25, 1);
                 }
             }
 
