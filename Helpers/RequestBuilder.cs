@@ -28,7 +28,6 @@ namespace PokemonGo.RocketAPI.Helpers
         private readonly double _altitude;
         private readonly AuthType _authType;
         //private readonly Crypt _crypt;
-        private readonly int _horizontalAccuracy;
         private readonly double _latitude;
         private readonly double _longitude;
         private readonly float _speed;
@@ -46,16 +45,6 @@ namespace PokemonGo.RocketAPI.Helpers
             _latitude = latitude;
             _longitude = longitude;
             _altitude = altitude;
-
-            // Add small variance to speed.
-            _speed = speed + ((float)Math.Round(GenRandom(-1, 1), 7));
-
-            // If speed is 0 or negative, make it random.
-            if (_speed <= 0)
-                _speed = (float)TRandomDevice.Triangular(0.1, 3.1, .8);
-
-            _horizontalAccuracy = TRandomDevice.Choice(new List<int>(new int[] { 5, 5, 5, 5, 10, 10, 10 }));
-
             _settings = settings;
 
             if (SessionHash == null)
@@ -184,16 +173,16 @@ namespace PokemonGo.RocketAPI.Helpers
                 MagneticFieldX = TRandomDevice.Triangular(-50, 50, 0),
                 MagneticFieldY = TRandomDevice.Triangular(-60, 50, -5),
                 MagneticFieldZ = TRandomDevice.Triangular(-60, 40, -30),
-                AttitudePitch = GenRandom(-47.149471283, 61.8397789001),
-                AttitudeYaw = GenRandom(-47.149471283, 61.8397789001),
-                AttitudeRoll = GenRandom(-47.149471283, 5),
-                RotationRateX = GenRandom(0.0729667818829, 0.0729667818829),
-                RotationRateY = GenRandom(-2.788630499244109, 3.0586791383810468),
-                RotationRateZ = GenRandom(-0.34825887123552773, 0.19347580173737935),
+                MagneticFieldAccuracy = TRandomDevice.Choice(new List<int>(new int[] { -1, 1, 1, 2, 2, 2, 2 })),
+                AttitudePitch = TRandomDevice.Triangular(-1.5, 1.5, 0.2),
+                AttitudeYaw = GenRandom(-3, 3),
+                AttitudeRoll = TRandomDevice.Triangular(-2.8, 2.5, 0.25),
+                RotationRateX = TRandomDevice.Triangular(-6, 4, 0),
+                RotationRateY = TRandomDevice.Triangular(-5.5, 5, 0),
+                RotationRateZ = TRandomDevice.Triangular(-5, 3, 0),
                 GravityX = TRandomDevice.Triangular(-1, 1, 0.15),
                 GravityY = TRandomDevice.Triangular(-1, 1, -.2),
                 GravityZ = TRandomDevice.Triangular(-1, .7, -0.8),
-                MagneticFieldAccuracy = -1,
                 Status = 3
             });
 
@@ -203,33 +192,34 @@ namespace PokemonGo.RocketAPI.Helpers
                 Latitude = (float)_latitude,
                 Longitude = (float)_longitude,
                 Altitude = (float)_altitude,
-                HorizontalAccuracy = _horizontalAccuracy,
                 TimestampSnapshot = (ulong)(Utils.GetTime(true) - _client.StartTime - RandomDevice.Next(100, 300)),
                 ProviderStatus = 3,
                 LocationType = 1
             };
 
-            if (_horizontalAccuracy >= 65)
+            if (requestEnvelope.Accuracy >= 65)
             {
-                locationFix.HorizontalAccuracy = TRandomDevice.Choice(new List<int>(new int[] { _horizontalAccuracy, 65, 65, (int)Math.Round(GenRandom(66, 80)), 200 }));
+                locationFix.HorizontalAccuracy = TRandomDevice.Choice(new List<float>(new float[] { (float)requestEnvelope.Accuracy, 65, 65, (int)Math.Round(GenRandom(66, 80)), 200 }));
                 if (_client.Platform == Platform.Ios)
                     locationFix.VerticalAccuracy = (float)TRandomDevice.Triangular(35, 100, 65);
             }
             else
             {
-                locationFix.HorizontalAccuracy = _horizontalAccuracy;
+                locationFix.HorizontalAccuracy = (float)requestEnvelope.Accuracy;
                 if (_client.Platform == Platform.Ios)
                 {
-                    if (_horizontalAccuracy > 10)
+                    if (requestEnvelope.Accuracy > 10)
                         locationFix.VerticalAccuracy = (float)TRandomDevice.Choice(new List<double>(new double[] { 24, 32, 48, 48, 64, 64, 96, 128 }));
                     else
                         locationFix.VerticalAccuracy = (float)TRandomDevice.Choice(new List<double>(new double[] { 3, 4, 6, 6, 8, 12, 24 }));
                 }
             }
-
-
+            
             if (_client.Platform == Platform.Ios)
             {
+                sig.ActivityStatus = new ActivityStatus();
+                sig.ActivityStatus.Stationary = true;
+
                 if (RandomDevice.NextDouble() > 0.95)
                 {
                     // No reading for roughly 1 in 20 updates
@@ -244,7 +234,7 @@ namespace PokemonGo.RocketAPI.Helpers
                     locationFix.Course = _course;
 
                     // Speed is iOS only.
-                    locationFix.Speed = _speed;
+                    locationFix.Speed = (float)TRandomDevice.Triangular(0.2, 4.25, 1); ;
                 }
             }
 
@@ -260,7 +250,7 @@ namespace PokemonGo.RocketAPI.Helpers
             {
                 Latitude = _latitude,
                 Longitude = _longitude,
-                Altitude = _altitude,
+                Altitude = requestEnvelope.Accuracy,
                 AuthTicket = ticketBytes,
                 SessionData = SessionHash.ToByteArray(),
                 Requests = new List<byte[]>(),
@@ -303,7 +293,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 RequestId = GetNextRequestId(), //3
                 Latitude = _latitude, //7
                 Longitude = _longitude, //8
-                Accuracy = _altitude,// (int)_horizontalAccuracy, //9
+                Accuracy = TRandomDevice.Choice(new List<int>(new int[] { 5, 5, 5, 5, 10, 10, 10, 30, 30, 50, 65, _random.Next(66, 80) })), //9
                 MsSinceLastLocationfix = (long)TRandomDevice.Triangular(300, 30000, 10000) //12
             };
 
