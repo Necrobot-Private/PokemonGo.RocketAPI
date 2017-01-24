@@ -51,7 +51,7 @@ namespace PokemonGo.RocketAPI
 
                 // These constants need to change if we update the hashing server API version that is used.
                 AppVersion = 5301;
-                CurrentApiEmulationVersion = new Version("0.53.0"); 
+                CurrentApiEmulationVersion = new Version("0.53.1"); 
             }
             else
             if (settings.UseLegacyAPI)
