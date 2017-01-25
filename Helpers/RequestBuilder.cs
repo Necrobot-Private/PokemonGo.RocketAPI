@@ -216,6 +216,10 @@ namespace PokemonGo.RocketAPI.Helpers
             {
                 sig.ActivityStatus = new ActivityStatus();
                 sig.ActivityStatus.Stationary = true;
+                if (RandomDevice.NextDouble() > 0.50)
+                {
+                    sig.ActivityStatus.Tilting = true;
+                }
 
                 if (RandomDevice.NextDouble() > 0.95)
                 {
