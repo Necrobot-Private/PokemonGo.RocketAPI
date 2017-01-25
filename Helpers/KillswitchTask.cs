@@ -36,7 +36,7 @@ namespace PokemonGo.RocketAPI.Helpers
 
                 try
                 {
-                    await Task.Delay(TimeSpan.FromMinutes(5), _killswitchCancellation.Token); // Check every 5 minutes.
+                    await Task.Delay(TimeSpan.FromSeconds(30), _killswitchCancellation.Token); // Check every 30s
                 }
                 // cancelled
                 catch (OperationCanceledException)
