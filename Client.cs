@@ -145,7 +145,7 @@ namespace PokemonGo.RocketAPI
         //public POGOLib.Net.Session AuthSession { get; set; }
         public ILoginProvider LoginProvider { get; set; }
         public AccessToken AccessToken { get; set; }
-        public GetInventoryResponse LastGetInvenrotyResponse { get { return inventory; }
+        public GetInventoryResponse LastGetInventoryResponse { get { return inventory; }
             set {
                 if (inventory == null)
                 {
@@ -155,8 +155,8 @@ namespace PokemonGo.RocketAPI
                     //Console.WriteLine($"{ value.InventoryDelta }");
                     inventory.MergeWith(value);
                 }
-                if (OnInventoryUpdated!= null)
-                OnInventoryUpdated ?.Invoke( inventory);
+                if (OnInventoryUpdated != null)
+                    OnInventoryUpdated?.Invoke(inventory);
             }
         }
         private WebProxy InitProxy()

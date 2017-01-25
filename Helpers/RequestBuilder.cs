@@ -286,7 +286,7 @@ namespace PokemonGo.RocketAPI.Helpers
             return encryptedSignature;
         }
 
-        public async Task<RequestEnvelope> GetRequestEnvelope(Request[] customRequests)
+        public async Task<RequestEnvelope> GetRequestEnvelope(IEnumerable<Request> customRequests)
         {
             var e = new RequestEnvelope
             {
