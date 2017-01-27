@@ -7,6 +7,9 @@ using POGOProtos.Inventory.Item;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
+using Google.Protobuf;
+using PokemonGo.RocketAPI.Helpers;
+using System;
 
 #endregion
 
@@ -20,41 +23,104 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<FortDetailsResponse> GetFort(string fortId, double fortLatitude, double fortLongitude)
         {
-            var message = new FortDetailsMessage
+            var getFortRequest = new Request
             {
-                FortId = fortId,
-                Latitude = fortLatitude,
-                Longitude = fortLongitude
+                RequestType = RequestType.FortDetails,
+                RequestMessage = ((IMessage)new FortDetailsMessage
+                {
+                    FortId = fortId,
+                    Latitude = fortLatitude,
+                    Longitude = fortLongitude
+                }).ToByteString()
             };
 
-            return await PostProtoPayload<Request, FortDetailsResponse>(RequestType.FortDetails, message);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getFortRequest, Client));
+
+            Tuple<FortDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, FortDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
         }
 
         public async Task<FortSearchResponse> SearchFort(string fortId, double fortLat, double fortLng)
         {
-            var message = new FortSearchMessage
+            var searchFortRequest = new Request
             {
-                FortId = fortId,
-                FortLatitude = fortLat,
-                FortLongitude = fortLng,
-                PlayerLatitude = Client.CurrentLatitude,
-                PlayerLongitude = Client.CurrentLongitude
+                RequestType = RequestType.FortSearch,
+                RequestMessage = ((IMessage)new FortSearchMessage
+                {
+                    FortId = fortId,
+                    FortLatitude = fortLat,
+                    FortLongitude = fortLng,
+                    PlayerLatitude = Client.CurrentLatitude,
+                    PlayerLongitude = Client.CurrentLongitude
+                }).ToByteString()
             };
 
-            return await PostProtoPayload<Request, FortSearchResponse>(RequestType.FortSearch, message);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(searchFortRequest, Client));
+
+            Tuple<FortSearchResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, FortSearchResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
         }
 
         public async Task<AddFortModifierResponse> AddFortModifier(string fortId, ItemId modifierType)
         {
-            var message = new AddFortModifierMessage
+            var addFortModifierRequest = new Request
             {
-                FortId = fortId,
-                ModifierType = modifierType,
-                PlayerLatitude = Client.CurrentLatitude,
-                PlayerLongitude = Client.CurrentLongitude
+                RequestType = RequestType.AddFortModifier,
+                RequestMessage = ((IMessage)new AddFortModifierMessage
+                {
+                    FortId = fortId,
+                    ModifierType = modifierType,
+                    PlayerLatitude = Client.CurrentLatitude,
+                    PlayerLongitude = Client.CurrentLongitude
+                }).ToByteString()
             };
 
-            return await PostProtoPayload<Request, AddFortModifierResponse>(RequestType.AddFortModifier, message);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(addFortModifierRequest, Client));
+
+            Tuple<AddFortModifierResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, AddFortModifierResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
         }
 
         public async Task<AttackGymResponse> AttackGym(string fortId, string battleId, List<BattleAction> battleActions,
@@ -72,63 +138,170 @@ namespace PokemonGo.RocketAPI.Rpc
             };
 
             message.AttackActions.AddRange(battleActions);
+            
+            var attackGymRequest = new Request
+            {
+                RequestType = RequestType.AttackGym,
+                RequestMessage = message.ToByteString()
+            };
 
-            return await PostProtoPayload<Request, AttackGymResponse>(RequestType.AttackGym, message);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(attackGymRequest, Client));
+
+            Tuple<AttackGymResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, AttackGymResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
         }
 
         public async Task<FortDeployPokemonResponse> FortDeployPokemon(string fortId, ulong pokemonId)
         {
-            var message = new FortDeployPokemonMessage
+            var fortDeployPokemonRequest = new Request
             {
-                PokemonId = pokemonId,
-                FortId = fortId,
-                PlayerLatitude = Client.CurrentLatitude,
-                PlayerLongitude = Client.CurrentLongitude
+                RequestType = RequestType.FortDeployPokemon,
+                RequestMessage = ((IMessage)new FortDeployPokemonMessage
+                {
+                    PokemonId = pokemonId,
+                    FortId = fortId,
+                    PlayerLatitude = Client.CurrentLatitude,
+                    PlayerLongitude = Client.CurrentLongitude
+                }).ToByteString()
             };
 
-            return await PostProtoPayload<Request, FortDeployPokemonResponse>(RequestType.FortDeployPokemon, message);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(fortDeployPokemonRequest, Client));
+
+            Tuple<FortDeployPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, FortDeployPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
         }
 
         public async Task<FortRecallPokemonResponse> FortRecallPokemon(string fortId, ulong pokemonId)
         {
-            var message = new FortRecallPokemonMessage
+            var fortRecallPokemonRequest = new Request
             {
-                PokemonId = pokemonId,
-                FortId = fortId,
-                PlayerLatitude = Client.CurrentLatitude,
-                PlayerLongitude = Client.CurrentLongitude
+                RequestType = RequestType.FortRecallPokemon,
+                RequestMessage = ((IMessage)new FortRecallPokemonMessage
+                {
+                    PokemonId = pokemonId,
+                    FortId = fortId,
+                    PlayerLatitude = Client.CurrentLatitude,
+                    PlayerLongitude = Client.CurrentLongitude
+                }).ToByteString()
             };
 
-            return await PostProtoPayload<Request, FortRecallPokemonResponse>(RequestType.FortRecallPokemon, message);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(fortRecallPokemonRequest, Client));
+
+            Tuple<FortRecallPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, FortRecallPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
         }
 
         public async Task<GetGymDetailsResponse> GetGymDetails(string gymId, double gymLat, double gymLng)
         {
-            var message = new GetGymDetailsMessage
+            var getGymDetailsRequest = new Request
             {
-                GymId = gymId,
-                GymLatitude = gymLat,
-                GymLongitude = gymLng,
-                PlayerLatitude = Client.CurrentLatitude,
-                PlayerLongitude = Client.CurrentLongitude
+                RequestType = RequestType.GetGymDetails,
+                RequestMessage = ((IMessage)new GetGymDetailsMessage
+                {
+                    GymId = gymId,
+                    GymLatitude = gymLat,
+                    GymLongitude = gymLng,
+                    PlayerLatitude = Client.CurrentLatitude,
+                    PlayerLongitude = Client.CurrentLongitude
+                }).ToByteString()
             };
 
-            return await PostProtoPayload<Request, GetGymDetailsResponse>(RequestType.GetGymDetails, message);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getGymDetailsRequest, Client));
+
+            Tuple<GetGymDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, GetGymDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
         }
 
         public async Task<StartGymBattleResponse> StartGymBattle(string gymId, ulong defendingPokemonId,
             IEnumerable<ulong> attackingPokemonIds)
         {
-            var message = new StartGymBattleMessage
+            var startGymBattleRequest = new Request
             {
-                GymId = gymId,
-                DefendingPokemonId = defendingPokemonId,
-                AttackingPokemonIds = {attackingPokemonIds},
-                PlayerLatitude = Client.CurrentLatitude,
-                PlayerLongitude = Client.CurrentLongitude
+                RequestType = RequestType.StartGymBattle,
+                RequestMessage = ((IMessage)new StartGymBattleMessage
+                {
+                    GymId = gymId,
+                    DefendingPokemonId = defendingPokemonId,
+                    AttackingPokemonIds = { attackingPokemonIds },
+                    PlayerLatitude = Client.CurrentLatitude,
+                    PlayerLongitude = Client.CurrentLongitude
+                }).ToByteString()
             };
 
-            return await PostProtoPayload<Request, StartGymBattleResponse>(RequestType.StartGymBattle, message);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(startGymBattleRequest, Client));
+
+            Tuple<StartGymBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, StartGymBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
         }
     }
 }
