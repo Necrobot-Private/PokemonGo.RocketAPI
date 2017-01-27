@@ -140,7 +140,8 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<GetPlayerResponse> DoLogin()
         {
-            await Client.KillswitchTask.Start();
+            // Don't wait for background start of killswitch.
+            Client.KillswitchTask.Start();
 
             await Login.LoadAccessToken(Client.LoginProvider, Client, true);
             Client.StartTime = Utils.GetTime(true);
