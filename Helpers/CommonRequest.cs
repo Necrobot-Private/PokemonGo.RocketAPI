@@ -164,7 +164,7 @@ namespace PokemonGo.RocketAPI.Helpers
                     return;
 
                 client.SettingsHash = downloadSettingsResponse.Hash;
-
+                client.GlobalSettings = downloadSettingsResponse.Settings;
                 if (!string.IsNullOrEmpty(downloadSettingsResponse.Settings.MinimumClientVersion))
                 {
                     client.MinimumClientVersion = new Version(downloadSettingsResponse.Settings.MinimumClientVersion);
