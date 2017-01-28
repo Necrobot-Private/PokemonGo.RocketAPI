@@ -15,6 +15,7 @@ using PokemonGo.RocketAPI.Exceptions;
 using POGOProtos.Networking.Responses;
 using PokemonGo.RocketAPI.Authentication.Data;
 using PokemonGo.RocketAPI.LoginProviders;
+using POGOProtos.Settings;
 
 #endregion
 
@@ -134,6 +135,7 @@ namespace PokemonGo.RocketAPI
         internal AuthTicket AuthTicket { get; set; }                
 
         internal string SettingsHash { get; set; }
+        public GlobalSettings GlobalSettings { get; set; }
         internal long InventoryLastUpdateTimestamp { get; set; }
         internal Platform Platform { get; set; }
         internal uint AppVersion { get; set; }
