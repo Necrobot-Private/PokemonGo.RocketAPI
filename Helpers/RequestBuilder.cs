@@ -216,6 +216,10 @@ namespace PokemonGo.RocketAPI.Helpers
             {
                 sig.ActivityStatus = new ActivityStatus();
                 sig.ActivityStatus.Stationary = true;
+                if (RandomDevice.NextDouble() > 0.50)
+                {
+                    sig.ActivityStatus.Tilting = true;
+                }
 
                 if (RandomDevice.NextDouble() > 0.95)
                 {
@@ -282,7 +286,7 @@ namespace PokemonGo.RocketAPI.Helpers
             return encryptedSignature;
         }
 
-        public async Task<RequestEnvelope> GetRequestEnvelope(Request[] customRequests)
+        public async Task<RequestEnvelope> GetRequestEnvelope(IEnumerable<Request> customRequests)
         {
             var e = new RequestEnvelope
             {
