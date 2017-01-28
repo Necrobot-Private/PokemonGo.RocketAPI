@@ -136,7 +136,7 @@ namespace PokemonGo.RocketAPI
 
         internal string SettingsHash { get; set; }
         public GlobalSettings GlobalSettings { get; set; }
-        internal long InventoryLastUpdateTimestamp { get; set; }
+        public long InventoryLastUpdateTimestamp { get; set; }
         internal Platform Platform { get; set; }
         internal uint AppVersion { get; set; }
         public long StartTime { get; set; }
