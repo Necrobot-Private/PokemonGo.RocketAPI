@@ -140,62 +140,22 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<GetPlayerResponse> DoLogin()
         {
-            await Client.KillswitchTask.Start();
+            // Don't wait for background start of killswitch.
+            Client.KillswitchTask.Start();
 
             await Login.LoadAccessToken(Client.LoginProvider, Client, true);
             Client.StartTime = Utils.GetTime(true);
             RequestBuilder.Reset();
 
-            var player = await Client.Player.GetPlayer();
+            var player = await Client.Player.GetPlayer(false); // Set false because initial GetPlayer does not use common requests.
 
-            await
-                FireRequestBlock(CommonRequest.GetDownloadRemoteConfigVersionMessageRequest(Client))
-                    .ConfigureAwait(false);
-
-            await FireRequestBlockTwo().ConfigureAwait(false);
-
-            return player;
-        }
-        
-        private async Task FireRequestBlock(Request request)
-        {
-            var requests = CommonRequest.FillRequest(request, Client);
-
-            var serverRequest = await GetRequestBuilder().GetRequestEnvelope(requests);
-            var serverResponse = await PostProto<Request>(serverRequest);
+            await Client.Download.GetRemoteConfigVersion();
+            await Client.Download.GetAssetDigest();
+            await Client.Download.GetItemTemplates();
             
-            var responses = serverResponse.Returns;
-            if (responses != null)
-            {
-                var checkChallengeResponse = new CheckChallengeResponse();
-                if (2 <= responses.Count)
-                {
-                    checkChallengeResponse.MergeFrom(responses[1]);
-
-                    CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-                }
-
-                var getInventoryResponse = new GetInventoryResponse();
-                if (4 <= responses.Count)
-                {
-                    getInventoryResponse.MergeFrom(responses[3]);
-
-                    CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
-                }
-
-                var downloadSettingsResponse = new DownloadSettingsResponse();
-                if (6 <= responses.Count)
-                {
-                    downloadSettingsResponse.MergeFrom(responses[5]);
-
-                    CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
-                }
-            }
-        }
-
-        public async Task FireRequestBlockTwo()
-        {
-            await FireRequestBlock(CommonRequest.GetGetAssetDigestMessageRequest(Client));
+            await Client.Player.GetPlayerProfile();
+            
+            return player;
         }
     }
 }

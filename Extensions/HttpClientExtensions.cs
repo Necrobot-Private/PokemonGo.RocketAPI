@@ -45,7 +45,7 @@ namespace PokemonGo.RocketAPI.Extensions
             ResponseEnvelope response = await PerformThrottledRemoteProcedureCall<TRequest>(client, apiClient, requestEnvelope);
 
             if (response== null || (response.Returns.Count != requestEnvelope.Requests.Count))
-                throw new InvalidResponseException();
+                throw new InvalidResponseException($"Error with API request type: {requestEnvelope.Requests[0].RequestType}");
 
             for (var i = 0; i < responseTypes.Length; i++)
             {
@@ -64,7 +64,7 @@ namespace PokemonGo.RocketAPI.Extensions
             ResponseEnvelope response = await PerformThrottledRemoteProcedureCall<TRequest>(client, apiClient, requestEnvelope);
 
             if (response.Returns.Count != requestEnvelope.Requests.Count)
-                throw new InvalidResponseException();
+                throw new InvalidResponseException($"Error with API request type: {requestEnvelope.Requests[0].RequestType}");
 
             //Decode payload
             //todo: multi-payload support

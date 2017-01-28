@@ -15,6 +15,7 @@ using PokemonGo.RocketAPI.Exceptions;
 using POGOProtos.Networking.Responses;
 using PokemonGo.RocketAPI.Authentication.Data;
 using PokemonGo.RocketAPI.LoginProviders;
+using POGOProtos.Settings;
 
 #endregion
 
@@ -134,7 +135,8 @@ namespace PokemonGo.RocketAPI
         internal AuthTicket AuthTicket { get; set; }                
 
         internal string SettingsHash { get; set; }
-        internal long InventoryLastUpdateTimestamp { get; set; }
+        public GlobalSettings GlobalSettings { get; set; }
+        public long InventoryLastUpdateTimestamp { get; set; }
         internal Platform Platform { get; set; }
         internal uint AppVersion { get; set; }
         public long StartTime { get; set; }
@@ -145,18 +147,26 @@ namespace PokemonGo.RocketAPI
         //public POGOLib.Net.Session AuthSession { get; set; }
         public ILoginProvider LoginProvider { get; set; }
         public AccessToken AccessToken { get; set; }
-        public GetInventoryResponse LastGetInvenrotyResponse { get { return inventory; }
-            set {
+        public GetInventoryResponse LastGetInventoryResponse
+        {
+            get
+            {
+                return inventory;
+            }
+
+            set
+            {
                 if (inventory == null)
                 {
                     inventory = value;
                 }
-                else {
-                    //Console.WriteLine($"{ value.InventoryDelta }");
+                else
+                {
                     inventory.MergeWith(value);
                 }
-                if (OnInventoryUpdated!= null)
-                OnInventoryUpdated ?.Invoke( inventory);
+
+                if (OnInventoryUpdated != null)
+                    OnInventoryUpdated?.Invoke(inventory);
             }
         }
         private WebProxy InitProxy()
