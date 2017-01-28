@@ -10,6 +10,9 @@ using POGOProtos.Networking.Responses;
 using Google.Protobuf;
 using PokemonGo.RocketAPI.Helpers;
 using System;
+using System.Linq;
+using POGOProtos.Map;
+using PokemonGo.RocketAPI.Extensions;
 
 #endregion
 
@@ -86,6 +89,16 @@ namespace PokemonGo.RocketAPI.Rpc
             DownloadSettingsResponse downloadSettingsResponse = response.Item6;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
+            // Update LastMapObject to mark fort as being used
+            foreach (MapCell mapCell in Client.Map.LastGetMapObjectResponse.MapCells)
+            {
+                var mapFort = mapCell.Forts.Where(x => x.Id == fortId).FirstOrDefault();
+                if (mapFort != null && mapFort.Type == POGOProtos.Map.Fort.FortType.Checkpoint)
+                {
+                    mapFort.CooldownCompleteTimestampMs = DateTime.UtcNow.ToUnixTime() + 5 * 60 * 1000; // Cooldown is 5 minutes.
+                    break;
+                }
+            }
             return response.Item1;
         }
 
