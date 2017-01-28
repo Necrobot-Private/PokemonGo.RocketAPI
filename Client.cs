@@ -147,16 +147,24 @@ namespace PokemonGo.RocketAPI
         //public POGOLib.Net.Session AuthSession { get; set; }
         public ILoginProvider LoginProvider { get; set; }
         public AccessToken AccessToken { get; set; }
-        public GetInventoryResponse LastGetInventoryResponse { get { return inventory; }
-            set {
+        public GetInventoryResponse LastGetInventoryResponse
+        {
+            get
+            {
+                return inventory;
+            }
+
+            set
+            {
                 if (inventory == null)
                 {
                     inventory = value;
                 }
-                else {
-                    //Console.WriteLine($"{ value.InventoryDelta }");
+                else
+                {
                     inventory.MergeWith(value);
                 }
+
                 if (OnInventoryUpdated != null)
                     OnInventoryUpdated?.Invoke(inventory);
             }
