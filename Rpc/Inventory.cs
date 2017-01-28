@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using Google.Protobuf;
 using System;
 using PokemonGo.RocketAPI.Helpers;
+using Google.Protobuf.Collections;
+using POGOProtos.Inventory;
+using System.Linq;
 
 #endregion
 
@@ -19,7 +22,15 @@ namespace PokemonGo.RocketAPI.Rpc
         public Inventory(Client client) : base(client)
         {
         }
-
+        
+        internal void RemoveInventoryItems(IEnumerable<InventoryItem> items)
+        {
+            foreach (var item in items)
+            {
+                Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Remove(item);
+            }
+        }
+        
         public async Task<ReleasePokemonResponse> TransferPokemon(ulong pokemonId)
         {
             var transferPokemonRequest = new Request
@@ -47,6 +58,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             DownloadSettingsResponse downloadSettingsResponse = response.Item6;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            ReleasePokemonResponse releaseResponse = response.Item1;
+            if (releaseResponse.Result == ReleasePokemonResponse.Types.Result.Success)
+            {
+                var pokemons = Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Where(
+                    i =>
+                        i?.InventoryItemData?.PokemonData != null &&
+                        i.InventoryItemData.PokemonData.Id.Equals(pokemonId));
+                RemoveInventoryItems(pokemons);
+            }
 
             return response.Item1;
 
@@ -79,6 +100,16 @@ namespace PokemonGo.RocketAPI.Rpc
             DownloadSettingsResponse downloadSettingsResponse = response.Item6;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
+            ReleasePokemonResponse releaseResponse = response.Item1;
+            if (releaseResponse.Result == ReleasePokemonResponse.Types.Result.Success)
+            {
+                var pokemons = Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Where(
+                    i =>
+                        i?.InventoryItemData?.PokemonData != null &&
+                        pokemonIds.Contains(i.InventoryItemData.PokemonData.Id));
+                RemoveInventoryItems(pokemons);
+            }
+
             return response.Item1;
         }
         public async Task<EvolvePokemonResponse> EvolvePokemon(ulong pokemonId)
@@ -109,6 +140,15 @@ namespace PokemonGo.RocketAPI.Rpc
             DownloadSettingsResponse downloadSettingsResponse = response.Item6;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
+            EvolvePokemonResponse evolveResponse = response.Item1;
+            if (evolveResponse.Result == EvolvePokemonResponse.Types.Result.Success)
+            {
+                var pokemons = Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Where(
+                    i =>
+                        i?.InventoryItemData?.PokemonData != null &&
+                        i.InventoryItemData.PokemonData.Id.Equals(pokemonId));
+                RemoveInventoryItems(pokemons);
+            }
             return response.Item1;
         }
 
