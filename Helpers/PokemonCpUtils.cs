@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf.Collections;
+using POGOProtos.Data;
 using POGOProtos.Enums;
 using POGOProtos.Settings.Master;
 using POGOProtos.Settings.Master.Pokemon;
@@ -36,7 +37,12 @@ namespace PokemonGo.RocketAPI.Helpers
             }
         }
 
-        private static float getLevel(double combinedCpMultiplier)
+        public static float GetLevel(PokemonData pokemonData)
+        {
+            return GetLevelFromCpMultiplier(pokemonData.CpMultiplier + pokemonData.AdditionalCpMultiplier);
+        }
+
+        public static float GetLevelFromCpMultiplier(double combinedCpMultiplier)
         {
             double level;
             if (combinedCpMultiplier < 0.734f)
@@ -54,9 +60,9 @@ namespace PokemonGo.RocketAPI.Helpers
             return (float)(Math.Round((level) * 2) / 2.0);
         }
 
-        public static float GetLevelFromCpMultiplier(double combinedCpMultiplier)
+        public static int GetMaxCp(PokemonData pokemon)
         {
-            return getLevel(combinedCpMultiplier);
+            return GetMaxCpForPlayer(pokemon.IndividualAttack, pokemon.IndividualDefense, pokemon.IndividualStamina, 40);
         }
 
         public static int GetMaxCp(int attack, int defense, int stamina)
@@ -83,6 +89,13 @@ namespace PokemonGo.RocketAPI.Helpers
             float maxLevel = Math.Min(playerLevel + 1.5f, 40f);
             double maxCpMultplier = LEVEL_CP_MULTIPLIER[maxLevel];
             return GetCp(attack, defense, stamina, maxCpMultplier);
+        }
+
+        public static int GetCp(PokemonData pokemon)
+        {
+            int cp = GetCp(pokemon.IndividualAttack, pokemon.IndividualDefense, pokemon.IndividualStamina, pokemon.CpMultiplier + pokemon.AdditionalCpMultiplier);
+            // TODO: Why not return pokemon.cp;
+            return cp;
         }
 
         public static int GetCp(int attack, int defense, int stamina, double combinedCpMultiplier)
