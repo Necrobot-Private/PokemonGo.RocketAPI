@@ -128,7 +128,8 @@ namespace PokemonGo.RocketAPI.Extensions
 
                 foreach (var oldItem in oldItems)
                 {
-                    InventoryItems.Remove(oldItem);
+                    if (InventoryItems.Contains(oldItem))
+                        InventoryItems.Remove(oldItem);
                 }
             }
         }
