@@ -13,6 +13,7 @@ using Google.Protobuf.Collections;
 using POGOProtos.Inventory;
 using System.Linq;
 using POGOProtos.Data;
+using System.Collections.Concurrent;
 
 #endregion
 
@@ -20,21 +21,153 @@ namespace PokemonGo.RocketAPI.Rpc
 {
     public class Inventory : BaseRpc
     {
+        public delegate void OnInventoryUpdateHandler();
+
         public Inventory(Client client) : base(client)
         {
         }
-        
+
+        public ConcurrentBag<InventoryItem> InventoryItems = new ConcurrentBag<InventoryItem>();
+        public event OnInventoryUpdateHandler OnInventoryUpdated;
+
+        internal void Merge(GetInventoryResponse update)
+        {
+            var delta = update.InventoryDelta;
+
+            if (delta?.InventoryItems == null || delta.InventoryItems.All(i => i == null))
+            {
+                return;
+            }
+
+            foreach (var item in delta.InventoryItems.Where(x => x != null))
+                InventoryItems.Add(item);
+            
+            //remove delete items
+
+            foreach (var deletedItem in delta.InventoryItems.Where(p => p != null && p.DeletedItem != null))
+            {
+                var pokemon = InventoryItems.FirstOrDefault(p => p.InventoryItemData?.PokemonData?.Id == deletedItem.DeletedItem.PokemonId);
+                if (pokemon != null)
+                {
+                    RemoveInventoryItem(pokemon);
+                }
+                RemoveInventoryItem(deletedItem);
+            }
+            // Only keep the newest ones
+            foreach (var deltaItem in delta.InventoryItems.Where(d => d?.InventoryItemData != null))
+            {
+                var oldItems = new List<InventoryItem>();
+
+                if (deltaItem.InventoryItemData.PlayerStats != null)
+                {
+                    oldItems.AddRange(
+                        InventoryItems.Where(i => i.InventoryItemData?.PlayerStats != null)
+                            .OrderByDescending(i => i.ModifiedTimestampMs)
+                            .Skip(1));
+                }
+                if (deltaItem.InventoryItemData.PlayerCurrency != null)
+                {
+                    oldItems.AddRange(
+                        InventoryItems.Where(i => i.InventoryItemData?.PlayerCurrency != null)
+                            .OrderByDescending(i => i.ModifiedTimestampMs)
+                            .Skip(1));
+                }
+                if (deltaItem.InventoryItemData.PlayerCamera != null)
+                {
+                    oldItems.AddRange(
+                        InventoryItems.Where(i => i.InventoryItemData?.PlayerCamera != null)
+                            .OrderByDescending(i => i.ModifiedTimestampMs)
+                            .Skip(1));
+                }
+                if (deltaItem.InventoryItemData.InventoryUpgrades != null)
+                {
+                    oldItems.AddRange(
+                        InventoryItems.Where(i => i.InventoryItemData?.InventoryUpgrades != null)
+                            .OrderByDescending(i => i.ModifiedTimestampMs)
+                            .Skip(1));
+                }
+                if (deltaItem.InventoryItemData.PokedexEntry != null)
+                {
+                    oldItems.AddRange(
+                        InventoryItems.Where(
+                            i =>
+                                i.InventoryItemData?.PokedexEntry != null &&
+                                i.InventoryItemData.PokedexEntry.PokemonId ==
+                                deltaItem.InventoryItemData.PokedexEntry.PokemonId)
+                            .OrderByDescending(i => i.ModifiedTimestampMs)
+                            .Skip(1));
+                }
+                if (deltaItem.InventoryItemData.Candy != null)
+                {
+                    oldItems.AddRange(
+                        InventoryItems.Where(
+                            i =>
+                                i.InventoryItemData?.Candy != null &&
+                                i.InventoryItemData.Candy.FamilyId ==
+                                deltaItem.InventoryItemData.Candy.FamilyId)
+                            .OrderByDescending(i => i.ModifiedTimestampMs)
+                            .Skip(1));
+                }
+                if (deltaItem.InventoryItemData.Item != null)
+                {
+                    oldItems.AddRange(
+                        InventoryItems.Where(
+                            i =>
+                                i.InventoryItemData?.Item != null &&
+                                i.InventoryItemData.Item.ItemId == deltaItem.InventoryItemData.Item.ItemId)
+                            .OrderByDescending(i => i.ModifiedTimestampMs)
+                            .Skip(1));
+                }
+
+                if (deltaItem.InventoryItemData.PokemonData != null)
+                {
+                    oldItems.AddRange(
+                        InventoryItems.Where(
+                            i =>
+                                i.InventoryItemData?.PokemonData != null &&
+                                i.InventoryItemData.PokemonData.Id == deltaItem.InventoryItemData.PokemonData.Id)
+                            .OrderByDescending(i => i.ModifiedTimestampMs)
+                            .Skip(1));
+                }
+
+                if (deltaItem.InventoryItemData.AppliedItems != null)
+                {
+                    oldItems.AddRange(
+                        InventoryItems.Where(i => i.InventoryItemData?.AppliedItems != null)
+                            .OrderByDescending(i => i.ModifiedTimestampMs)
+                            .Skip(1));
+                }
+                if (deltaItem.InventoryItemData.EggIncubators != null)
+                {
+                    oldItems.AddRange(
+                        InventoryItems.Where(i => i.InventoryItemData?.EggIncubators != null)
+                            .OrderByDescending(i => i.ModifiedTimestampMs)
+                            .Skip(1));
+                }
+
+                RemoveInventoryItems(oldItems);
+            }
+
+            OnInventoryUpdated?.Invoke();
+        }
+    
+        internal bool RemoveInventoryItem(InventoryItem item)
+        {
+            InventoryItem itemToRemove;
+            return InventoryItems.TryTake(out itemToRemove);
+        }
+
         internal void RemoveInventoryItems(IEnumerable<InventoryItem> items)
         {
             foreach (var item in items)
             {
-                Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Remove(item);
+                RemoveInventoryItem(item);
             }
         }
 
         public IEnumerable<PokemonData> GetPokemons()
         {
-            return Client.LastGetInventoryResponse.InventoryDelta.InventoryItems
+            return InventoryItems
                     .Select(i => i.InventoryItemData?.PokemonData)
                     .Where(p => p != null && p.PokemonId > 0);
         }
@@ -78,7 +211,7 @@ namespace PokemonGo.RocketAPI.Rpc
             ReleasePokemonResponse releaseResponse = response.Item1;
             if (releaseResponse.Result == ReleasePokemonResponse.Types.Result.Success)
             {
-                var pokemons = Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Where(
+                var pokemons = InventoryItems.Where(
                     i =>
                         i?.InventoryItemData?.PokemonData != null &&
                         i.InventoryItemData.PokemonData.Id.Equals(pokemonId));
@@ -122,7 +255,7 @@ namespace PokemonGo.RocketAPI.Rpc
             ReleasePokemonResponse releaseResponse = response.Item1;
             if (releaseResponse.Result == ReleasePokemonResponse.Types.Result.Success)
             {
-                var pokemons = Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Where(
+                var pokemons = InventoryItems.Where(
                     i =>
                         i?.InventoryItemData?.PokemonData != null &&
                         pokemonIds.Contains(i.InventoryItemData.PokemonData.Id));
@@ -162,7 +295,7 @@ namespace PokemonGo.RocketAPI.Rpc
             EvolvePokemonResponse evolveResponse = response.Item1;
             if (evolveResponse.Result == EvolvePokemonResponse.Types.Result.Success)
             {
-                var pokemons = Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Where(
+                var pokemons = InventoryItems.Where(
                     i =>
                         i?.InventoryItemData?.PokemonData != null &&
                         i.InventoryItemData.PokemonData.Id.Equals(pokemonId));
