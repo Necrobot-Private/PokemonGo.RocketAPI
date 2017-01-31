@@ -12,6 +12,7 @@ using PokemonGo.RocketAPI.Helpers;
 using Google.Protobuf.Collections;
 using POGOProtos.Inventory;
 using System.Linq;
+using POGOProtos.Data;
 
 #endregion
 
@@ -30,9 +31,24 @@ namespace PokemonGo.RocketAPI.Rpc
                 Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Remove(item);
             }
         }
+
+        public IEnumerable<PokemonData> GetPokemons()
+        {
+            return Client.LastGetInventoryResponse.InventoryDelta.InventoryItems
+                    .Select(i => i.InventoryItemData?.PokemonData)
+                    .Where(p => p != null && p.PokemonId > 0);
+        }
+
+        public PokemonData GetPokemon(ulong pokemonId)
+        {
+            return GetPokemons().Where(p => p.Id == pokemonId).FirstOrDefault();
+        }
         
         public async Task<ReleasePokemonResponse> TransferPokemon(ulong pokemonId)
         {
+            if (GetPokemon(pokemonId) == null)
+                return new ReleasePokemonResponse() { Result = ReleasePokemonResponse.Types.Result.Success };
+
             var transferPokemonRequest = new Request
             {
                 RequestType = RequestType.ReleasePokemon,
@@ -70,10 +86,13 @@ namespace PokemonGo.RocketAPI.Rpc
             }
 
             return response.Item1;
-
         }
+
         public async Task<ReleasePokemonResponse> TransferPokemons(List<ulong> pokemonIds)
         {
+            // Filter out all pokemons that don't exist and duplicates.
+            pokemonIds = GetPokemons().Where(p => pokemonIds.Contains(p.Id)).Select(p => p.Id).Distinct().ToList();
+
             var message = new ReleasePokemonMessage();
             message.PokemonIds.AddRange(pokemonIds);
 
