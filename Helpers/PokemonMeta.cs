@@ -19,12 +19,9 @@ namespace PokemonGo.RocketAPI.Helpers
         public static GymBattleSettings BattleSettings;
         public static PokemonUpgradeSettings UpgradeSettings;
         
-        private static DownloadItemTemplatesResponse TemplatesResponse;
-
         public static void Update(DownloadItemTemplatesResponse templatesResponse)
         {
-            TemplatesResponse = templatesResponse;
-            RepeatedField<ItemTemplate> templates = TemplatesResponse.ItemTemplates;
+            RepeatedField<ItemTemplate> templates = templatesResponse.ItemTemplates;
             PokemonMeta.templates.Clear();
             PokemonMeta.templates.AddRange(templates);
 		    foreach (ItemTemplate template in templates)

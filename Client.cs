@@ -156,13 +156,16 @@ namespace PokemonGo.RocketAPI
 
             set
             {
-                if (inventory == null)
+                lock (Inventory.InventoryLock)
                 {
-                    inventory = value;
-                }
-                else
-                {
-                    inventory.MergeWith(value);
+                    if (inventory == null)
+                    {
+                        inventory = value;
+                    }
+                    else
+                    {
+                        inventory.MergeWith(value);
+                    }
                 }
 
                 if (OnInventoryUpdated != null)

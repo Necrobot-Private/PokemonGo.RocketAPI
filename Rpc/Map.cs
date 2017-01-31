@@ -17,7 +17,7 @@ namespace PokemonGo.RocketAPI.Rpc
     public class Map : BaseRpc
     {
         internal GetMapObjectsResponse LastGetMapObjectResponse;
-        internal DateTime LastRpcMapObjectsRequest { get; private set; }
+        internal long LastRpcMapObjectsRequestMs { get; private set; }
         internal GeoCoordinate LastGeoCoordinateMapObjectsRequest { get; private set; }
         
         public Map(Client client) : base(client)
@@ -30,7 +30,7 @@ namespace PokemonGo.RocketAPI.Rpc
             var maxSeconds = Client.GlobalSettings.MapSettings.GetMapObjectsMaxRefreshSeconds;
             var minDistance = Client.GlobalSettings.MapSettings.GetMapObjectsMinDistanceMeters;
             var lastGeoCoordinate = LastGeoCoordinateMapObjectsRequest;
-            var secondsSinceLast = DateTime.UtcNow.Subtract(LastRpcMapObjectsRequest).Seconds;
+            var secondsSinceLast = (Util.TimeUtil.GetCurrentTimestampInMilliseconds() - LastRpcMapObjectsRequestMs) * 1000;
 
             if (lastGeoCoordinate == null)
             {
@@ -102,7 +102,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 // Good map response since we got at least a fort or pokemon in our cells.
                 LastGetMapObjectResponse = response.Item1;
                 LastGeoCoordinateMapObjectsRequest = new GeoCoordinate(lat, lon);
-                LastRpcMapObjectsRequest = new DateTime();
+                LastRpcMapObjectsRequestMs = Util.TimeUtil.GetCurrentTimestampInMilliseconds();
             }
             
             return LastGetMapObjectResponse;
