@@ -43,6 +43,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
             DownloadItemTemplatesResponse downloadItemTemplatesResponse = response.Item1;
             ItemTemplates = downloadItemTemplatesResponse.ItemTemplates;
+            PokemonMeta.Update(downloadItemTemplatesResponse);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
             CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
