@@ -21,9 +21,6 @@ using POGOProtos.Settings;
 
 namespace PokemonGo.RocketAPI
 {
-
-    public delegate void OnInventoryUpdateHandler(GetInventoryResponse response);
-
     public class Client : ICaptchaResponseHandler
     {
         public static WebProxy Proxy;
@@ -41,7 +38,6 @@ namespace PokemonGo.RocketAPI
         public KillSwitchTask KillswitchTask;
         public Hash.IHasher Hasher;
         public ICrypt Cryptor;
-        public event OnInventoryUpdateHandler OnInventoryUpdated;
         public Client(ISettings settings)
         {
             if (settings.UsePogoDevHashServer )
@@ -140,35 +136,13 @@ namespace PokemonGo.RocketAPI
         internal Platform Platform { get; set; }
         internal uint AppVersion { get; set; }
         public long StartTime { get; set; }
-        internal GetInventoryResponse inventory;
         public Version CurrentApiEmulationVersion { get; set; }
         public Version MinimumClientVersion { get; set; }        // This is version from DownloadSettings, but after login is updated from https://pgorelease.nianticlabs.com/plfe/version
 
         //public POGOLib.Net.Session AuthSession { get; set; }
         public ILoginProvider LoginProvider { get; set; }
         public AccessToken AccessToken { get; set; }
-        public GetInventoryResponse LastGetInventoryResponse
-        {
-            get
-            {
-                return inventory;
-            }
-
-            set
-            {
-                if (inventory == null)
-                {
-                    inventory = value;
-                }
-                else
-                {
-                    inventory.MergeWith(value);
-                }
-
-                if (OnInventoryUpdated != null)
-                    OnInventoryUpdated?.Invoke(inventory);
-            }
-        }
+        
         private WebProxy InitProxy()
         {
             if (!Settings.UseProxy) return null;
