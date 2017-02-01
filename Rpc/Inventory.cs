@@ -35,12 +35,15 @@ namespace PokemonGo.RocketAPI.Rpc
             try
             {
                 InventoryItem toRemove;
-                return InventoryItems.TryRemove(item.GetHashCode(), out toRemove);
+
+                if (item != null)
+                    return InventoryItems.TryRemove(item.GetHashCode(), out toRemove);
             }
             catch (ArgumentNullException)
             {
-                return false;
             }
+
+            return false;
         }
 
         private void AddInventoryItem(InventoryItem item)
