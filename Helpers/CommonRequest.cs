@@ -149,7 +149,7 @@ namespace PokemonGo.RocketAPI.Helpers
                     client.InventoryLastUpdateTimestamp = getInventoryResponse.InventoryDelta.NewTimestampMs;
                 }
 
-                client.LastGetInventoryResponse = getInventoryResponse;
+                client.Inventory.MergeWith(getInventoryResponse);
             }
         }
 
