@@ -24,8 +24,6 @@ namespace PokemonGo.RocketAPI.Rpc
         {
         }
 
-        internal readonly object InventoryLock = new object();
-        
         internal void RemoveInventoryItems(IEnumerable<InventoryItem> items)
         {   
             foreach (var item in items)
@@ -36,12 +34,9 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public IEnumerable<PokemonData> GetPokemons()
         {
-            lock (InventoryLock)
-            {
-                return Client.LastGetInventoryResponse.InventoryDelta.InventoryItems
-                    .Select(i => i.InventoryItemData?.PokemonData)
-                    .Where(p => p != null && p.PokemonId > 0);
-            }
+            return Client.LastGetInventoryResponse.InventoryDelta.InventoryItems
+                .Select(i => i.InventoryItemData?.PokemonData)
+                .Where(p => p != null && p.PokemonId > 0);
         }
 
         public PokemonData GetPokemon(ulong pokemonId)
@@ -83,14 +78,11 @@ namespace PokemonGo.RocketAPI.Rpc
             ReleasePokemonResponse releaseResponse = response.Item1;
             if (releaseResponse.Result == ReleasePokemonResponse.Types.Result.Success)
             {
-                lock (InventoryLock)
-                {
-                    var pokemons = Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Where(
-                        i =>
-                            i?.InventoryItemData?.PokemonData != null &&
-                            i.InventoryItemData.PokemonData.Id.Equals(pokemonId));
-                    RemoveInventoryItems(pokemons);
-                }
+                var pokemons = Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Where(
+                    i =>
+                        i?.InventoryItemData?.PokemonData != null &&
+                        i.InventoryItemData.PokemonData.Id.Equals(pokemonId));
+                RemoveInventoryItems(pokemons);
             }
 
             return response.Item1;
@@ -130,14 +122,11 @@ namespace PokemonGo.RocketAPI.Rpc
             ReleasePokemonResponse releaseResponse = response.Item1;
             if (releaseResponse.Result == ReleasePokemonResponse.Types.Result.Success)
             {
-                lock (InventoryLock)
-                {
-                    var pokemons = Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Where(
-                        i =>
-                            i?.InventoryItemData?.PokemonData != null &&
-                            pokemonIds.Contains(i.InventoryItemData.PokemonData.Id));
-                    RemoveInventoryItems(pokemons);
-                }
+                var pokemons = Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Where(
+                    i =>
+                        i?.InventoryItemData?.PokemonData != null &&
+                        pokemonIds.Contains(i.InventoryItemData.PokemonData.Id));
+                RemoveInventoryItems(pokemons);
             }
 
             return response.Item1;
@@ -173,14 +162,11 @@ namespace PokemonGo.RocketAPI.Rpc
             EvolvePokemonResponse evolveResponse = response.Item1;
             if (evolveResponse.Result == EvolvePokemonResponse.Types.Result.Success)
             {
-                lock (InventoryLock)
-                {
-                    var pokemons = Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Where(
-                        i =>
-                            i?.InventoryItemData?.PokemonData != null &&
-                            i.InventoryItemData.PokemonData.Id.Equals(pokemonId));
-                    RemoveInventoryItems(pokemons);
-                }
+                var pokemons = Client.LastGetInventoryResponse.InventoryDelta.InventoryItems.Where(
+                    i =>
+                        i?.InventoryItemData?.PokemonData != null &&
+                        i.InventoryItemData.PokemonData.Id.Equals(pokemonId));
+                RemoveInventoryItems(pokemons);
             }
             return response.Item1;
         }
