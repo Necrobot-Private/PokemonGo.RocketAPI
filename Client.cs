@@ -38,6 +38,8 @@ namespace PokemonGo.RocketAPI
         public KillSwitchTask KillswitchTask;
         public Hash.IHasher Hasher;
         public ICrypt Cryptor;
+        internal RequestBuilder RequestBuilder;
+
         public Client(ISettings settings)
         {
             if (settings.UsePogoDevHashServer )
@@ -75,10 +77,7 @@ namespace PokemonGo.RocketAPI
             {
                 throw new AuthConfigException("No API method being select in your auth.json");
             }
-
-            //Hasher = new LegacyHashser();
-
-
+            
             Settings = settings;
             Proxy = InitProxy();
             PokemonHttpClient = new PokemonHttpClient();

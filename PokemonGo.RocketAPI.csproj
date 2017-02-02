@@ -249,6 +249,7 @@
     <Compile Include="Helpers\DeviceInfoUtil.cs" />
     <Compile Include="Helpers\HashBuilder.cs" />
     <Compile Include="Helpers\KillSwitchTask.cs" />
+    <Compile Include="Helpers\LehmerRng.cs" />
     <Compile Include="Helpers\PokemonCpUtils.cs" />
     <Compile Include="Helpers\PokemonMeta.cs" />
     <Compile Include="Helpers\PokemonMetaRegistry.cs" />

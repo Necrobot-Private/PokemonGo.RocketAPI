@@ -2,12 +2,9 @@
 
 using System;
 using System.Threading.Tasks;
-using Google.Protobuf;
 using PokemonGo.RocketAPI.Enums;
 using PokemonGo.RocketAPI.Exceptions;
 using PokemonGo.RocketAPI.Helpers;
-using POGOProtos.Networking.Envelopes;
-using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Responses;
 using System.IO;
 using Newtonsoft.Json;
@@ -145,7 +142,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
             await Login.LoadAccessToken(Client.LoginProvider, Client, true);
             Client.StartTime = Utils.GetTime(true);
-            RequestBuilder.Reset();
+            Client.RequestBuilder = new RequestBuilder(Client, Client.Settings);
 
             var player = await Client.Player.GetPlayer(false); // Set false because initial GetPlayer does not use common requests.
 
