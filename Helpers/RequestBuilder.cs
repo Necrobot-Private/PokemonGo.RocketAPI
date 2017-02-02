@@ -309,13 +309,17 @@ namespace PokemonGo.RocketAPI.Helpers
                     await Rpc.Login.Reauthenticate(_client);
                 }
 
+                int unknown2 = 0;
+                if (_client.AccessToken.ProviderID == "ptc")
+                    unknown2 = TRandomDevice.Choice(new List<int>(new int[] { 0, 21, 28, 28, 56, 59, 59, 59 }));
+                
                 e.AuthInfo = new RequestEnvelope.Types.AuthInfo
                 {
                     Provider = _client.AccessToken.ProviderID,
                     Token = new RequestEnvelope.Types.AuthInfo.Types.JWT
                     {
                         Contents = _client.AccessToken.Token,
-                        Unknown2 = 59
+                        Unknown2 = unknown2
                     }
                 };
             }
