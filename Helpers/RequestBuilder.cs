@@ -267,18 +267,22 @@ namespace PokemonGo.RocketAPI.Helpers
                 e.AuthTicket = _client.AccessToken.AuthTicket;
             }
 
-            //Chat with  SLxTnT -  this is required for all request and need befor ethe main envelop.
+            if (_client.AppVersion > 4500)
+            {
+                // Only add UnknownPtr8Request if not using the legacy API.
+                // Chat with SLxTnT - this is required for all request and needed before the main envelope.
 
-            //if(customRequests.Any(x=>x.RequestType == RequestType.GetMapObjects  || x.RequestType == RequestType.GetPlayer))
-            var plat8Message = new UnknownPtr8Request()
-            {
-                Message = _client.UnknownPlat8Field
-            };
-            e.PlatformRequests.Add(new RequestEnvelope.Types.PlatformRequest()
-            {
-                Type = PlatformRequestType.UnknownPtr8,
-                RequestMessage = plat8Message.ToByteString()
-            });
+                //if(customRequests.Any(x=>x.RequestType == RequestType.GetMapObjects  || x.RequestType == RequestType.GetPlayer))
+                var plat8Message = new UnknownPtr8Request()
+                {
+                    Message = _client.UnknownPlat8Field
+                };
+                e.PlatformRequests.Add(new RequestEnvelope.Types.PlatformRequest()
+                {
+                    Type = PlatformRequestType.UnknownPtr8,
+                    RequestMessage = plat8Message.ToByteString()
+                });
+            }
             e.PlatformRequests.Add(GenerateSignature(e, currentLocation));
 
             return e;
