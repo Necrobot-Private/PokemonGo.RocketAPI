@@ -20,15 +20,16 @@ namespace PokemonGo.RocketAPI.Hash
             public DateTime Timestamp { get; set; }
             public long ResponseTime { get; set; }
         }
-        public long Client_Unknown25 => -76506539888958491;
-        //0.51 UK25- 8832040574896607694;
         private string apiKey;
         public bool VerboseLog { get; set; }
         private List<Stat> statistics = new List<Stat>();
-        public PokefamerHasher(string apiKey, bool log)
+        private string apiEndPoint;
+
+        public PokefamerHasher(string apiKey, bool log, string apiEndPoint)
         {
             this.VerboseLog = log;
             this.apiKey = apiKey;
+            this.apiEndPoint = apiEndPoint;
         }
         public async Task<HashResponseContent> RequestHashesAsync(HashRequestContent request)
         {
@@ -65,13 +66,6 @@ namespace PokemonGo.RocketAPI.Hash
 
         private async Task<HashResponseContent> InternalRequestHashesAsync(HashRequestContent request)
         {
-            // This value will determine which version of hashing you receive.
-            // Currently supported versions:
-            // v119 -> Pogo iOS 1.19
-            // v121 -> Pogo iOS 1.21
-            // v121_2 => IOS 1.22
-            const string endpoint = "api/v123_1/hash";
-
             // NOTE: This is really bad. Don't create new HttpClient's all the time.
             // Use a single client per-thread if you need one.
             using (var client = new System.Net.Http.HttpClient())
@@ -97,7 +91,7 @@ namespace PokemonGo.RocketAPI.Hash
                 Stat stat = new Stat() { Timestamp = DateTime.Now };
                 try
                 {
-                    response = await client.PostAsync(endpoint, content);
+                    response = await client.PostAsync(apiEndPoint, content);
                 }
                 catch (Exception ex)
                 {
@@ -165,7 +159,7 @@ namespace PokemonGo.RocketAPI.Hash
 
                         return await RequestHashesAsync(request);
                     default:
-                        throw new HasherException($"Hash API server ({client.BaseAddress}{endpoint}) might down!");
+                        throw new HasherException($"Hash API server ({client.BaseAddress}{apiEndPoint}) might down!");
                 }
             }
 

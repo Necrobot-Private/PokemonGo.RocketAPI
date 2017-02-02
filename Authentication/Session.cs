@@ -96,15 +96,9 @@ namespace PokemonGo.RocketAPI.Authentication
         /// Gets the <see cref="GlobalSettings"/> of the <see cref="Session" />.
         /// </summary>
         public GlobalSettings GlobalSettings { get; internal set; }
-
-        /// <summary>
-        /// Gets the hash of the <see cref="GlobalSettings"/>.
-        /// </summary>
-        internal string GlobalSettingsHash { get; set; } = string.Empty;
-
+        
         private Semaphore ReauthenticateMutex { get; } = new Semaphore(1, 1);
       
-
         /// <summary>
         /// Ensures the <see cref="Session" /> gets reauthenticated, no matter how long it takes.
         /// </summary>
