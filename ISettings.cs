@@ -32,7 +32,6 @@ namespace PokemonGo.RocketAPI
         string FirmwareTags { get; set; }
         string FirmwareType { get; set; }
         string FirmwareFingerprint { get; set; }
-        ByteString SessionHash { get; set; }
         bool UseProxy { get; set; }
         bool UseProxyAuthentication { get; set; }
         string UseProxyHost { get; set; }
