@@ -43,21 +43,25 @@ namespace PokemonGo.RocketAPI
             if (settings.UsePogoDevHashServer )
             {
                 if (string.IsNullOrEmpty(settings.AuthAPIKey)) throw new AuthConfigException("You selected Pogodev API but not provide proper API Key");
+
                 Hasher = new PokefamerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog);
                 Cryptor = new Crypt();
 
-                // These constants need to change if we update the hashing server API version that is used.
-                AppVersion = 5301;
-                CurrentApiEmulationVersion = new Version("0.53.1"); 
+                // These 4 constants below need to change if we update the hashing server API version that is used.
+                Unknown25 = -9156899491064153954;
+                AppVersion = 5500;
+                CurrentApiEmulationVersion = new Version("0.55.0");
+                UnknownPlat8Field = "7bb2d74dec0d8c5e132ad6c5491f72c9f19b306c";
             }
             else
             if (settings.UseLegacyAPI)
             {
                 Hasher = new LegacyHashser();
                 Cryptor = new LegacyCrypt();
+
+                Unknown25 = -1553869577012279119;
                 AppVersion = 4500;
                 CurrentApiEmulationVersion = new Version("0.45.0");
-
             }
             else
             {
@@ -135,6 +139,8 @@ namespace PokemonGo.RocketAPI
         public long InventoryLastUpdateTimestamp { get; set; }
         internal Platform Platform { get; set; }
         internal uint AppVersion { get; set; }
+        internal string UnknownPlat8Field { get; set; }
+        internal long Unknown25 { get; set; }
         public long StartTime { get; set; }
         public Version CurrentApiEmulationVersion { get; set; }
         public Version MinimumClientVersion { get; set; }        // This is version from DownloadSettings, but after login is updated from https://pgorelease.nianticlabs.com/plfe/version

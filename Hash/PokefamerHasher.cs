@@ -20,8 +20,6 @@ namespace PokemonGo.RocketAPI.Hash
             public DateTime Timestamp { get; set; }
             public long ResponseTime { get; set; }
         }
-        public long Client_Unknown25 => -76506539888958491;
-        //0.51 UK25- 8832040574896607694;
         private string apiKey;
         public bool VerboseLog { get; set; }
         private List<Stat> statistics = new List<Stat>();
@@ -70,7 +68,7 @@ namespace PokemonGo.RocketAPI.Hash
             // v119 -> Pogo iOS 1.19
             // v121 -> Pogo iOS 1.21
             // v121_2 => IOS 1.22
-            const string endpoint = "api/v123_1/hash";
+            const string endpoint = "api/v125/hash";
 
             // NOTE: This is really bad. Don't create new HttpClient's all the time.
             // Use a single client per-thread if you need one.
