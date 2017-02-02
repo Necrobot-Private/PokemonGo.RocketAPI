@@ -138,7 +138,10 @@ namespace PokemonGo.RocketAPI.Rpc
         public async Task<GetPlayerResponse> DoLogin()
         {
             // Don't wait for background start of killswitch.
+            // jjskuld - Ignore CS4014 warning for now.
+            #pragma warning disable 4014
             Client.KillswitchTask.Start();
+            #pragma warning restore 4014
 
             await Login.LoadAccessToken(Client.LoginProvider, Client, true);
             Client.StartTime = Utils.GetTime(true);
