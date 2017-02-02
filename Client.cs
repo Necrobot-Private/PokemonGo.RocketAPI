@@ -44,8 +44,16 @@ namespace PokemonGo.RocketAPI
             {
                 if (string.IsNullOrEmpty(settings.AuthAPIKey)) throw new AuthConfigException("You selected Pogodev API but not provide proper API Key");
 
-                Hasher = new PokefamerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog);
                 Cryptor = new Crypt();
+
+                // This value will determine which version of hashing you receive.
+                // Currently supported versions:
+                // v119   -> Pogo iOS 1.19
+                // v121   -> Pogo iOS 1.21
+                // v121_2 -> Pogo iOS 1.22
+                // v125   -> Pogo iOS 1.25
+                ApiEndPoint = "api/v125/hash";
+                Hasher = new PokefamerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog, ApiEndPoint);
 
                 // These 4 constants below need to change if we update the hashing server API version that is used.
                 Unknown25 = -9156899491064153954;
@@ -141,6 +149,7 @@ namespace PokemonGo.RocketAPI
         internal uint AppVersion { get; set; }
         internal string UnknownPlat8Field { get; set; }
         internal long Unknown25 { get; set; }
+        internal string ApiEndPoint { get; set; }
         public long StartTime { get; set; }
         public Version CurrentApiEmulationVersion { get; set; }
         public Version MinimumClientVersion { get; set; }        // This is version from DownloadSettings, but after login is updated from https://pgorelease.nianticlabs.com/plfe/version
