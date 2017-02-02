@@ -153,7 +153,7 @@ namespace PokemonGo.RocketAPI.Helpers
             var sig = new Signature
             {
                 SessionHash = SessionHash,
-                Unknown25 = _client.Hasher.Client_Unknown25,
+                Unknown25 = _client.Unknown25,
                 Timestamp = (ulong)Utils.GetTime(true),
                 TimestampSinceStart = (ulong)(Utils.GetTime(true) - _client.StartTime),
                 //LocationHash1 = (int)Utils.GenerateLocation1(ticketBytes, _latitude, _longitude, _horizontalAccuracy),
@@ -327,9 +327,14 @@ namespace PokemonGo.RocketAPI.Helpers
             //Chat with  SLxTnT -  this is required for all request and need befor ethe main envelop.
 
             //if(customRequests.Any(x=>x.RequestType == RequestType.GetMapObjects  || x.RequestType == RequestType.GetPlayer))
+            var plat8Message = new UnknownPtr8Request()
+            {
+                Message = _client.UnknownPlat8Field
+            };
             e.PlatformRequests.Add(new RequestEnvelope.Types.PlatformRequest()
             {
-                Type = PlatformRequestType.UnknownPtr8
+                Type = PlatformRequestType.UnknownPtr8,
+                RequestMessage = plat8Message.ToByteString()
             });
             e.PlatformRequests.Add(GenerateSignature(e));
 
