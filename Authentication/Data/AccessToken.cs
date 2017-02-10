@@ -24,13 +24,13 @@ namespace PokemonGo.RocketAPI.Authentication.Data
         [JsonIgnore]
         public bool IsExpired => DateTime.UtcNow > Expiry;
 
-        [JsonIgnore]
-        public AuthTicket AuthTicket { get; set; }
+        //[JsonIgnore]
+        //public AuthTicket AuthTicket { get; set; }
 
         public void Expire()
         {
             Expiry = DateTime.UtcNow;
-            AuthTicket = null;
+            //AuthTicket = null;
             Token = null;
         }
     }
