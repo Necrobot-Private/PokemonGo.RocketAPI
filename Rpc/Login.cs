@@ -61,14 +61,24 @@ namespace PokemonGo.RocketAPI.Rpc
             if (accessToken == null)
                 return false;
 
+            // If auth ticket is not null, check auth ticket expiration (with 10 minute buffer)
+            if (accessToken.AuthTicket != null && accessToken.AuthTicket.ExpireTimestampMs > (ulong)Utils.GetTime(true) - (60000 * 10))
+            {
+                // If about to expire, then null out the auth ticket.
+                accessToken.AuthTicket = null;  
+            }
+
+            if (accessToken.AuthTicket != null)
+            {
+                // If we have auth ticket not about to expire, then return true.
+                return true;
+            }
+
+            // No auth ticket, so check if access token is valid.
             if (string.IsNullOrEmpty(accessToken.Token) || accessToken.IsExpired)
                 return false;
-
-            // If auth ticket is not null, check auth ticket expiration (with 10 minute buffer)
-            if (accessToken.AuthTicket != null && !IsValidAuthTicket(accessToken))
-                return false;
-
-            // If we got here, then we have a valid non-expired access token and either no auth ticket or auth ticket that has not expired.
+            
+            // If we got here, then we have a valid non-expired access token.
             return true;
         }
 
@@ -92,10 +102,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
                 if (IsValidAccessToken(client.AccessToken))
                     return client.AccessToken;
-
-                if (client.AccessToken != null && !IsValidAuthTicket(client.AccessToken))
-                    client.AccessToken.AuthTicket = null;
-
+                
                 // If we got here then access token is expired or not loaded into memory.
                 if (isCached)
                 {
@@ -199,7 +206,6 @@ namespace PokemonGo.RocketAPI.Rpc
             Client.StartTime = Utils.GetTime(true);
             Client.RequestBuilder = new RequestBuilder(Client, Client.Settings);
 
-            await Rpc.Login.GetValidAccessToken(Client);
             var player = await Client.Player.GetPlayer(false); // Set false because initial GetPlayer does not use common requests.
 
             await Client.Download.GetRemoteConfigVersion();
