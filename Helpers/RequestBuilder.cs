@@ -222,6 +222,44 @@ namespace PokemonGo.RocketAPI.Helpers
             return encryptedSignature;
         }
 
+        public async Task RegenerateRequestEnvelopeWithNewAccessToken(RequestEnvelope requestEnvelope)
+        {
+            var accessToken = await Rpc.Login.GetValidAccessToken(_client, true /* force refresh */);
+
+            requestEnvelope.AuthTicket = null;
+            requestEnvelope.AuthInfo = new RequestEnvelope.Types.AuthInfo
+            {
+                Provider = accessToken.ProviderID,
+                Token = new RequestEnvelope.Types.AuthInfo.Types.JWT
+                {
+                    Contents = accessToken.Token,
+                    Unknown2 = (accessToken.ProviderID == "ptc") ? TRandomDevice.Choice(new List<int>(new int[] { 0, 21, 28, 28, 56, 59, 59, 59 })) : 0
+                }
+            };
+
+            requestEnvelope.PlatformRequests.Clear();
+
+            if (_client.AppVersion > 4500)
+            {
+                // Only add UnknownPtr8Request if not using the legacy API.
+                // Chat with SLxTnT - this is required for all request and needed before the main envelope.
+
+                //if(customRequests.Any(x=>x.RequestType == RequestType.GetMapObjects  || x.RequestType == RequestType.GetPlayer))
+                var plat8Message = new UnknownPtr8Request()
+                {
+                    Message = _client.UnknownPlat8Field
+                };
+                requestEnvelope.PlatformRequests.Add(new RequestEnvelope.Types.PlatformRequest()
+                {
+                    Type = PlatformRequestType.UnknownPtr8,
+                    RequestMessage = plat8Message.ToByteString()
+                });
+            }
+
+            var currentLocation = new GeoCoordinate(requestEnvelope.Latitude, requestEnvelope.Longitude, _client.CurrentAltitude);
+            requestEnvelope.PlatformRequests.Add(GenerateSignature(requestEnvelope, currentLocation));
+        }
+
         public async Task<RequestEnvelope> GetRequestEnvelope(IEnumerable<Request> customRequests)
         {
             // Save the location
@@ -238,33 +276,23 @@ namespace PokemonGo.RocketAPI.Helpers
             };
 
             e.Requests.AddRange(customRequests);
-
-            if (_client.AccessToken.AuthTicket == null || 
-                (_client.AccessToken.AuthTicket != null && _client.AccessToken.AuthTicket.ExpireTimestampMs < (ulong)Utils.GetTime(true) - (60000 * 10)) || // Check AuthTicket expiration (with 10 minute buffer)
-                _client.AccessToken.IsExpired)
+            
+            if (_client.AuthTicket != null)
             {
-                if (_client.AccessToken.IsExpired)
-                {
-                    await Rpc.Login.Reauthenticate(_client);
-                }
-
-                int unknown2 = 0;
-                if (_client.AccessToken.ProviderID == "ptc")
-                    unknown2 = TRandomDevice.Choice(new List<int>(new int[] { 0, 21, 28, 28, 56, 59, 59, 59 }));
-                
-                e.AuthInfo = new RequestEnvelope.Types.AuthInfo
-                {
-                    Provider = _client.AccessToken.ProviderID,
-                    Token = new RequestEnvelope.Types.AuthInfo.Types.JWT
-                    {
-                        Contents = _client.AccessToken.Token,
-                        Unknown2 = unknown2
-                    }
-                };
+                e.AuthTicket = _client.AuthTicket;
             }
             else
             {
-                e.AuthTicket = _client.AccessToken.AuthTicket;
+                var accessToken = await Rpc.Login.GetValidAccessToken(_client);
+                e.AuthInfo = new RequestEnvelope.Types.AuthInfo
+                {
+                    Provider = accessToken.ProviderID,
+                    Token = new RequestEnvelope.Types.AuthInfo.Types.JWT
+                    {
+                        Contents = accessToken.Token,
+                        Unknown2 = (accessToken.ProviderID == "ptc") ? TRandomDevice.Choice(new List<int>(new int[] { 0, 21, 28, 28, 56, 59, 59, 59 })) : 0
+                    }
+                };
             }
 
             if (_client.AppVersion > 4500)
