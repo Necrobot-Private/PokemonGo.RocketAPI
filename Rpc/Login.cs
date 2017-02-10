@@ -61,16 +61,16 @@ namespace PokemonGo.RocketAPI.Rpc
             if (accessToken == null)
                 return false;
 
-            // If auth ticket is not null, check auth ticket expiration (with 10 minute buffer)
-            if (accessToken.AuthTicket != null && accessToken.AuthTicket.ExpireTimestampMs > (ulong)Utils.GetTime(true) - (60000 * 10))
+            // If auth ticket is not null, check auth ticket expiration
+            if (accessToken.AuthTicket != null && accessToken.AuthTicket.ExpireTimestampMs > (ulong)Utils.GetTime(true))
             {
-                // If about to expire, then null out the auth ticket.
+                // If expired, then null out the auth ticket.
                 accessToken.AuthTicket = null;  
             }
 
             if (accessToken.AuthTicket != null)
             {
-                // If we have auth ticket not about to expire, then return true.
+                // If we have auth ticket, then return true.
                 return true;
             }
 
