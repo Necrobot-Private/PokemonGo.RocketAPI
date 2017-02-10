@@ -276,15 +276,14 @@ namespace PokemonGo.RocketAPI.Helpers
             };
 
             e.Requests.AddRange(customRequests);
-
-            var accessToken = await Rpc.Login.GetValidAccessToken(_client);
-
-            if (accessToken.AuthTicket != null)
+            
+            if (_client.AuthTicket != null)
             {
-                e.AuthTicket = accessToken.AuthTicket;
+                e.AuthTicket = _client.AuthTicket;
             }
             else
             {
+                var accessToken = await Rpc.Login.GetValidAccessToken(_client);
                 e.AuthInfo = new RequestEnvelope.Types.AuthInfo
                 {
                     Provider = accessToken.ProviderID,

@@ -10,6 +10,7 @@ using POGOProtos.Networking.Envelopes;
 using System.Collections.Concurrent;
 using System.Threading;
 using Newtonsoft.Json;
+using PokemonGo.RocketAPI.Helpers;
 
 #endregion
 
@@ -100,7 +101,17 @@ namespace PokemonGo.RocketAPI.Extensions
                 apiClient.ApiUrl = "https://" + serverResponse.ApiUrl + "/rpc";
 
             if (serverResponse.AuthTicket != null)
-                Rpc.Login.SetAuthTicketOnAccessToken(apiClient, serverResponse.AuthTicket);
+            {
+                if (serverResponse.AuthTicket.ExpireTimestampMs > (ulong)Utils.GetTime(true))
+                {
+                    apiClient.AuthTicket = serverResponse.AuthTicket;
+                }
+                else
+                {
+                    // Expired auth ticket.
+                    apiClient.AuthTicket = null;
+                }
+            }
 
             switch (serverResponse.StatusCode)
             {

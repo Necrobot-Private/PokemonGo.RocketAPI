@@ -11,8 +11,6 @@ using Newtonsoft.Json;
 using System.Threading;
 using PokemonGo.RocketAPI.LoginProviders;
 using PokemonGo.RocketAPI.Authentication.Data;
-using PokemonGo.RocketAPI.Authentication;
-using POGOProtos.Networking.Envelopes;
 
 #endregion
 
@@ -41,52 +39,15 @@ namespace PokemonGo.RocketAPI.Rpc
                     throw new ArgumentOutOfRangeException(nameof(settings.AuthType), "Unknown AuthType");
             }
         }
-
-        public static void SetAuthTicketOnAccessToken(Client client, AuthTicket authTicket)
-        {
-            try
-            {
-                ReauthenticateMutex.WaitOne();
-                if (client.AccessToken != null)
-                    client.AccessToken.AuthTicket = authTicket;
-            }
-            finally
-            {
-                ReauthenticateMutex.Release();
-            }
-        }
-
+        
         private static bool IsValidAccessToken(AccessToken accessToken)
         {
-            if (accessToken == null)
+            if (accessToken == null || string.IsNullOrEmpty(accessToken.Token) || accessToken.IsExpired)
                 return false;
 
-            // If auth ticket is not null, check auth ticket expiration
-            if (accessToken.AuthTicket != null && accessToken.AuthTicket.ExpireTimestampMs > (ulong)Utils.GetTime(true))
-            {
-                // If expired, then null out the auth ticket.
-                accessToken.AuthTicket = null;  
-            }
-
-            if (accessToken.AuthTicket != null)
-            {
-                // If we have auth ticket, then return true.
-                return true;
-            }
-
-            // No auth ticket, so check if access token is valid.
-            if (string.IsNullOrEmpty(accessToken.Token) || accessToken.IsExpired)
-                return false;
-            
-            // If we got here, then we have a valid non-expired access token.
             return true;
         }
-
-        private static bool IsValidAuthTicket(AccessToken accessToken)
-        {
-            return accessToken != null && accessToken.AuthTicket != null && accessToken.AuthTicket.ExpireTimestampMs < (ulong)Utils.GetTime(true) - (60000 * 10);
-        }
-
+        
         public static async Task<AccessToken> GetValidAccessToken(Client client, bool forceRefresh = false, bool isCached = false)
         {
             try
@@ -136,7 +97,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
         private static void SaveAccessToken(AccessToken accessToken)
         {
-            if (accessToken == null || string.IsNullOrEmpty(accessToken.Uid) || string.IsNullOrEmpty(accessToken.Token) || accessToken.IsExpired)
+            if (!IsValidAccessToken(accessToken))
                 return;
 
             var fileName = Path.Combine(Directory.GetCurrentDirectory(), "Cache", $"{accessToken.Uid}.json");
@@ -155,7 +116,7 @@ namespace PokemonGo.RocketAPI.Rpc
         private static async Task Reauthenticate(Client client, bool isCached)
         {
             var tries = 0;
-            while (null == client.AccessToken || client.AccessToken.IsExpired || string.IsNullOrEmpty(client.AccessToken.Token))
+            while (!IsValidAccessToken(client.AccessToken))
             {
                 // If expired, then we always delete the saved access token if it exists.
                 if (isCached)
@@ -174,7 +135,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 }
                 finally
                 {
-                    if (null == client.AccessToken || client.AccessToken.IsExpired || string.IsNullOrEmpty(client.AccessToken.Token))
+                    if (!IsValidAccessToken(client.AccessToken))
                     {
                         var sleepSeconds = Math.Min(60, ++tries * 5);
                         //Logger.Error($"Reauthentication failed, trying again in {sleepSeconds} seconds.");
