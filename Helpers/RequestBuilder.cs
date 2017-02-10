@@ -245,7 +245,7 @@ namespace PokemonGo.RocketAPI.Helpers
             {
                 if (_client.AccessToken.IsExpired)
                 {
-                    await Rpc.Login.Reauthenticate(_client);
+                    await Rpc.Login.GetValidAccessToken(_client, true /* force refresh */);
                 }
 
                 int unknown2 = 0;

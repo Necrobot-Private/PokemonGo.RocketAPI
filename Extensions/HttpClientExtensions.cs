@@ -105,9 +105,7 @@ namespace PokemonGo.RocketAPI.Extensions
             switch (serverResponse.StatusCode)
             {
                 case ResponseEnvelope.Types.StatusCode.InvalidAuthToken:
-                    apiClient.AccessToken.Expire();
-                    await Rpc.Login.Reauthenticate(apiClient);
-                    Rpc.Login.SaveAccessToken(apiClient.AccessToken);
+                    await Rpc.Login.GetValidAccessToken(apiClient, true /* force refresh */);
                     throw new AccessTokenExpiredException();
                 case ResponseEnvelope.Types.StatusCode.Redirect:
                     // 53 means that the api_endpoint was not correctly set, should be at this point, though, so redo the request
