@@ -19,23 +19,26 @@ namespace PokemonGo.RocketAPI.Rpc
         internal GetMapObjectsResponse LastGetMapObjectResponse;
         internal long LastRpcMapObjectsRequestMs { get; private set; }
         internal GeoCoordinate LastGeoCoordinateMapObjectsRequest { get; private set; }
-        
+
         public Map(Client client) : base(client)
         {
         }
 
-        private int GetTimeUntilRefreshMapAvail()
+        private int GetMilisSecondUntilRefreshMapAvail()
         {
-            var minSeconds = Client.GlobalSettings.MapSettings.GetMapObjectsMinRefreshSeconds;
+            var minSeconds =  Client.GlobalSettings.MapSettings.GetMapObjectsMinRefreshSeconds;
             var lastGeoCoordinate = LastGeoCoordinateMapObjectsRequest;
-            var secondsSinceLast = (Util.TimeUtil.GetCurrentTimestampInMilliseconds() - LastRpcMapObjectsRequestMs) * 1000;
+            var secondsSinceLast = Util.TimeUtil.GetCurrentTimestampInMilliseconds() - LastRpcMapObjectsRequestMs;
 
-            if (lastGeoCoordinate == null)
-            {
-                return 0;
-            }
+            //if (lastGeoCoordinate == null)
+            //{
+            //    return 0;
+            //}
+            if (secondsSinceLast > minSeconds * 1000) return 0;
 
-            return (int)Math.Min(secondsSinceLast - minSeconds, 0);
+            int waitTime = (int)Math.Max(minSeconds*1000- secondsSinceLast, 0);
+
+            return waitTime;
         }
         private bool CanRefreshMap()
         {
@@ -64,13 +67,16 @@ namespace PokemonGo.RocketAPI.Rpc
             return false;
         }
 
-        public async Task<GetMapObjectsResponse> GetMapObjects(bool force= false)
+        public async Task<GetMapObjectsResponse> GetMapObjects(bool force = false)
         {
-            if(force)
+            if (force)
             {
+                var t = GetMilisSecondUntilRefreshMapAvail();
                 //wait until get map available
-                if(GetTimeUntilRefreshMapAvail()>0)
-                await Task.Delay(GetTimeUntilRefreshMapAvail() * 1000);
+                if (t > 0)
+                {
+                    await Task.Delay(t);
+                }
             }
             if (!CanRefreshMap())
             {
@@ -87,18 +93,18 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var getMapObjectsMessage = new GetMapObjectsMessage
             {
-                CellId = {S2Helper.GetNearbyCellIds(lon, lat)},
-                SinceTimestampMs = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                CellId = { S2Helper.GetNearbyCellIds(lon, lat) },
+                SinceTimestampMs = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                 Latitude = lat,
                 Longitude = lon
             };
-            
+
             var getMapObjectsRequest = new Request
             {
                 RequestType = RequestType.GetMapObjects,
                 RequestMessage = getMapObjectsMessage.ToByteString()
             };
-            
+
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getMapObjectsRequest, Client));
 
             Tuple<GetMapObjectsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
@@ -116,8 +122,10 @@ namespace PokemonGo.RocketAPI.Rpc
             CheckChallengeResponse checkChallengeResponse = response.Item2;
             CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
 
+            LastRpcMapObjectsRequestMs = Util.TimeUtil.GetCurrentTimestampInMilliseconds();
+
             // Only cache good responses
-            if (response.Item1.MapCells.Count > 0 && 
+            if (response.Item1.MapCells.Count > 0 &&
                 (response.Item1.MapCells.Where(x => x.Forts.Count > 0).Count() > 0 ||
                  response.Item1.MapCells.Where(x => x.NearbyPokemons.Count > 0).Count() > 0 ||
                  response.Item1.MapCells.Where(x => x.WildPokemons.Count > 0).Count() > 0))
@@ -125,12 +133,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 // Good map response since we got at least a fort or pokemon in our cells.
                 LastGetMapObjectResponse = response.Item1;
                 LastGeoCoordinateMapObjectsRequest = new GeoCoordinate(lat, lon);
-                LastRpcMapObjectsRequestMs = Util.TimeUtil.GetCurrentTimestampInMilliseconds();
             }
-            
-            if(LastGetMapObjectResponse == null )
-            {
 
+            if (LastGetMapObjectResponse == null)
+            {
                 LastGetMapObjectResponse = response.Item1;
             }
 
