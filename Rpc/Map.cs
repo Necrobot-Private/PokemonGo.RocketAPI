@@ -16,7 +16,7 @@ namespace PokemonGo.RocketAPI.Rpc
 {
     public class Map : BaseRpc
     {
-        internal GetMapObjectsResponse LastGetMapObjectResponse;
+        public GetMapObjectsResponse LastGetMapObjectResponse;
         internal long LastRpcMapObjectsRequestMs { get; private set; }
         internal GeoCoordinate LastGeoCoordinateMapObjectsRequest { get; private set; }
 
@@ -133,11 +133,6 @@ namespace PokemonGo.RocketAPI.Rpc
                 // Good map response since we got at least a fort or pokemon in our cells.
                 LastGetMapObjectResponse = response.Item1;
                 LastGeoCoordinateMapObjectsRequest = new GeoCoordinate(lat, lon);
-            }
-
-            if (LastGetMapObjectResponse == null)
-            {
-                LastGetMapObjectResponse = response.Item1;
             }
 
             return LastGetMapObjectResponse;
