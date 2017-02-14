@@ -24,6 +24,19 @@ namespace PokemonGo.RocketAPI.Rpc
         {
         }
 
+        private int GetTimeUntilRefreshMapAvail()
+        {
+            var minSeconds = Client.GlobalSettings.MapSettings.GetMapObjectsMinRefreshSeconds;
+            var lastGeoCoordinate = LastGeoCoordinateMapObjectsRequest;
+            var secondsSinceLast = (Util.TimeUtil.GetCurrentTimestampInMilliseconds() - LastRpcMapObjectsRequestMs) * 1000;
+
+            if (lastGeoCoordinate == null)
+            {
+                return 0;
+            }
+
+            return (int)Math.Min(secondsSinceLast - minSeconds, 0);
+        }
         private bool CanRefreshMap()
         {
             var minSeconds = Client.GlobalSettings.MapSettings.GetMapObjectsMinRefreshSeconds;
@@ -51,10 +64,20 @@ namespace PokemonGo.RocketAPI.Rpc
             return false;
         }
 
-        public async Task<GetMapObjectsResponse> GetMapObjects()
+        public async Task<GetMapObjectsResponse> GetMapObjects(bool force= false)
         {
+            if(force)
+            {
+                //wait until get map available
+                if(GetTimeUntilRefreshMapAvail()>0)
+                await Task.Delay(GetTimeUntilRefreshMapAvail() * 1000);
+            }
             if (!CanRefreshMap())
             {
+                if (force)
+                {
+                    return await GetMapObjects(force);
+                }
                 // If we cannot refresh the map, return the cached response.
                 return LastGetMapObjectResponse;
             }
@@ -105,6 +128,12 @@ namespace PokemonGo.RocketAPI.Rpc
                 LastRpcMapObjectsRequestMs = Util.TimeUtil.GetCurrentTimestampInMilliseconds();
             }
             
+            if(LastGetMapObjectResponse == null )
+            {
+
+                LastGetMapObjectResponse = response.Item1;
+            }
+
             return LastGetMapObjectResponse;
         }
 
