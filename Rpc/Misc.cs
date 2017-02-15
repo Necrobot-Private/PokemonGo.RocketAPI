@@ -113,5 +113,34 @@ namespace PokemonGo.RocketAPI.Rpc
 
             return response.Item1;
         }
+
+
+        private Random randomizer = new Random();
+        public async Task RandomAPICall()
+        {
+
+            var apiIndex = randomizer.Next(0, 3);
+
+            switch (apiIndex)
+            {
+                case 1:
+                    await Client.Inventory.GetInventory();
+                    break;
+
+                case 2:
+                    await Client.Player.CheckChallenge();
+                    break;
+
+                case 3:
+                    await Client.Player.GetNewlyAwardedBadges();
+                    break;
+                case 4:
+                    await Client.Player.GetPlayerProfile();
+                    break;
+                default:
+                    break;
+            }
+
+        }
     }
 }
