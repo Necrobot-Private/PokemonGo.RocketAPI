@@ -16,7 +16,7 @@ namespace PokemonGo.RocketAPI.Rpc
 {
     public class Map : BaseRpc
     {
-        internal GetMapObjectsResponse LastGetMapObjectResponse;
+        public GetMapObjectsResponse LastGetMapObjectResponse;
         internal long LastRpcMapObjectsRequestMs { get; private set; }
         internal GeoCoordinate LastGeoCoordinateMapObjectsRequest { get; private set; }
 
