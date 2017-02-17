@@ -2,6 +2,7 @@
 
 using Google.Protobuf;
 using POGOProtos.Networking.Envelopes;
+using POGOProtos.Networking.Platform.Responses;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
@@ -195,9 +196,17 @@ namespace PokemonGo.RocketAPI.Helpers
                 client.Player.PlayerData = getPlayerResponse.PlayerData;
         }
 
-        public static void ProcessCommonResponses(Client client, ResponseEnvelope responseEnvelope)
+        public static void ProcessPlatform8Response(Client client, ResponseEnvelope responseEnvelope)
         {
-
+            foreach (var platformReturn in responseEnvelope.PlatformReturns)
+            {
+                if (platformReturn.Type == POGOProtos.Networking.Platform.PlatformRequestType.UnknownPtr8)
+                {
+                    UnknownPtr8Response ptr8Response = new UnknownPtr8Response();
+                    ptr8Response.MergeFrom(platformReturn.Response);
+                    client.UnknownPlat8Field = ptr8Response.Message;
+                }
+            }
         }
     }
 }
