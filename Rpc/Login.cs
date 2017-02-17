@@ -158,10 +158,11 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<GetPlayerResponse> DoLogin()
         {
+            // For now disable killswitch task since Niantic has disabled this page.
             // Don't wait for background start of killswitch.
             // jjskuld - Ignore CS4014 warning for now.
 #pragma warning disable 4014
-            Client.KillswitchTask.Start();
+            //Client.KillswitchTask.Start();
 #pragma warning restore 4014
 
             Client.StartTime = Utils.GetTime(true);
