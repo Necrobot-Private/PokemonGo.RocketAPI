@@ -9,6 +9,7 @@ using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
 using GeoCoordinatePortable;
 using System.Linq;
+using System.Collections.Generic;
 
 #endregion
 
@@ -91,10 +92,19 @@ namespace PokemonGo.RocketAPI.Rpc
             var lat = Client.CurrentLatitude;
             var lon = Client.CurrentLongitude;
 
+            var cellIds = S2Helper.GetNearbyCellIds(lon, lat);
+            var sinceTimeMs = new List<long>(cellIds.Count);
+            foreach (var cellId in cellIds)
+            {
+                var cell = LastGetMapObjectResponse?.MapCells.FirstOrDefault(x => x.S2CellId == cellId);
+
+                sinceTimeMs.Add(cell?.CurrentTimestampMs ?? 0);
+            }
+
             var getMapObjectsMessage = new GetMapObjectsMessage
             {
-                CellId = { S2Helper.GetNearbyCellIds(lon, lat) },
-                SinceTimestampMs = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                CellId = { cellIds },
+                SinceTimestampMs = { sinceTimeMs.ToArray() },
                 Latitude = lat,
                 Longitude = lon
             };
