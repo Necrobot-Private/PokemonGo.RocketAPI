@@ -96,7 +96,10 @@ namespace PokemonGo.RocketAPI.Extensions
             var codedStream = new CodedInputStream(responseData);
             ResponseEnvelope serverResponse = new ResponseEnvelope();
             serverResponse.MergeFrom(codedStream);
-            
+
+            // Process Platform8Response
+            CommonRequest.ProcessPlatform8Response(apiClient, serverResponse);
+
             if (!string.IsNullOrEmpty(serverResponse.ApiUrl))
                 apiClient.ApiUrl = "https://" + serverResponse.ApiUrl + "/rpc";
 
