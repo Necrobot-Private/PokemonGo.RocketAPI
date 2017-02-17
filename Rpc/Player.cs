@@ -23,12 +23,12 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public PlayerData PlayerData { get; set; }
 
-        public async Task<PlayerUpdateResponse> UpdatePlayerLocation(double latitude, double longitude, double altitude, float speed)
+        public void UpdatePlayerLocation(double latitude, double longitude, double altitude, float speed)
         {
             SetCoordinates(latitude, longitude, altitude);
             SetSpeed(speed);
 
-            return null;
+            return;
 
             //var updatePlayerLocationRequest = new Request
             //{
