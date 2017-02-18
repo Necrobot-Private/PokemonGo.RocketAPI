@@ -47,7 +47,7 @@ namespace PokemonGo.RocketAPI.Rpc
             var wildPokemon = WildPokemonCache.FirstOrDefault(p => p.Value.EncounterId == encounterId).Value;
             WildPokemon toRemoveWild;
             WildPokemonCache.TryRemove(encounterId, out toRemoveWild);
-
+            
             var catchablePokemon = CatchablePokemonsCache.FirstOrDefault(p => p.Value.EncounterId == encounterId).Value;
             MapPokemon toRemoveCatchable;
             CatchablePokemonsCache.TryRemove(encounterId, out toRemoveCatchable);
@@ -223,7 +223,7 @@ namespace PokemonGo.RocketAPI.Rpc
                     NearbyPokemonCache.TryRemove(p.EncounterId, out toRemove);
                 }
             }
-
+            
             IEnumerable<MapPokemon> newCatchablePokemon = mapObjects.MapCells.SelectMany(c => c.CatchablePokemons);
             if (newCatchablePokemon.Count() > 0)
             {
@@ -251,7 +251,15 @@ namespace PokemonGo.RocketAPI.Rpc
                     CatchablePokemonsCache.TryRemove(p.EncounterId, out toRemove);
                 }
             }
-            
+
+            // Remove expired wild pokemon
+            var expiredCatchablePokemon = CatchablePokemonsCache.Where(kvp => kvp.Value.ExpirationTimestampMs < TimeUtil.GetCurrentTimestampInMilliseconds());
+            foreach (var kvp in expiredCatchablePokemon)
+            {
+                MapPokemon removedPokemon;
+                CatchablePokemonsCache.TryRemove(kvp.Key, out removedPokemon);
+            }
+
             IEnumerable<FortData> newForts = mapObjects.MapCells.SelectMany(c => c.Forts);
             foreach (var f in newForts)
             {
