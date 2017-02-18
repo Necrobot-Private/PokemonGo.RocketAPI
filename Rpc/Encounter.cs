@@ -157,6 +157,14 @@ namespace PokemonGo.RocketAPI.Rpc
             DownloadSettingsResponse downloadSettingsResponse = response.Item6;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
+            CatchPokemonResponse caughtPokemonResponse = response.Item1;
+            if (caughtPokemonResponse.Status == CatchPokemonResponse.Types.CatchStatus.CatchFlee ||
+                caughtPokemonResponse.Status == CatchPokemonResponse.Types.CatchStatus.CatchSuccess)
+            {
+                // Remove caught pokemon from our map caches.
+                Client.Map.RemovePokemonFromCache(encounterId);
+            }
+
             return response.Item1;
         }
 
