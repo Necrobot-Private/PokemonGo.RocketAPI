@@ -13,6 +13,8 @@ using System;
 using System.Linq;
 using POGOProtos.Map;
 using PokemonGo.RocketAPI.Extensions;
+using POGOProtos.Map.Fort;
+using PokemonGo.RocketAPI.Util;
 
 #endregion
 
@@ -89,17 +91,19 @@ namespace PokemonGo.RocketAPI.Rpc
             DownloadSettingsResponse downloadSettingsResponse = response.Item6;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
-            // Update LastMapObject to mark fort as being used
-            foreach (MapCell mapCell in Client.Map.LastGetMapObjectResponse.MapCells)
+            FortSearchResponse fortSearchResponse = response.Item1;
+
+            if (fortSearchResponse.Result == FortSearchResponse.Types.Result.Success)
             {
-                var mapFort = mapCell.Forts.Where(x => x.Id == fortId).FirstOrDefault();
-                if (mapFort != null && mapFort.Type == POGOProtos.Map.Fort.FortType.Checkpoint)
+                FortData cachedFort;
+                Client.Map.FortsCache.TryGetValue(fortId, out cachedFort);
+                if (cachedFort != null && cachedFort.Type == FortType.Checkpoint)
                 {
-                    mapFort.CooldownCompleteTimestampMs = DateTime.UtcNow.ToUnixTime() + 5 * 60 * 1000; // Cooldown is 5 minutes.
-                    break;
+                    long newCooldown = TimeUtil.GetCurrentTimestampInMilliseconds() + (5 * 60 * 1000); // Cooldown is 5 minutes.
+                    cachedFort.CooldownCompleteTimestampMs = newCooldown;
                 }
             }
-            return response.Item1;
+            return fortSearchResponse;
         }
 
         public async Task<AddFortModifierResponse> AddFortModifier(string fortId, ItemId modifierType)
