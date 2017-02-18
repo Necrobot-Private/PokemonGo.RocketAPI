@@ -87,6 +87,40 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
+
+        public async Task<UseItemEncounterResponse> UseItemEncounter(ulong encounterId, ItemId itemId, string spawnPointId)
+        {
+            var useCaptureItemRequest = new Request
+            {
+                RequestType = RequestType.UseItemEncounter,
+                RequestMessage = ((IMessage)new UseItemEncounterMessage
+                {
+                    EncounterId = encounterId,
+                    Item = itemId,
+                    SpawnPointGuid = spawnPointId
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(useCaptureItemRequest, Client));
+
+            Tuple<UseItemEncounterResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, UseItemEncounterResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
         public async Task<CatchPokemonResponse> CatchPokemon(ulong encounterId, string spawnPointGuid,
             ItemId pokeballItemId, double normalizedRecticleSize = 1.950, double spinModifier = 1,
             bool hitPokemon = true, double normalizedHitPos = 1)
