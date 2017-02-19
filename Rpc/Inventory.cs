@@ -285,14 +285,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             return response.Item1;
         }
-        public async Task<EvolvePokemonResponse> EvolvePokemon(ulong pokemonId)
+        public async Task<EvolvePokemonResponse> EvolvePokemon(ulong pokemonId, ItemId ievolutionItem = ItemId.ItemUnknown)
         {
             var evolvePokemonRequest = new Request
             {
                 RequestType = RequestType.EvolvePokemon,
                 RequestMessage = ((IMessage)new EvolvePokemonMessage
                 {
-                    PokemonId = pokemonId
+                    PokemonId = pokemonId    ,
+                    EvolutionItemRequirement = ievolutionItem
+
                 }).ToByteString()
             };
 
