@@ -181,18 +181,6 @@ namespace PokemonGo.RocketAPI.Rpc
                         return v;
                     });
                 }
-
-                // Remove pokemon not in most recent map objects
-                /*
-                foreach (var p in WildPokemonCache.Select(kvp => kvp.Value))
-                {
-                    if (newWildPokemon.Any(x => x.PokemonData.Id == p.PokemonData.Id))
-                        continue;
-
-                    WildPokemon toRemove;
-                    WildPokemonCache.TryRemove(p.PokemonData.Id, out toRemove);
-                }
-                */
             }
 
             IEnumerable<NearbyPokemon> newNearbyPokemon = mapObjects.MapCells.SelectMany(c => c.NearbyPokemons);
@@ -210,18 +198,6 @@ namespace PokemonGo.RocketAPI.Rpc
                         return v;
                     });
                 }
-
-                /*
-                // Remove pokemon not in most recent map objects
-                foreach (var p in NearbyPokemonCache.Select(kvp => kvp.Value))
-                {
-                    if (newNearbyPokemon.Any(x => x.EncounterId == p.EncounterId))
-                        continue;
-
-                    NearbyPokemon toRemove;
-                    NearbyPokemonCache.TryRemove(p.EncounterId, out toRemove);
-                }
-                */
             }
             
             IEnumerable<MapPokemon> newCatchablePokemon = mapObjects.MapCells.SelectMany(c => c.CatchablePokemons);
@@ -240,26 +216,12 @@ namespace PokemonGo.RocketAPI.Rpc
                         return v;
                     });
                 }
-
-                // Remove pokemon not in most recent map objects
-                /*
-                foreach (var p in CatchablePokemonsCache.Select(kvp => kvp.Value))
-                {
-                    if (newCatchablePokemon.Any(x => x.EncounterId == p.EncounterId))
-                        continue;
-
-                    MapPokemon toRemove;
-                    CatchablePokemonsCache.TryRemove(p.EncounterId, out toRemove);
-                }
-                */
             }
             
             // Remove expired wild pokemon
             var expiredWildPokemon = WildPokemonCache.Where(kvp => (kvp.Value.TimeTillHiddenMs > 0 && kvp.Value.TimeTillHiddenMs <= 90000) && (kvp.Value.LastModifiedTimestampMs + kvp.Value.TimeTillHiddenMs) < TimeUtil.GetCurrentTimestampInMilliseconds());
             foreach (var kvp in expiredWildPokemon)
             {
-                //WildPokemon removedPokemon;
-                //WildPokemonCache.TryRemove(kvp.Key, out removedPokemon);
                 RemovePokemonFromCache(kvp.Key);
             }
 
@@ -267,8 +229,6 @@ namespace PokemonGo.RocketAPI.Rpc
             var expiredCatchablePokemon = CatchablePokemonsCache.Where(kvp => kvp.Value.ExpirationTimestampMs > 0 && kvp.Value.ExpirationTimestampMs < TimeUtil.GetCurrentTimestampInMilliseconds());
             foreach (var kvp in expiredCatchablePokemon)
             {
-                //MapPokemon removedPokemon;
-                //CatchablePokemonsCache.TryRemove(kvp.Key, out removedPokemon);
                 RemovePokemonFromCache(kvp.Key);
             }
 
