@@ -70,7 +70,7 @@ namespace PokemonGo.RocketAPI
                 Hasher = new LegacyHashser();
                 Cryptor = new LegacyCrypt();
 
-                Unknown25 = -1553869577012279119;
+                Unknown25 = -816976800928766045;// - 816976800928766045;// - 1553869577012279119;
                 AppVersion = 4500;
                 CurrentApiEmulationVersion = new Version("0.45.0");
             }
