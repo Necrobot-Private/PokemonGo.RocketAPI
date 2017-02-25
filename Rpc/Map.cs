@@ -88,7 +88,7 @@ namespace PokemonGo.RocketAPI.Rpc
             {
                 if (force)
                 {
-                    return await GetMapObjects(force);
+                    return await GetMapObjects(force, updateCache);
                 }
                 // If we cannot refresh the map, return the cached response.
                 return LastGetMapObjectResponse;
@@ -145,6 +145,7 @@ namespace PokemonGo.RocketAPI.Rpc
             if (updateCache && LastGetMapObjectResponse == null)
             {
                 LastGetMapObjectResponse = response.Item1;
+                
             }
 
             return response.Item1;
