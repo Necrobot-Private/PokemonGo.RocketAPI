@@ -67,7 +67,13 @@ namespace PokemonGo.RocketAPI.Rpc
             return false;
         }
 
-        public async Task<GetMapObjectsResponse> GetMapObjects(bool force = false)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="force">For thread wait until next api call available to use</param>
+        /// <param name="updateCache">Allow update cache, in some case we don't want update cache, snipe pokemon is an example</param>
+        /// <returns></returns>
+        public async Task<GetMapObjectsResponse> GetMapObjects(bool force = false, bool updateCache=true)
         {
             if (force)
             {
@@ -125,7 +131,8 @@ namespace PokemonGo.RocketAPI.Rpc
             LastRpcMapObjectsRequestMs = Util.TimeUtil.GetCurrentTimestampInMilliseconds();
 
             // Only cache good responses
-            if (response.Item1.MapCells.Count > 0 &&
+            if (updateCache &&
+                response.Item1.MapCells.Count > 0 &&
                 (response.Item1.MapCells.Where(x => x.Forts.Count > 0).Count() > 0 ||
                  response.Item1.MapCells.Where(x => x.NearbyPokemons.Count > 0).Count() > 0 ||
                  response.Item1.MapCells.Where(x => x.WildPokemons.Count > 0).Count() > 0))
@@ -135,12 +142,12 @@ namespace PokemonGo.RocketAPI.Rpc
                 LastGeoCoordinateMapObjectsRequest = new GeoCoordinate(lat, lon);
             }
 
-            if (LastGetMapObjectResponse == null)
+            if (updateCache && LastGetMapObjectResponse == null)
             {
                 LastGetMapObjectResponse = response.Item1;
             }
 
-            return LastGetMapObjectResponse;
+            return response.Item1;
         }
 
         public async Task<GetIncensePokemonResponse> GetIncensePokemons()
