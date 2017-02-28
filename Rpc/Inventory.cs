@@ -14,6 +14,7 @@ using POGOProtos.Inventory;
 using System.Linq;
 using POGOProtos.Data;
 using System.Collections.Concurrent;
+using POGOProtos.Enums;
 
 #endregion
 
@@ -29,6 +30,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public event OnInventoryUpdateHandler OnInventoryUpdated;
         public ConcurrentDictionary<int, InventoryItem> InventoryItems = new ConcurrentDictionary<int, InventoryItem>();
+        public ConcurrentDictionary<PokemonId, PokedexEntry> Pokedex = new ConcurrentDictionary<PokemonId, PokedexEntry>();
 
         private bool RemoveInventoryItem(InventoryItem item)
         {
@@ -48,7 +50,50 @@ namespace PokemonGo.RocketAPI.Rpc
 
         private void AddInventoryItem(InventoryItem item)
         {
+            if (item == null)
+                return;
+
             InventoryItems[item.GetHashCode()] = item;
+
+            if (item.InventoryItemData != null)
+                AddOrUpdatePokedexEntry(item.InventoryItemData.PokedexEntry);
+        }
+
+        private void AddOrUpdatePokedexEntry(PokedexEntry item)
+        {
+            if (item == null)
+                return;
+
+            Pokedex.AddOrUpdate(item.PokemonId, item, (key, oldValue) =>
+            {
+                oldValue.CapturedCostumes.Clear();
+                oldValue.CapturedCostumes.AddRange(item.CapturedCostumes);
+
+                oldValue.CapturedForms.Clear();
+                oldValue.CapturedForms.AddRange(item.CapturedForms);
+
+                oldValue.CapturedGenders.Clear();
+                oldValue.CapturedGenders.AddRange(item.CapturedGenders);
+
+                oldValue.CapturedShiny = item.CapturedShiny;
+
+                oldValue.EncounteredCostumes.Clear();
+                oldValue.EncounteredCostumes.AddRange(item.EncounteredCostumes);
+
+                oldValue.EncounteredForms.Clear();
+                oldValue.EncounteredForms.AddRange(item.EncounteredForms);
+
+                oldValue.EncounteredGenders.Clear();
+                oldValue.EncounteredGenders.AddRange(item.EncounteredGenders);
+
+                oldValue.EncounteredShiny = item.EncounteredShiny;
+                oldValue.EvolutionStonePieces = item.EvolutionStonePieces;
+                oldValue.EvolutionStones = item.EvolutionStones;
+                oldValue.TimesCaptured = item.TimesCaptured;
+                oldValue.TimesEncountered = item.TimesEncountered;
+
+                return oldValue;
+            });
         }
 
         public void MergeWith(GetInventoryResponse update)
