@@ -55,12 +55,12 @@ namespace PokemonGo.RocketAPI
                 // v121_2 -> Pogo iOS 1.22
                 // v125   -> Pogo iOS 1.25
                 // v127_2 -> Pogo iOS 1.27.2
-                ApiEndPoint = "api/v127_2/hash";
+                ApiEndPoint = "api/v127_3/hash";
                 Hasher = new PokefamerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog, ApiEndPoint);
 
                 // These 4 constants below need to change if we update the hashing server API version that is used.
                 Unknown25 = -816976800928766045;
-                AppVersion = 5702;
+                AppVersion = 5703;
                 CurrentApiEmulationVersion = new Version("0.57.2");
                 UnknownPlat8Field = "90f6a704505bccac73cec99b07794993e6fd5a12";
             }
