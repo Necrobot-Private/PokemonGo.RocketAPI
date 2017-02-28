@@ -23,6 +23,8 @@ namespace PokemonGo.RocketAPI
 {
     public class Client : ICaptchaResponseHandler
     {
+        public static string API_VERSION = "0.57.3";
+
         public static WebProxy Proxy;
 
         internal readonly PokemonHttpClient PokemonHttpClient;
@@ -62,7 +64,7 @@ namespace PokemonGo.RocketAPI
                 // These 4 constants below need to change if we update the hashing server API version that is used.
                 Unknown25 = -816976800928766045;
                 AppVersion = 5703;
-                CurrentApiEmulationVersion = new Version("0.57.3");
+                CurrentApiEmulationVersion = new Version(API_VERSION); // Make sure to update the constant above.
                 UnknownPlat8Field = "90f6a704505bccac73cec99b07794993e6fd5a12";
             }
             else
