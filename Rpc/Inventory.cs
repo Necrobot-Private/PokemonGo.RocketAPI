@@ -14,6 +14,7 @@ using POGOProtos.Inventory;
 using System.Linq;
 using POGOProtos.Data;
 using System.Collections.Concurrent;
+using POGOProtos.Enums;
 
 #endregion
 
@@ -29,6 +30,11 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public event OnInventoryUpdateHandler OnInventoryUpdated;
         public ConcurrentDictionary<string, InventoryItem> InventoryItems = new ConcurrentDictionary<string, InventoryItem>();
+
+        private static string GetPokemonHashKey(ulong id)
+        {
+            return $"PokemonData.{id}";
+        }
 
         private static string GetInventoryItemHashKey(InventoryItem item)
         {
@@ -68,7 +74,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 return $"PokedexEntry.{delta.PokedexEntry.PokemonId}";
 
             if (delta.PokemonData != null)
-                return $"PokemonData.{delta.PokemonData.Id}";
+                return GetPokemonHashKey(delta.PokemonData.Id);
 
             if (delta.Quest != null)
                 return $"Quest.{delta.Quest.QuestType}";
@@ -197,16 +203,10 @@ namespace PokemonGo.RocketAPI.Rpc
             ReleasePokemonResponse releaseResponse = response.Item1;
             if (releaseResponse.Result == ReleasePokemonResponse.Types.Result.Success)
             {
-                var pokemons = InventoryItems.Where(
-                    kvp =>
-                        kvp.Value != null &&
-                        kvp.Value.InventoryItemData != null &&
-                        kvp.Value.InventoryItemData.PokemonData != null &&
-                        kvp.Value.InventoryItemData.PokemonData.Id == pokemonId);
-                RemoveInventoryItems(pokemons.Select(kvp => kvp.Value));
+                RemoveInventoryItem(GetPokemonHashKey(pokemonId));
             }
 
-            return response.Item1;
+            return releaseResponse;
         }
 
         public async Task<ReleasePokemonResponse> TransferPokemons(List<ulong> pokemonIds)
@@ -243,17 +243,15 @@ namespace PokemonGo.RocketAPI.Rpc
             ReleasePokemonResponse releaseResponse = response.Item1;
             if (releaseResponse.Result == ReleasePokemonResponse.Types.Result.Success)
             {
-                var pokemons = InventoryItems.Where(
-                    kvp =>
-                        kvp.Value != null &&
-                        kvp.Value.InventoryItemData != null &&
-                        kvp.Value.InventoryItemData.PokemonData != null &&
-                        pokemonIds.Contains(kvp.Value.InventoryItemData.PokemonData.Id));
-                RemoveInventoryItems(pokemons.Select(kvp => kvp.Value));
+                foreach (var pokemonId in pokemonIds)
+                {
+                    RemoveInventoryItem(GetPokemonHashKey(pokemonId));
+                }
             }
 
-            return response.Item1;
+            return releaseResponse;
         }
+
         public async Task<EvolvePokemonResponse> EvolvePokemon(ulong pokemonId, ItemId ievolutionItem = ItemId.ItemUnknown)
         {
             var evolvePokemonRequest = new Request
@@ -285,17 +283,7 @@ namespace PokemonGo.RocketAPI.Rpc
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             EvolvePokemonResponse evolveResponse = response.Item1;
-            if (evolveResponse.Result == EvolvePokemonResponse.Types.Result.Success)
-            {
-                var pokemons = InventoryItems.Where(
-                    kvp =>
-                        kvp.Value != null &&
-                        kvp.Value.InventoryItemData != null &&
-                        kvp.Value.InventoryItemData.PokemonData != null &&
-                        kvp.Value.InventoryItemData.PokemonData.Id == pokemonId);
-                RemoveInventoryItems(pokemons.Select(kvp => kvp.Value));
-            }
-            return response.Item1;
+            return evolveResponse;
         }
 
         public async Task<UpgradePokemonResponse> UpgradePokemon(ulong pokemonId)
@@ -326,7 +314,8 @@ namespace PokemonGo.RocketAPI.Rpc
             DownloadSettingsResponse downloadSettingsResponse = response.Item6;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
-            return response.Item1;
+            UpgradePokemonResponse upgradePokemonResponse = response.Item1;
+            return upgradePokemonResponse;
         }
 
         public async Task<GetInventoryResponse> GetInventory()
