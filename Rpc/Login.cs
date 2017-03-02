@@ -128,8 +128,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }
                 catch (Exception ex)
                 {
+                    APIConfiguration.Logger.LogError(ex.Message);
 
-                    Console.WriteLine(ex.Message);
+                    if (ex.Message.Contains("15 minutes")) throw new PtcLoginException(ex.Message);
+
                     if (ex.Message.Contains("You have to log into an browser")) throw new GoogleTwoFactorException(ex.Message);
                     //Logger.Error($"Reauthenticate exception was catched: {exception}");
                 }
