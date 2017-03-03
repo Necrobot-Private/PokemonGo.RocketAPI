@@ -32,6 +32,8 @@ namespace PokemonGo.RocketAPI.Helpers
                 new string[] {"iPad6,7", "iPad", "J98aAP"},
                 new string[] {"iPad6,8", "iPad", "J99aAP"},
 
+                new string[] {"iPad7,1", "iPad", "N102AP"},
+
                 new string[] {"iPhone5,1", "iPhone", "N41AP"},
                 new string[] {"iPhone5,2", "iPhone", "N42AP"},
                 new string[] {"iPhone5,3", "iPhone", "N48AP"},
@@ -43,10 +45,17 @@ namespace PokemonGo.RocketAPI.Helpers
                 new string[] {"iPhone7,1", "iPhone", "N56AP"},
                 new string[] {"iPhone7,2", "iPhone", "N61AP"},
 
-                new string[] {"iPhone8,1", "iPhone", "N71AP"}
+                new string[] {"iPhone8,1", "iPhone", "N71AP"},
+                new string[] {"iPhone8,2", "iPhone", "N66AP"},
+                new string[] {"iPhone8,4", "iPhone", "N69AP"},
+
+                new string[] {"iPhone9,1", "iPhone", "D10AP"},
+                new string[] {"iPhone9,2", "iPhone", "D11AP"},
+                new string[] {"iPhone9,3", "iPhone", "D101AP"},
+                new string[] {"iPhone9,4", "iPhone", "D111AP"}
             };
 
-        private static string[] IosVersions = { "8.1.1", "8.1.2", "8.1.3", "8.2", "8.3", "8.4", "8.4.1", "9.0", "9.0.1", "9.0.2", "9.1", "9.2", "9.2.1", "9.3", "9.3.1", "9.3.2", "9.3.3", "9.3.4" };
+        private static string[] IosVersions = { "8.1.1", "8.1.2", "8.1.3", "8.2", "8.3", "8.4", "8.4.1", "9.0", "9.0.1", "9.0.2", "9.1", "9.2", "9.2.1", "9.3", "9.3.1", "9.3.2", "9.3.3", "9.3.4", "10.2", "10.2.1" };
 
         public static string BytesToHex(byte[] bytes)
         {
