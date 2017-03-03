@@ -219,6 +219,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APIConfiguration.cs" />
     <Compile Include="Authentication\Data\AccessToken.cs" />
     <Compile Include="Authentication\Data\LoginData.cs" />
     <Compile Include="Authentication\Exceptions\WrongCredentialsException.cs" />
@@ -237,6 +238,7 @@
     <Compile Include="Exceptions\HasherException.cs" />
     <Compile Include="Exceptions\LoginFailedException.cs" />
     <Compile Include="Exceptions\MinimumClientVersionException.cs" />
+    <Compile Include="Exceptions\PtcLoginException.cs" />
     <Compile Include="Extensions\RandomExtension.cs" />
     <Compile Include="Hash\PokefamerHasher.cs" />
     <Compile Include="Hash\IHasher.cs" />
@@ -270,7 +272,9 @@
     <Compile Include="Helpers\RetryHandler.cs" />
     <Compile Include="Helpers\S2Helper.cs" />
     <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="ILogger.cs" />
     <Compile Include="ISettings.cs" />
+    <Compile Include="Logging\HashInfo.cs" />
     <Compile Include="LoginProviders\GoogleLoginProvider.cs" />
     <Compile Include="LoginProviders\ILoginProvider.cs" />
     <Compile Include="LoginProviders\PtcLoginProvider.cs" />
