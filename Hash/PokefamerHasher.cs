@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using PokemonGo.RocketAPI.Exceptions;
 using PokemonGo.RocketAPI.Helpers;
+using PokemonGo.RocketAPI.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,6 +25,8 @@ namespace PokemonGo.RocketAPI.Hash
         public bool VerboseLog { get; set; }
         private List<Stat> statistics = new List<Stat>();
         private string apiEndPoint;
+
+        private HashInfo fullStats = new HashInfo();
 
         public PokefamerHasher(string apiKey, bool log, string apiEndPoint)
         {
@@ -100,19 +103,21 @@ namespace PokemonGo.RocketAPI.Hash
                 finally
                 {
                     watcher.Stop();
+                    fullStats.APICalles++;
+                    fullStats.TotalTimes += watcher.ElapsedMilliseconds;
+
                     stat.ResponseTime = watcher.ElapsedMilliseconds;
                     statistics.Add(stat);
                     statistics.RemoveAll(x => x.Timestamp < DateTime.Now.AddMinutes(-1));
-                    if (VerboseLog && lastPrintVerbose.AddSeconds(15) < DateTime.Now)
+                    if (statistics.Count > 0)
                     {
-
-                        if (statistics.Count > 0)
-                        {
-                            lastPrintVerbose = DateTime.Now;
-                            double agv = statistics.Sum(x => x.ResponseTime) / statistics.Count;
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] (HASH SERVER)  in last 1 minute  {statistics.Count} request/min , AVG: {agv:0.00} ms/request , Fastest : {statistics.Min(t=>t.ResponseTime)}, Slowest: {statistics.Max(t => t.ResponseTime)}");
-                        }
+                        lastPrintVerbose = DateTime.Now;
+                        double agv = statistics.Sum(x => x.ResponseTime) / statistics.Count;
+                        fullStats.Last60MinAPICalles = statistics.Count;
+                        fullStats.Last60MinAPIAvgTime = agv;
+                        fullStats.Fastest = fullStats.Fastest == 0 ? watcher.ElapsedMilliseconds : Math.Min(fullStats.Fastest, watcher.ElapsedMilliseconds);
+                        fullStats.Slowest =  Math.Max(fullStats.Slowest, watcher.ElapsedMilliseconds);
+                        APIConfiguration.Logger.HashStatusUpdate(fullStats);
                     }
                 }
 

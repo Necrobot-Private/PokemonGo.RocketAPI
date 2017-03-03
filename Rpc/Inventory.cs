@@ -14,6 +14,7 @@ using POGOProtos.Inventory;
 using System.Linq;
 using POGOProtos.Data;
 using System.Collections.Concurrent;
+using POGOProtos.Enums;
 
 #endregion
 
@@ -28,157 +29,131 @@ namespace PokemonGo.RocketAPI.Rpc
         }
 
         public event OnInventoryUpdateHandler OnInventoryUpdated;
-        public ConcurrentDictionary<int, InventoryItem> InventoryItems = new ConcurrentDictionary<int, InventoryItem>();
+        public ConcurrentDictionary<string, InventoryItem> InventoryItems = new ConcurrentDictionary<string, InventoryItem>();
+
+        private static string GetPokemonHashKey(ulong id)
+        {
+            return $"PokemonData.{id}";
+        }
+
+        private static string GetInventoryItemHashKey(InventoryItem item)
+        {
+            if (item == null || item.InventoryItemData == null)
+                return null;
+
+            var delta = item.InventoryItemData;
+
+            if (delta.AppliedItems != null)
+                return "AppliedItems";
+
+            if (delta.AvatarItem != null)
+                return $"AvatarItem.{delta.AvatarItem.AvatarTemplateId}";
+
+            if (delta.Candy != null)
+                return $"Candy.{delta.Candy.FamilyId}";
+
+            if (delta.EggIncubators != null)
+                return "EggIncubators";
+
+            if (delta.InventoryUpgrades != null)
+                return "InventoryUpgrades";
+
+            if (delta.Item != null)
+                return $"Item.{delta.Item.ItemId}";
+
+            if (delta.PlayerCamera != null)
+                return "PlayerCamera";
+
+            if (delta.PlayerCurrency != null)
+                return "PlayerCurrency";
+
+            if (delta.PlayerStats != null)
+                return "PlayerStats";
+
+            if (delta.PokedexEntry != null)
+                return $"PokedexEntry.{delta.PokedexEntry.PokemonId}";
+
+            if (delta.PokemonData != null)
+                return GetPokemonHashKey(delta.PokemonData.Id);
+
+            if (delta.Quest != null)
+                return $"Quest.{delta.Quest.QuestType}";
+
+            throw new Exception("Unexpected inventory error. Could not generate hash code.");
+        }
 
         private bool RemoveInventoryItem(InventoryItem item)
+        {
+            if (item == null)
+                return false;
+
+            return RemoveInventoryItem(GetInventoryItemHashKey(item));
+        }
+
+        private bool RemoveInventoryItem(string key)
         {
             try
             {
                 InventoryItem toRemove;
-
-                if (item != null)
-                    return InventoryItems.TryRemove(item.GetHashCode(), out toRemove);
+                return InventoryItems.TryRemove(key, out toRemove);
             }
             catch (ArgumentNullException)
             {
+                return false;
             }
-
-            return false;
         }
 
-        private void AddInventoryItem(InventoryItem item)
+        private void AddRemoveOrUpdateItem(InventoryItem item)
         {
-            InventoryItems[item.GetHashCode()] = item;
+            if (item == null)
+                return;
+
+            if (item.DeletedItem != null)
+            {
+                // Items with DeletedItem have a null InventoryItemData and are not added to inventory.
+                // But we still need to remove the pokemon with Id == item.DeletedItem.PokemonId from the inventory.
+                var pokemonToRemoveKey = $"PokemonData.{item.DeletedItem.PokemonId}"; // Manually construct key.
+                RemoveInventoryItem(pokemonToRemoveKey);
+            }
+            else
+            {
+                InventoryItems.AddOrUpdate(GetInventoryItemHashKey(item), item, (key, oldItem) =>
+                {
+                    // Check timestamps to make sure we update with a newer item.
+                    if (oldItem.ModifiedTimestampMs < item.ModifiedTimestampMs)
+                    {
+                        // Copy fields over to the old item.
+                        oldItem.InventoryItemData = item.InventoryItemData;
+                        oldItem.ModifiedTimestampMs = item.ModifiedTimestampMs;
+                    }
+
+                    return oldItem;
+                });
+            }
         }
 
         public void MergeWith(GetInventoryResponse update)
         {
             var delta = update.InventoryDelta;
 
-            if (delta?.InventoryItems == null || delta.InventoryItems.All(i => i == null))
+            if (delta?.InventoryItems == null)
             {
                 return;
             }
 
-            foreach(var item in delta.InventoryItems.Where(x => x != null))
+            foreach(var item in delta.InventoryItems)
             {
-                AddInventoryItem(item);
+                AddRemoveOrUpdateItem(item);
             }
-
-            //remove delete items
-            foreach (var deletedItem in delta.InventoryItems.Where(p => p != null && p.DeletedItem != null))
-            {
-                var pokemon = InventoryItems.FirstOrDefault(kvp => kvp.Value.InventoryItemData?.PokemonData?.Id == deletedItem.DeletedItem.PokemonId).Value;
-                RemoveInventoryItem(pokemon);
-                RemoveInventoryItem(deletedItem);
-            }
-
-            // Only keep the newest ones
-            foreach (var deltaItem in delta.InventoryItems.Where(d => d?.InventoryItemData != null))
-            {
-                var oldItems = new List<KeyValuePair<int, InventoryItem>>();
-
-                if (deltaItem.InventoryItemData.PlayerStats != null)
-                {
-                    oldItems.AddRange(
-                        InventoryItems.Where(kvp => kvp.Value.InventoryItemData?.PlayerStats != null)
-                            .OrderByDescending(kvp => kvp.Value.ModifiedTimestampMs)
-                            .Skip(1));
-                }
-                if (deltaItem.InventoryItemData.PlayerCurrency != null)
-                {
-                    oldItems.AddRange(
-                        InventoryItems.Where(kvp => kvp.Value.InventoryItemData?.PlayerCurrency != null)
-                            .OrderByDescending(kvp => kvp.Value.ModifiedTimestampMs)
-                            .Skip(1));
-                }
-                if (deltaItem.InventoryItemData.PlayerCamera != null)
-                {
-                    oldItems.AddRange(
-                        InventoryItems.Where(kvp => kvp.Value.InventoryItemData?.PlayerCamera != null)
-                            .OrderByDescending(kvp => kvp.Value.ModifiedTimestampMs)
-                            .Skip(1));
-                }
-                if (deltaItem.InventoryItemData.InventoryUpgrades != null)
-                {
-                    oldItems.AddRange(
-                        InventoryItems.Where(kvp => kvp.Value.InventoryItemData?.InventoryUpgrades != null)
-                            .OrderByDescending(kvp => kvp.Value.ModifiedTimestampMs)
-                            .Skip(1));
-                }
-                if (deltaItem.InventoryItemData.PokedexEntry != null)
-                {
-                    oldItems.AddRange(
-                        InventoryItems.Where(
-                            kvp =>
-                                kvp.Value.InventoryItemData?.PokedexEntry != null &&
-                                kvp.Value.InventoryItemData.PokedexEntry.PokemonId ==
-                                deltaItem.InventoryItemData.PokedexEntry.PokemonId)
-                            .OrderByDescending(kvp => kvp.Value.ModifiedTimestampMs)
-                            .Skip(1));
-                }
-                if (deltaItem.InventoryItemData.Candy != null)
-                {
-                    oldItems.AddRange(
-                        InventoryItems.Where(
-                            kvp =>
-                                kvp.Value.InventoryItemData?.Candy != null &&
-                                kvp.Value.InventoryItemData.Candy.FamilyId ==
-                                deltaItem.InventoryItemData.Candy.FamilyId)
-                            .OrderByDescending(kvp => kvp.Value.ModifiedTimestampMs)
-                            .Skip(1));
-                }
-                if (deltaItem.InventoryItemData.Item != null)
-                {
-                    oldItems.AddRange(
-                        InventoryItems.Where(
-                            kvp =>
-                                kvp.Value.InventoryItemData?.Item != null &&
-                                kvp.Value.InventoryItemData.Item.ItemId == deltaItem.InventoryItemData.Item.ItemId)
-                            .OrderByDescending(kvp => kvp.Value.ModifiedTimestampMs)
-                            .Skip(1));
-                }
-
-                if (deltaItem.InventoryItemData.PokemonData != null)
-                {
-                    oldItems.AddRange(
-                        InventoryItems.Where(
-                            kvp =>
-                                kvp.Value.InventoryItemData?.PokemonData != null &&
-                                kvp.Value.InventoryItemData.PokemonData.Id == deltaItem.InventoryItemData.PokemonData.Id)
-                            .OrderByDescending(kvp => kvp.Value.ModifiedTimestampMs)
-                            .Skip(1));
-                }
-
-                if (deltaItem.InventoryItemData.AppliedItems != null)
-                {
-                    oldItems.AddRange(
-                        InventoryItems.Where(kvp => kvp.Value.InventoryItemData?.AppliedItems != null)
-                            .OrderByDescending(kvp => kvp.Value.ModifiedTimestampMs)
-                            .Skip(1));
-                }
-                if (deltaItem.InventoryItemData.EggIncubators != null)
-                {
-                    oldItems.AddRange(
-                        InventoryItems.Where(kvp => kvp.Value.InventoryItemData?.EggIncubators != null)
-                            .OrderByDescending(kvp => kvp.Value.ModifiedTimestampMs)
-                            .Skip(1));
-                }
-
-                foreach (var oldItem in oldItems)
-                {
-                    RemoveInventoryItem(oldItem.Value);
-                }
-            }
-
+            
             OnInventoryUpdated?.Invoke();
         }
 
-        internal void RemoveInventoryItems(IEnumerable<KeyValuePair<int, InventoryItem>> items)
+        internal void RemoveInventoryItems(IEnumerable<InventoryItem> items)
         {   
             foreach (var item in items)
             {
-                RemoveInventoryItem(item.Value);
+                RemoveInventoryItem(item);
             }
         }
 
@@ -228,16 +203,10 @@ namespace PokemonGo.RocketAPI.Rpc
             ReleasePokemonResponse releaseResponse = response.Item1;
             if (releaseResponse.Result == ReleasePokemonResponse.Types.Result.Success)
             {
-                var pokemons = InventoryItems.Where(
-                    kvp =>
-                        kvp.Value != null &&
-                        kvp.Value.InventoryItemData != null &&
-                        kvp.Value.InventoryItemData.PokemonData != null &&
-                        kvp.Value.InventoryItemData.PokemonData.Id == pokemonId);
-                RemoveInventoryItems(pokemons);
+                RemoveInventoryItem(GetPokemonHashKey(pokemonId));
             }
 
-            return response.Item1;
+            return releaseResponse;
         }
 
         public async Task<ReleasePokemonResponse> TransferPokemons(List<ulong> pokemonIds)
@@ -274,17 +243,15 @@ namespace PokemonGo.RocketAPI.Rpc
             ReleasePokemonResponse releaseResponse = response.Item1;
             if (releaseResponse.Result == ReleasePokemonResponse.Types.Result.Success)
             {
-                var pokemons = InventoryItems.Where(
-                    kvp =>
-                        kvp.Value != null &&
-                        kvp.Value.InventoryItemData != null &&
-                        kvp.Value.InventoryItemData.PokemonData != null &&
-                        pokemonIds.Contains(kvp.Value.InventoryItemData.PokemonData.Id));
-                RemoveInventoryItems(pokemons);
+                foreach (var pokemonId in pokemonIds)
+                {
+                    RemoveInventoryItem(GetPokemonHashKey(pokemonId));
+                }
             }
 
-            return response.Item1;
+            return releaseResponse;
         }
+
         public async Task<EvolvePokemonResponse> EvolvePokemon(ulong pokemonId, ItemId ievolutionItem = ItemId.ItemUnknown)
         {
             var evolvePokemonRequest = new Request
@@ -316,17 +283,7 @@ namespace PokemonGo.RocketAPI.Rpc
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             EvolvePokemonResponse evolveResponse = response.Item1;
-            if (evolveResponse.Result == EvolvePokemonResponse.Types.Result.Success)
-            {
-                var pokemons = InventoryItems.Where(
-                    kvp =>
-                        kvp.Value != null &&
-                        kvp.Value.InventoryItemData != null &&
-                        kvp.Value.InventoryItemData.PokemonData != null &&
-                        kvp.Value.InventoryItemData.PokemonData.Id == pokemonId);
-                RemoveInventoryItems(pokemons);
-            }
-            return response.Item1;
+            return evolveResponse;
         }
 
         public async Task<UpgradePokemonResponse> UpgradePokemon(ulong pokemonId)
@@ -357,7 +314,8 @@ namespace PokemonGo.RocketAPI.Rpc
             DownloadSettingsResponse downloadSettingsResponse = response.Item6;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
-            return response.Item1;
+            UpgradePokemonResponse upgradePokemonResponse = response.Item1;
+            return upgradePokemonResponse;
         }
 
         public async Task<GetInventoryResponse> GetInventory()

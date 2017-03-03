@@ -32,9 +32,9 @@ namespace PokemonGo.RocketAPI.Rpc
             switch (settings.AuthType)
             {
                 case AuthType.Google:
-                    return new GoogleLoginProvider(settings.GoogleUsername, settings.GooglePassword);
+                    return new GoogleLoginProvider(settings.Username, settings.Password);
                 case AuthType.Ptc:
-                    return new PtcLoginProvider(settings.PtcUsername, settings.PtcPassword);
+                    return new PtcLoginProvider(settings.Username, settings.Password);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(settings.AuthType), "Unknown AuthType");
             }
@@ -128,8 +128,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }
                 catch (Exception ex)
                 {
+                    APIConfiguration.Logger.LogError(ex.Message);
 
-                    Console.WriteLine(ex.Message);
+                    if (ex.Message.Contains("15 minutes")) throw new PtcLoginException(ex.Message);
+
                     if (ex.Message.Contains("You have to log into an browser")) throw new GoogleTwoFactorException(ex.Message);
                     //Logger.Error($"Reauthenticate exception was catched: {exception}");
                 }
