@@ -1,11 +1,7 @@
 ﻿#region using directives
 
 using System;
-using System.Collections.Generic;
-using System.Data.HashFunction;
-using System.IO;
 using System.Linq;
-using System.Net;
 
 #endregion
 
