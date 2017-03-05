@@ -232,7 +232,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-  <ProjectReference Include="..\POGOProtos\POGOProtos.csproj">
+  <ProjectReference Include="$(SolutionDir)\POGOProtos\POGOProtos.csproj">
       <Project>{a03a7bb2-4f0b-467b-84b2-9a76e6aae6fb}</Project>
       <Name>POGOProtos</Name>
   </ProjectReference>
