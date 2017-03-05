@@ -20,6 +20,6 @@ namespace PokemonGo.RocketAPI.Logging
         public double Last60MinAPICalles { get; set; }
         public double Last60MinAPIAvgTime { get; set; }
         public string Expired { get; set; }
-
+        public string MaskedAPIKey { get; internal set; }
     }
 }
