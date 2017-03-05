@@ -23,8 +23,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
         protected RequestBuilder GetRequestBuilder()
         {
-            return new RequestBuilder(Client, Client.AuthType, Client.CurrentLatitude, Client.CurrentLongitude,
-                    Client.CurrentAltitude, Client.CurrentSpeed, Client.Settings);
+            return Client.RequestBuilder;
         }
 
         protected async Task<TResponsePayload> PostProtoPayload<TRequest, TResponsePayload>(RequestType type,

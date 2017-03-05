@@ -21,11 +21,10 @@ using POGOProtos.Settings;
 
 namespace PokemonGo.RocketAPI
 {
-
-    public delegate void OnInventoryUpdateHandler(GetInventoryResponse response);
-
     public class Client : ICaptchaResponseHandler
     {
+        public static string API_VERSION = "0.57.3";
+
         public static WebProxy Proxy;
 
         internal readonly PokemonHttpClient PokemonHttpClient;
@@ -41,36 +40,48 @@ namespace PokemonGo.RocketAPI
         public KillSwitchTask KillswitchTask;
         public Hash.IHasher Hasher;
         public ICrypt Cryptor;
-        public event OnInventoryUpdateHandler OnInventoryUpdated;
+        internal RequestBuilder RequestBuilder;
+
         public Client(ISettings settings)
         {
             if (settings.UsePogoDevHashServer )
             {
                 if (string.IsNullOrEmpty(settings.AuthAPIKey)) throw new AuthConfigException("You selected Pogodev API but not provide proper API Key");
-                Hasher = new PokefamerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog);
+
                 Cryptor = new Crypt();
 
-                // These constants need to change if we update the hashing server API version that is used.
-                AppVersion = 5301;
-                CurrentApiEmulationVersion = new Version("0.53.1"); 
+                // This value will determine which version of hashing you receive.
+                // Currently supported versions:
+                // v119   -> Pogo iOS 1.19
+                // v121   -> Pogo iOS 1.21
+                // v121_2 -> Pogo iOS 1.22
+                // v125   -> Pogo iOS 1.25
+                // v127_2 -> Pogo iOS 1.27.2
+                // v127_3 -> Pogo iOS 1.27.3
+                ApiEndPoint = "api/v127_3/hash";
+                Hasher = new PokefamerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog, ApiEndPoint);
+
+                // These 4 constants below need to change if we update the hashing server API version that is used.
+                Unknown25 = -816976800928766045;
+                AppVersion = 5703;
+                CurrentApiEmulationVersion = new Version(API_VERSION); // Make sure to update the constant above.
+                UnknownPlat8Field = "90f6a704505bccac73cec99b07794993e6fd5a12";
             }
             else
             if (settings.UseLegacyAPI)
             {
                 Hasher = new LegacyHashser();
                 Cryptor = new LegacyCrypt();
+
+                Unknown25 = -816976800928766045;// - 816976800928766045;// - 1553869577012279119;
                 AppVersion = 4500;
                 CurrentApiEmulationVersion = new Version("0.45.0");
-
             }
             else
             {
                 throw new AuthConfigException("No API method being select in your auth.json");
             }
-
-            //Hasher = new LegacyHashser();
-
-
+            
             Settings = settings;
             Proxy = InitProxy();
             PokemonHttpClient = new PokemonHttpClient();
@@ -139,36 +150,17 @@ namespace PokemonGo.RocketAPI
         public long InventoryLastUpdateTimestamp { get; set; }
         internal Platform Platform { get; set; }
         internal uint AppVersion { get; set; }
+        internal string UnknownPlat8Field { get; set; }
+        internal long Unknown25 { get; set; }
+        internal string ApiEndPoint { get; set; }
         public long StartTime { get; set; }
-        internal GetInventoryResponse inventory;
         public Version CurrentApiEmulationVersion { get; set; }
         public Version MinimumClientVersion { get; set; }        // This is version from DownloadSettings, but after login is updated from https://pgorelease.nianticlabs.com/plfe/version
 
         //public POGOLib.Net.Session AuthSession { get; set; }
         public ILoginProvider LoginProvider { get; set; }
         public AccessToken AccessToken { get; set; }
-        public GetInventoryResponse LastGetInventoryResponse
-        {
-            get
-            {
-                return inventory;
-            }
-
-            set
-            {
-                if (inventory == null)
-                {
-                    inventory = value;
-                }
-                else
-                {
-                    inventory.MergeWith(value);
-                }
-
-                if (OnInventoryUpdated != null)
-                    OnInventoryUpdated?.Invoke(inventory);
-            }
-        }
+        
         private WebProxy InitProxy()
         {
             if (!Settings.UseProxy) return null;

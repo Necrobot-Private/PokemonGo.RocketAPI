@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf.Collections;
+using POGOProtos.Data;
 using POGOProtos.Enums;
 using POGOProtos.Settings.Master;
 using POGOProtos.Settings.Master.Pokemon;
@@ -36,7 +37,18 @@ namespace PokemonGo.RocketAPI.Helpers
             }
         }
 
-        private static float getLevel(double combinedCpMultiplier)
+        public static float GetLevel(PokemonData pokemonData)
+        {
+            return GetLevelFromCpMultiplier(pokemonData.CpMultiplier + pokemonData.AdditionalCpMultiplier);
+        }
+
+        /**
+	     * Get the level from the cp multiplier
+	     *
+	     * @param combinedCpMultiplier All CP multiplier values combined
+	     * @return Level
+	     */
+        public static float GetLevelFromCpMultiplier(double combinedCpMultiplier)
         {
             double level;
             if (combinedCpMultiplier < 0.734f)
@@ -53,18 +65,28 @@ namespace PokemonGo.RocketAPI.Helpers
             // round to nearest .5 value and return
             return (float)(Math.Round((level) * 2) / 2.0);
         }
-
-        public static float GetLevelFromCpMultiplier(double combinedCpMultiplier)
-        {
-            return getLevel(combinedCpMultiplier);
-        }
-
+        
+        /**
+	     * Get the maximum CP from the values
+	     *
+	     * @param attack All attack values combined
+	     * @param defense All defense values combined
+	     * @param stamina All stamina values combined
+	     * @return Maximum CP for these levels
+	     */
         public static int GetMaxCp(int attack, int defense, int stamina)
         {
             return GetMaxCpForPlayer(attack, defense, stamina, 40);
         }
 
-        public static int GetAbsoluteMaxCp(PokemonId id)
+        /**
+	     * Get the absolute maximum CP for pokemons with their PokemonId.
+	     *
+	     * @param id The {@link PokemonIdOuterClass.PokemonId} of the Pokemon to get CP for.
+	     * @return The absolute maximum CP
+	     * @throws NoSuchItemException If the PokemonId value cannot be found in the {@link PokemonMeta}.
+	     */
+        public static int GetAbsoluteMaxCp(PokemonId id, int level = 40)
         {
             PokemonSettings settings = PokemonMeta.GetPokemonSettings(id);
 		    if (settings == null) {
@@ -75,9 +97,18 @@ namespace PokemonGo.RocketAPI.Helpers
             int attack = 15 + stats.BaseAttack;
             int defense = 15 + stats.BaseDefense;
             int stamina = 15 + stats.BaseStamina;
-		    return GetMaxCpForPlayer(attack, defense, stamina, 40);
+		    return GetMaxCpForPlayer(attack, defense, stamina, level);
         }
-
+        
+        /**
+	     * Get the maximum CP from the values
+	     *
+	     * @param attack All attack values combined
+	     * @param defense All defense values combined
+	     * @param stamina All stamina values combined
+	     * @param playerLevel The player level
+	     * @return Maximum CP for these levels
+	     */
         public static int GetMaxCpForPlayer(int attack, int defense, int stamina, int playerLevel)
         {
             float maxLevel = Math.Min(playerLevel + 1.5f, 40f);
@@ -85,12 +116,48 @@ namespace PokemonGo.RocketAPI.Helpers
             return GetCp(attack, defense, stamina, maxCpMultplier);
         }
 
-        public static int GetCp(int attack, int defense, int stamina, double combinedCpMultiplier)
+        
+        public static int GetCp(PokemonData pokemon)
         {
-            return (int)Math.Round(attack * Math.Pow(defense, 0.5) * Math.Pow(stamina, 0.5)
-                    * Math.Pow(combinedCpMultiplier, 2) / 10f);
+            // Below is an example of how to calculate the CP manually. This should match pokemon.Cp.
+            /*
+            PokemonSettings settings = PokemonMeta.GetPokemonSettings(pokemon.PokemonId);
+            if (settings == null)
+            {
+                throw new Exception("Cannot find meta data for " + pokemon.PokemonId);
+            }
+            StatsAttributes stats = settings.Stats;
+
+            int attack = pokemon.IndividualAttack + stats.BaseAttack;
+            int defense = pokemon.IndividualDefense + stats.BaseDefense;
+            int stamina = pokemon.IndividualStamina + stats.BaseStamina;
+            int cp = GetCp(attack, defense, stamina, pokemon.CpMultiplier + pokemon.AdditionalCpMultiplier);
+            */
+
+            return pokemon.Cp;
         }
 
+        /**
+	     * Calculate CP based on raw values
+	     *
+	     * @param attack All attack values combined
+	     * @param defense All defense values combined
+	     * @param stamina All stamina values combined
+	     * @param combinedCpMultiplier All CP multiplier values combined
+	     * @return CP
+	     */
+        public static int GetCp(int attack, int defense, int stamina, double combinedCpMultiplier)
+        {
+            return (int)Math.Round(attack * Math.Pow(defense, 0.5) * Math.Pow(stamina, 0.5) * Math.Pow(combinedCpMultiplier, 2) / 10f);
+        }
+
+        /**
+	     * Get the CP after powerup
+	     *
+	     * @param cp Current CP level
+	     * @param combinedCpMultiplier All CP multiplier values combined
+	     * @return New CP
+	     */
         public static int GetCpAfterPowerup(int cp, double combinedCpMultiplier)
         {
             // Based on http://pokemongo.gamepress.gg/power-up-costs

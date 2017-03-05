@@ -23,39 +23,41 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public PlayerData PlayerData { get; set; }
 
-        public async Task<PlayerUpdateResponse> UpdatePlayerLocation(double latitude, double longitude, double altitude, float speed)
+        public void UpdatePlayerLocation(double latitude, double longitude, double altitude, float speed)
         {
             SetCoordinates(latitude, longitude, altitude);
             SetSpeed(speed);
 
-            var updatePlayerLocationRequest = new Request
-            {
-                RequestType = RequestType.PlayerUpdate,
-                RequestMessage = new PlayerUpdateMessage
-                {
-                    Latitude = Client.CurrentLatitude,
-                    Longitude = Client.CurrentLongitude
-                }.ToByteString()
-            };
+            return;
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(updatePlayerLocationRequest, Client));
+            //var updatePlayerLocationRequest = new Request
+            //{
+            //    RequestType = RequestType.PlayerUpdate,
+            //    RequestMessage = new PlayerUpdateMessage
+            //    {
+            //        Latitude = Client.CurrentLatitude,
+            //        Longitude = Client.CurrentLongitude
+            //    }.ToByteString()
+            //};
 
-            Tuple<PlayerUpdateResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
-                    PostProtoPayload
-                        <Request, PlayerUpdateResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+            //var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(updatePlayerLocationRequest, Client));
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+            //Tuple<PlayerUpdateResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            //    await
+            //        PostProtoPayload
+            //            <Request, PlayerUpdateResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+            //                CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
 
-            GetInventoryResponse getInventoryResponse = response.Item4;
-            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+            //CheckChallengeResponse checkChallengeResponse = response.Item2;
+            //CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
-            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+            //GetInventoryResponse getInventoryResponse = response.Item4;
+            //CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
 
-            return response.Item1;
+            //DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            //CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            //return response.Item1;
         }
 
         public async Task<SetBuddyPokemonResponse> SelectBuddy(ulong pokemonId)
