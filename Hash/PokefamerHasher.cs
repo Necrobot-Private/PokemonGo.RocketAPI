@@ -53,7 +53,7 @@ namespace PokemonGo.RocketAPI.Hash
                 }
                 catch (Exception ex)
                 {
-                    Debug.Write(ex.Message);
+                    APIConfiguration.Logger.LogDebug(ex.Message);
                 }
                 finally
                 {
@@ -135,7 +135,6 @@ namespace PokemonGo.RocketAPI.Hash
                         {
                             // Get the rate-limit period ends at timestamp in seconds.
                             int requestRemain = Convert.ToInt32(requestRemains.First());
-                            APIConfiguration.Logger.LogDebug($"API Key : {key}  Remaining : {requestRemain}");
                             UpdateRate(key, requestRemain);
                         }
                         return JsonConvert.DeserializeObject<HashResponseContent>(await response.Content.ReadAsStringAsync());
