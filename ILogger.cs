@@ -10,7 +10,7 @@ namespace PokemonGo.RocketAPI
     public interface ILogger
     {
         void LogInfo(string message);
-        //void LogDebug();
+        void LogDebug(string message);
         //void LogWarning();
         //void LogError();
 
@@ -22,12 +22,17 @@ namespace PokemonGo.RocketAPI
     {
         public void HashStatusUpdate(HashInfo info)
         {
-            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] (HASH SERVER)  in last 1 minute  {info.Last60MinAPICalles} request/min , AVG: {info.Last60MinAPIAvgTime:0.00} ms/request , Fastest : {info.Fastest}, Slowest: {info.Slowest}");
+            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] (HASH SERVER)  [{info.MaskedAPIKey}] in last 1 minute  {info.Last60MinAPICalles} request/min , AVG: {info.Last60MinAPIAvgTime:0.00} ms/request , Fastest : {info.Fastest}, Slowest: {info.Slowest}");
         }
 
         public void LogCritical(string message, dynamic data)
         {
             Console.WriteLine("ERROR - CRITICAL " + message);
+        }
+
+        public void LogDebug(string message)
+        {
+            Console.WriteLine("Debug : " + message);
         }
 
         public void LogError(string message)
