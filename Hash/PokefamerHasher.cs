@@ -105,6 +105,11 @@ namespace PokemonGo.RocketAPI.Hash
                 finally
                 {
                     watcher.Stop();
+
+                    // Need to check for null response.
+                    if (response == null)
+                        throw new HasherException($"Hash API server ({client.BaseAddress}{apiEndPoint}) might down!");
+
                     fullStats.APICalles++;
                     fullStats.TotalTimes += watcher.ElapsedMilliseconds;
 
