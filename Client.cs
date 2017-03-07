@@ -25,7 +25,7 @@ namespace PokemonGo.RocketAPI
 {
     public class Client : ICaptchaResponseHandler
     {
-        public static string API_VERSION = "0.57.3";
+        public static string API_VERSION = "0.57.4";
 
         public static WebProxy Proxy;
 
