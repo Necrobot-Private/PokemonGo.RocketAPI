@@ -205,6 +205,7 @@
     <Compile Include="Helpers\RetryHandler.cs" />
     <Compile Include="Helpers\S2Helper.cs" />
     <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="ICaptchaResolver.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="ISettings.cs" />
     <Compile Include="Logging\HashInfo.cs" />
