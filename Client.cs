@@ -16,6 +16,8 @@ using POGOProtos.Networking.Responses;
 using PokemonGo.RocketAPI.Authentication.Data;
 using PokemonGo.RocketAPI.LoginProviders;
 using POGOProtos.Settings;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 #endregion
 
@@ -185,10 +187,14 @@ namespace PokemonGo.RocketAPI
         {
             try
             {
-                var client = new WebClient();
-                client.Encoding = System.Text.Encoding.UTF8;
+                System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
+                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://pgorelease.nianticlabs.com/plfe/version");
+                requestMessage.Headers.Add("User-Agent", "Niantic App");
 
-                var version = client.DownloadString("https://pgorelease.nianticlabs.com/plfe/version").Replace("\u0006", "").Replace("\n", "");
+                HttpResponseMessage response = httpClient.SendAsync(requestMessage).Result;
+                var responseAsString = response.Content.ReadAsStringAsync().Result;
+
+                var version = responseAsString.Replace("\u0006", "").Replace("\n", "");
                 return new Version(version);
             }
             catch(Exception)
