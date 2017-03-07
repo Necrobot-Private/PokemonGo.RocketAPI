@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PokemonGo.RocketAPI.Exceptions
+namespace PokemonGo.RocketAPI
 {
-    public class GoogleOfflineException : Exception
+    public interface ICaptchaResolver
     {
+        void OnCaptcha(string captchaUrl);
     }
 }
