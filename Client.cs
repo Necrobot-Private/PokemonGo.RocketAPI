@@ -59,6 +59,7 @@ namespace PokemonGo.RocketAPI
                 // v121_2 -> Pogo iOS 1.22
                 // v125   -> Pogo iOS 1.25
                 // v127_2 -> Pogo iOS 1.27.2
+                // v127_3 -> Pogo iOS 1.27.3
                 // v127_4 -> Pogo iOS 1.27.4
                 
                 ApiEndPoint = "api/v127_4/hash";
