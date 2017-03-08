@@ -52,7 +52,7 @@ namespace PokemonGo.RocketAPI
 
                 Cryptor = new Crypt();
 
-                // This value will determine which version of hashing you receive.
+                // This value will determine which version of the hashing service you will receive.
                 // Currently supported versions:
                 // v119   -> Pogo iOS 1.19
                 // v121   -> Pogo iOS 1.21
