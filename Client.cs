@@ -43,10 +43,38 @@ namespace PokemonGo.RocketAPI
         public Hash.IHasher Hasher;
         public ICrypt Cryptor;
         internal RequestBuilder RequestBuilder;
+        
+        public ISettings Settings { get; }
 
+        public double CurrentLatitude { get; internal set; }
+        public double CurrentLongitude { get; internal set; }
+        public double CurrentAltitude { get; internal set; }
+        public double CurrentAccuracy { get; internal set; }
+        public float CurrentSpeed { get; internal set; }
+
+        public AuthType AuthType => Settings.AuthType;
+        internal string ApiUrl { get; set; }
+        internal AuthTicket AuthTicket { get; set; }                
+
+        internal string SettingsHash { get; set; }
+        public GlobalSettings GlobalSettings { get; set; }
+        public long InventoryLastUpdateTimestamp { get; set; }
+        internal Platform Platform { get; set; }
+        internal uint AppVersion { get; set; }
+        internal string UnknownPlat8Field { get; set; }
+        internal long Unknown25 { get; set; }
+        internal string ApiEndPoint { get; set; }
+        public long StartTime { get; set; }
+        public Version CurrentApiEmulationVersion { get; set; }
+        public Version MinimumClientVersion { get; set; }        // This is version from DownloadSettings, but after login is updated from https://pgorelease.nianticlabs.com/plfe/version
+
+        //public POGOLib.Net.Session AuthSession { get; set; }
+        public ILoginProvider LoginProvider { get; set; }
+        public AccessToken AccessToken { get; set; }
+        
         public Client(ISettings settings)
         {
-            if (settings.UsePogoDevHashServer )
+            if (settings.UsePogoDevHashServer)
             {
                 if (string.IsNullOrEmpty(settings.AuthAPIKey)) throw new AuthConfigException("You selected Pogodev API but not provide proper API Key");
 
@@ -100,9 +128,6 @@ namespace PokemonGo.RocketAPI
             KillswitchTask = new KillSwitchTask(this);
 
             Player.SetCoordinates(Settings.DefaultLatitude, Settings.DefaultLongitude, Settings.DefaultAltitude);
-
-            InventoryLastUpdateTimestamp = 0;
-
             Platform = settings.DevicePlatform.Equals("ios", StringComparison.Ordinal) ? Platform.Ios : Platform.Android;
 
             // We can no longer emulate Android so for now just overwrite settings with randomly generated iOS device info.
@@ -128,6 +153,15 @@ namespace PokemonGo.RocketAPI
                 // Now set the client platform to ios
                 Platform = Platform.Ios;
             }
+        }
+
+        public void Reset()
+        {
+            AccessToken = null;
+            AuthTicket = null;
+            StartTime = Utils.GetTime(true);
+            RequestBuilder = new RequestBuilder(this, this.Settings);
+            InventoryLastUpdateTimestamp = 0;
             SettingsHash = "";
         }
         
@@ -135,36 +169,7 @@ namespace PokemonGo.RocketAPI
         {
             CaptchaToken = token;
         }
-        
-        public ISettings Settings { get; }
-        public string AuthToken { get; set; }
 
-        public double CurrentLatitude { get; internal set; }
-        public double CurrentLongitude { get; internal set; }
-        public double CurrentAltitude { get; internal set; }
-        public double CurrentAccuracy { get; internal set; }
-        public float CurrentSpeed { get; internal set; }
-
-        public AuthType AuthType => Settings.AuthType;
-        internal string ApiUrl { get; set; }
-        internal AuthTicket AuthTicket { get; set; }                
-
-        internal string SettingsHash { get; set; }
-        public GlobalSettings GlobalSettings { get; set; }
-        public long InventoryLastUpdateTimestamp { get; set; }
-        internal Platform Platform { get; set; }
-        internal uint AppVersion { get; set; }
-        internal string UnknownPlat8Field { get; set; }
-        internal long Unknown25 { get; set; }
-        internal string ApiEndPoint { get; set; }
-        public long StartTime { get; set; }
-        public Version CurrentApiEmulationVersion { get; set; }
-        public Version MinimumClientVersion { get; set; }        // This is version from DownloadSettings, but after login is updated from https://pgorelease.nianticlabs.com/plfe/version
-
-        //public POGOLib.Net.Session AuthSession { get; set; }
-        public ILoginProvider LoginProvider { get; set; }
-        public AccessToken AccessToken { get; set; }
-        
         private WebProxy InitProxy()
         {
             if (!Settings.UseProxy) return null;
