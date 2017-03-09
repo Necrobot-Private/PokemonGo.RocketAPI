@@ -7,8 +7,8 @@ using PokemonGo.RocketAPI.Helpers;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
-using GeoCoordinatePortable;
 using System.Linq;
+using System.Device.Location;
 
 #endregion
 

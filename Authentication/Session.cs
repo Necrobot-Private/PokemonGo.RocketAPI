@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using GeoCoordinatePortable;
 using POGOProtos.Settings;
 using static POGOProtos.Networking.Envelopes.Signature.Types;
 using PokemonGo.RocketAPI.Rpc;
@@ -12,6 +9,7 @@ using PokemonGo.RocketAPI.Authentication.Data;
 using PokemonGo.RocketAPI.LoginProviders;
 using PokemonGo.RocketAPI.HttpClient;
 using PokemonGo.RocketAPI.Util.Device;
+using System.Device.Location;
 
 namespace PokemonGo.RocketAPI.Authentication
 {
