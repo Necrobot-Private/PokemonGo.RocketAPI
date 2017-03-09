@@ -14,7 +14,7 @@ using static POGOProtos.Networking.Envelopes.Signature.Types;
 using System.Threading.Tasks;
 using PokemonGo.RocketAPI.Hash;
 using Newtonsoft.Json;
-using GeoCoordinatePortable;
+using System.Device.Location;
 
 #endregion
 
