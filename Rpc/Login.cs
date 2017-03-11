@@ -24,7 +24,7 @@ namespace PokemonGo.RocketAPI.Rpc
         public Login(Client client) : base(client)
         {
             Client.LoginProvider = SetLoginType(client.Settings);
-            Client.ApiUrl = Resources.RpcUrl;
+            Client.ApiUrl = Constants.RpcUrl;
         }
 
         private static ILoginProvider SetLoginType(ISettings settings)
@@ -160,15 +160,14 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<GetPlayerResponse> DoLogin()
         {
+            Client.Reset();
+
             // Don't wait for background start of killswitch.
             // jjskuld - Ignore CS4014 warning for now.
 #pragma warning disable 4014
             Client.KillswitchTask.Start();
 #pragma warning restore 4014
-
-            Client.StartTime = Utils.GetTime(true);
-            Client.RequestBuilder = new RequestBuilder(Client, Client.Settings);
-
+            
             var player = await Client.Player.GetPlayer(false); // Set false because initial GetPlayer does not use common requests.
 
             await Client.Download.GetRemoteConfigVersion();

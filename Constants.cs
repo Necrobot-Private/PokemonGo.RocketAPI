@@ -19,6 +19,16 @@
 
         public const string GoogleAuthApp = "com.nianticlabs.pokemongo";
         public const string GoogleAuthClientSig = "321187995bc7cdc2b5fc91b11a96e2baa8602c62";
+        
+         // Login PTC
 
+        public const string RpcUrl = ApiUrl;
+
+        public const string NumberedRpcUrl = @"https://pgorelease.nianticlabs.com/plfe/{0}/rpc";
+
+        public const string PtcLoginUrl = LoginUrl;
+
+        public const string PtcLoginOauth = LoginOauthUrl;
+        public const string GoogleGrantRefreshAccessUrl = "https://android.clients.google.com/auth";
     }
 }
