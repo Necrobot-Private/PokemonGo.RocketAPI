@@ -86,7 +86,7 @@ namespace PokemonGo.RocketAPI.Helpers
             deviceInfo.DeviceModel = device[1];
 
             deviceInfo.HardwareModel = device[2];
-            deviceInfo.FirmwareBrand = "iPhone OS";
+            deviceInfo.FirmwareBrand = (device[1] == "iPhone" ? "iOS" : "iPhone OS");
             deviceInfo.DeviceBrand = "Apple";
             deviceInfo.HardwareManufacturer = "Apple";
 
