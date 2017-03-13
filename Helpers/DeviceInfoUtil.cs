@@ -60,8 +60,8 @@ namespace PokemonGo.RocketAPI.Util.Device
                 DeviceModel = device[1],
                 HardwareModel = device[2],
                 HardwareManufacturer = "Apple",
-                FirmwareBrand = "iPhone OS",
-                FirmwareType = firmwareType,
+                FirmwareBrand = (device[1] == "iPhone" ? "iOS" : "iPhone OS"),
+                FirmwareType = firmwareType
             };
         }
     }
