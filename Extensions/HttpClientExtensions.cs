@@ -138,7 +138,7 @@ namespace PokemonGo.RocketAPI.Extensions
                 case ResponseEnvelope.Types.StatusCode.InvalidPlatformRequest:
                     break;
                 case ResponseEnvelope.Types.StatusCode.SessionInvalidated:
-                    break;
+                    throw new SessionInvalidatedException("SESSION INVALIDATED EXCEPTION");
                 default:
                     throw new ArgumentOutOfRangeException();
             }

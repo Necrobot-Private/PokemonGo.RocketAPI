@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using Google.Protobuf;
-using PokemonGo.RocketAPI.Enums;
 using POGOProtos.Networking.Envelopes;
 using POGOProtos.Networking.Platform;
 using POGOProtos.Networking.Platform.Requests;
@@ -22,6 +21,8 @@ namespace PokemonGo.RocketAPI.Helpers
 {
     public class RequestBuilder
     {
+        private int GEOLOCATION_PRECISION = 5;
+
         private Random RandomDevice;
         private TRandom TRandomDevice;
         private LehmerRng _lehmerRng;
@@ -81,7 +82,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 DeviceModelBoot = _settings.DeviceModelBoot + "\0",
                 HardwareManufacturer = _settings.HardwareManufacturer,
                 HardwareModel = _settings.HardwareModel + "\0",
-                FirmwareBrand = _settings.FirmwareBrand,
+                FirmwareBrand = (_settings.DeviceModel == "iPhone" ? "iOS" : "iPhone OS"),
                 FirmwareType = _settings.FirmwareType
             };
 
@@ -104,9 +105,11 @@ namespace PokemonGo.RocketAPI.Helpers
                 DeviceInfo = deviceInfo
             };
 
-            sig.SensorInfo.Add(new SensorInfo()
+            if (sig.TimestampSinceStart < 5000)
+                sig.TimestampSinceStart = (ulong)RandomDevice.Next(5000, 8000);
+
+            var sen = new SensorInfo()
             {
-                TimestampSnapshot = (ulong)(Utils.GetTime(true) - _client.StartTime - RandomDevice.Next(100, 500)),
                 LinearAccelerationX = TRandomDevice.Triangular(-3, 1, 0),
                 LinearAccelerationY = TRandomDevice.Triangular(-2, 3, 0),
                 LinearAccelerationZ = TRandomDevice.Triangular(-4, 2, 0),
@@ -124,7 +127,9 @@ namespace PokemonGo.RocketAPI.Helpers
                 GravityY = TRandomDevice.Triangular(-1, 1, -.2),
                 GravityZ = TRandomDevice.Triangular(-1, .7, -0.8),
                 Status = 3
-            });
+            };
+            sen.TimestampSnapshot = (ulong)RandomDevice.Next((int)(sig.TimestampSinceStart - 5000), (int)(sig.TimestampSinceStart - 100));
+            sig.SensorInfo.Add(sen);
 
             Signature.Types.LocationFix locationFix = new Signature.Types.LocationFix
             {
@@ -132,11 +137,12 @@ namespace PokemonGo.RocketAPI.Helpers
                 Latitude = (float)currentLocation.Latitude,
                 Longitude = (float)currentLocation.Longitude,
                 Altitude = (float)currentLocation.Altitude,
-                TimestampSnapshot = (ulong)(Utils.GetTime(true) - _client.StartTime - RandomDevice.Next(100, 300)),
                 ProviderStatus = 3,
                 LocationType = 1
             };
 
+            locationFix.TimestampSnapshot = (ulong)RandomDevice.Next((int)(sig.TimestampSinceStart - 5000), (int)(sig.TimestampSinceStart - 1000));
+            
             if (requestEnvelope.Accuracy >= 65)
             {
                 locationFix.HorizontalAccuracy = TRandomDevice.Choice(new List<float>(new float[] { (float)requestEnvelope.Accuracy, 65, 65, (int)Math.Round(GenRandom(66, 80)), 200 }));
@@ -155,6 +161,9 @@ namespace PokemonGo.RocketAPI.Helpers
                 }
             }
             
+            locationFix.HorizontalAccuracy = (float)Math.Round(locationFix.HorizontalAccuracy, GEOLOCATION_PRECISION);
+            locationFix.VerticalAccuracy = (float)Math.Round(locationFix.VerticalAccuracy, GEOLOCATION_PRECISION);
+
             if (_client.Platform == Platform.Ios)
             {
                 sig.ActivityStatus = new ActivityStatus();
@@ -233,7 +242,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 Token = new RequestEnvelope.Types.AuthInfo.Types.JWT
                 {
                     Contents = accessToken.Token,
-                    Unknown2 = (accessToken.ProviderID == "ptc") ? TRandomDevice.Choice(new List<int>(new int[] { 0, 21, 28, 28, 56, 59, 59, 59 })) : 0
+                    Unknown2 = (accessToken.ProviderID == "ptc") ? TRandomDevice.Choice(new List<int>(new int[] { 2, 8, 21, 21, 21, 28, 37, 56, 59, 59, 59 })) : 59
                 }
             };
 
@@ -264,6 +273,9 @@ namespace PokemonGo.RocketAPI.Helpers
         {
             // Save the location
             GeoCoordinate currentLocation = new GeoCoordinate(_client.CurrentLatitude, _client.CurrentLongitude, _client.CurrentAltitude);
+            currentLocation.Latitude = Math.Round(currentLocation.Latitude, GEOLOCATION_PRECISION);
+            currentLocation.Longitude = Math.Round(currentLocation.Longitude, GEOLOCATION_PRECISION);
+            currentLocation.Altitude = Math.Round(currentLocation.Altitude, GEOLOCATION_PRECISION);
 
             var e = new RequestEnvelope
             {
