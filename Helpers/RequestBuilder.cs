@@ -81,7 +81,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 DeviceModelBoot = _settings.DeviceModelBoot + "\0",
                 HardwareManufacturer = _settings.HardwareManufacturer,
                 HardwareModel = _settings.HardwareModel + "\0",
-                FirmwareBrand = _settings.FirmwareBrand,
+                FirmwareBrand = (_settings.DeviceModel == "iPhone" ? "iOS" : "iPhone OS"),
                 FirmwareType = _settings.FirmwareType
             };
 
