@@ -21,6 +21,8 @@ namespace PokemonGo.RocketAPI.Helpers
 {
     public class RequestBuilder
     {
+        private int GEOLOCATION_PRECISION = 5;
+
         private Random RandomDevice;
         private TRandom TRandomDevice;
         private LehmerRng _lehmerRng;
@@ -159,6 +161,9 @@ namespace PokemonGo.RocketAPI.Helpers
                 }
             }
             
+            locationFix.HorizontalAccuracy = (float)Math.Round(locationFix.HorizontalAccuracy, GEOLOCATION_PRECISION);
+            locationFix.VerticalAccuracy = (float)Math.Round(locationFix.VerticalAccuracy, GEOLOCATION_PRECISION);
+
             if (_client.Platform == Platform.Ios)
             {
                 sig.ActivityStatus = new ActivityStatus();
@@ -268,6 +273,9 @@ namespace PokemonGo.RocketAPI.Helpers
         {
             // Save the location
             GeoCoordinate currentLocation = new GeoCoordinate(_client.CurrentLatitude, _client.CurrentLongitude, _client.CurrentAltitude);
+            currentLocation.Latitude = Math.Round(currentLocation.Latitude, GEOLOCATION_PRECISION);
+            currentLocation.Longitude = Math.Round(currentLocation.Longitude, GEOLOCATION_PRECISION);
+            currentLocation.Altitude = Math.Round(currentLocation.Altitude, GEOLOCATION_PRECISION);
 
             var e = new RequestEnvelope
             {
