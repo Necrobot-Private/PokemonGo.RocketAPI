@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using Google.Protobuf;
-using PokemonGo.RocketAPI.Enums;
 using POGOProtos.Networking.Envelopes;
 using POGOProtos.Networking.Platform;
 using POGOProtos.Networking.Platform.Requests;
@@ -104,9 +103,11 @@ namespace PokemonGo.RocketAPI.Helpers
                 DeviceInfo = deviceInfo
             };
 
-            sig.SensorInfo.Add(new SensorInfo()
+            if (sig.TimestampSinceStart < 5000)
+                sig.TimestampSinceStart = (ulong)RandomDevice.Next(5000, 8000);
+
+            var sen = new SensorInfo()
             {
-                TimestampSnapshot = (ulong)(Utils.GetTime(true) - _client.StartTime - RandomDevice.Next(100, 500)),
                 LinearAccelerationX = TRandomDevice.Triangular(-3, 1, 0),
                 LinearAccelerationY = TRandomDevice.Triangular(-2, 3, 0),
                 LinearAccelerationZ = TRandomDevice.Triangular(-4, 2, 0),
@@ -124,7 +125,9 @@ namespace PokemonGo.RocketAPI.Helpers
                 GravityY = TRandomDevice.Triangular(-1, 1, -.2),
                 GravityZ = TRandomDevice.Triangular(-1, .7, -0.8),
                 Status = 3
-            });
+            };
+            sen.TimestampSnapshot = (ulong)RandomDevice.Next((int)(sig.TimestampSinceStart - 5000), (int)(sig.TimestampSinceStart - 100));
+            sig.SensorInfo.Add(sen);
 
             Signature.Types.LocationFix locationFix = new Signature.Types.LocationFix
             {
@@ -132,11 +135,12 @@ namespace PokemonGo.RocketAPI.Helpers
                 Latitude = (float)currentLocation.Latitude,
                 Longitude = (float)currentLocation.Longitude,
                 Altitude = (float)currentLocation.Altitude,
-                TimestampSnapshot = (ulong)(Utils.GetTime(true) - _client.StartTime - RandomDevice.Next(100, 300)),
                 ProviderStatus = 3,
                 LocationType = 1
             };
 
+            locationFix.TimestampSnapshot = (ulong)RandomDevice.Next((int)(sig.TimestampSinceStart - 5000), (int)(sig.TimestampSinceStart - 1000));
+            
             if (requestEnvelope.Accuracy >= 65)
             {
                 locationFix.HorizontalAccuracy = TRandomDevice.Choice(new List<float>(new float[] { (float)requestEnvelope.Accuracy, 65, 65, (int)Math.Round(GenRandom(66, 80)), 200 }));
