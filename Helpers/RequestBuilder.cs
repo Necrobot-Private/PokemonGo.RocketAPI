@@ -78,9 +78,9 @@ namespace PokemonGo.RocketAPI.Helpers
                 DeviceId = _settings.DeviceId,
                 DeviceBrand = _settings.DeviceBrand,
                 DeviceModel = _settings.DeviceModel,
-                DeviceModelBoot = _settings.DeviceModelBoot,
+                DeviceModelBoot = _settings.DeviceModelBoot + "\0",
                 HardwareManufacturer = _settings.HardwareManufacturer,
-                HardwareModel = _settings.HardwareModel,
+                HardwareModel = _settings.HardwareModel + "\0",
                 FirmwareBrand = _settings.FirmwareBrand,
                 FirmwareType = _settings.FirmwareType
             };
