@@ -233,7 +233,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 Token = new RequestEnvelope.Types.AuthInfo.Types.JWT
                 {
                     Contents = accessToken.Token,
-                    Unknown2 = (accessToken.ProviderID == "ptc") ? TRandomDevice.Choice(new List<int>(new int[] { 0, 21, 28, 28, 56, 59, 59, 59 })) : 0
+                    Unknown2 = (accessToken.ProviderID == "ptc") ? TRandomDevice.Choice(new List<int>(new int[] { 2, 8, 21, 21, 21, 28, 37, 56, 59, 59, 59 })) : 59
                 }
             };
 
