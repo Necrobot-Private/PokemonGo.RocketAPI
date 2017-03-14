@@ -220,6 +220,7 @@
     <Compile Include="Exceptions\LoginFailedException.cs" />
     <Compile Include="Exceptions\MinimumClientVersionException.cs" />
     <Compile Include="Exceptions\PtcLoginException.cs" />
+    <Compile Include="Exceptions\SessionInvalidatedException.cs" />
     <Compile Include="Extensions\RandomExtension.cs" />
     <Compile Include="Hash\PokefamerHasher.cs" />
     <Compile Include="Hash\IHasher.cs" />
