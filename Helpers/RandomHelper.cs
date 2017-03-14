@@ -1,12 +1,14 @@
 ﻿#region using directives
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 #endregion
 
 namespace PokemonGo.RocketAPI.Helpers
 {
-    public class RandomHelper
+    public static class RandomHelper
     {
         private static readonly Random _random = new Random();
 
@@ -18,5 +20,15 @@ namespace PokemonGo.RocketAPI.Helpers
 
             return Math.Abs(longRand%(max - min)) + min;
         }
+
+        public static void RandomSleep(int min, int max)
+        {
+            Task.Delay(  (_random.Next(min, max))).Wait();
+        }
+
+        public static void RandomSleep(int average)
+        {
+            RandomSleep(average-100, average+100);
+        }        
     }
 }

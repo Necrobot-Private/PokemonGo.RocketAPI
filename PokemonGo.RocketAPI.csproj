@@ -214,10 +214,10 @@
     <Compile Include="Exceptions\GoogleException.cs" />
     <Compile Include="Exceptions\GoogleOfflineException.cs" />
     <Compile Include="Exceptions\HasherException.cs" />
-    <Compile Include="Exceptions\SessionInvalidatedException.cs" />
     <Compile Include="Exceptions\LoginFailedException.cs" />
     <Compile Include="Exceptions\MinimumClientVersionException.cs" />
     <Compile Include="Exceptions\PtcLoginException.cs" />
+    <Compile Include="Exceptions\SessionInvalidatedException.cs" />
     <Compile Include="Extensions\RandomExtension.cs" />
     <Compile Include="Hash\PokefamerHasher.cs" />
     <Compile Include="Hash\IHasher.cs" />
@@ -229,6 +229,7 @@
     <Compile Include="Helpers\DeviceInfoHelper.cs" />
     <Compile Include="Helpers\DeviceInfoUtil.cs" />
     <Compile Include="Helpers\HashBuilder.cs" />
+    <Compile Include="Helpers\HtmlRemoval.cs" />
     <Compile Include="Helpers\KillSwitchTask.cs" />
     <Compile Include="Helpers\LehmerRng.cs" />
     <Compile Include="Helpers\PokemonCpUtils.cs" />

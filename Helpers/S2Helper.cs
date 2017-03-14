@@ -8,7 +8,7 @@ using Google.Common.Geometry;
 
 namespace PokemonGo.RocketAPI.Helpers
 {
-    public class S2Helper
+    public static class S2Helper
     {
         public static List<ulong> GetNearbyCellIds(double longitude, double latitude)
         {
@@ -49,5 +49,10 @@ namespace PokemonGo.RocketAPI.Helpers
 
             return GetNext(cellId.Next, depth);
         }
+        public static double[] GetLatLng(ulong cellid)
+        {
+            var s2cell = new S2CellId(cellid);
+            return new []{s2cell.ToLatLng().LatDegrees,s2cell.ToLatLng().LngDegrees};
+        }        
     }
 }
