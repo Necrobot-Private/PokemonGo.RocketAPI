@@ -202,7 +202,7 @@ namespace PokemonGo.RocketAPI.Helpers
             {
                 if (platformReturn.Type == POGOProtos.Networking.Platform.PlatformRequestType.UnknownPtr8)
                 {
-                    UnknownPtr8Response ptr8Response = new UnknownPtr8Response();
+                    var ptr8Response = new UnknownPtr8Response();
                     ptr8Response.MergeFrom(platformReturn.Response);
                     client.UnknownPlat8Field = ptr8Response.Message;
                 }

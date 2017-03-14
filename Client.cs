@@ -52,7 +52,9 @@ namespace PokemonGo.RocketAPI
         public double CurrentAccuracy { get; internal set; }
         public float CurrentSpeed { get; internal set; }
 
-        public AuthType AuthType => Settings.AuthType;
+        public AuthType AuthType 
+        { get { return Settings.AuthType; } set { Settings.AuthType = value; } }
+            
         internal string ApiUrl { get; set; }
         internal AuthTicket AuthTicket { get; set; }                
 
@@ -174,7 +176,8 @@ namespace PokemonGo.RocketAPI
         {
             if (!Settings.UseProxy) return null;
 
-            var prox = new WebProxy(new Uri($"http://{Settings.UseProxyHost}:{Settings.UseProxyPort}"), false, null);
+            var uri = $"http://{Settings.UseProxyHost}:{Settings.UseProxyPort}";
+            var prox = new WebProxy(new Uri(uri), false, null);
 
             if (Settings.UseProxyAuthentication)
                 prox.Credentials = new NetworkCredential(Settings.UseProxyUsername, Settings.UseProxyPassword);
@@ -194,8 +197,8 @@ namespace PokemonGo.RocketAPI
         {
             try
             {
-                System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
-                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, Constants.VersionUrl);
+                var httpClient = new System.Net.Http.HttpClient();
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://pgorelease.nianticlabs.com/plfe/version");
                 requestMessage.Headers.Add("User-Agent", "Niantic App");
 
                 HttpResponseMessage response = httpClient.SendAsync(requestMessage).Result;
@@ -204,8 +207,9 @@ namespace PokemonGo.RocketAPI
                 var version = responseAsString.Replace("\u0006", "").Replace("\n", "");
                 return new Version(version);
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+                APIConfiguration.Logger.LogError(ex.ToString());
             }
             return null;
         }
