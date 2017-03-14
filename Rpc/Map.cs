@@ -86,12 +86,8 @@ namespace PokemonGo.RocketAPI.Rpc
             }
             if (!CanRefreshMap())
             {
-                if (force)
-                {
-                    return await GetMapObjects(force, updateCache);
-                }
+                return force ? await GetMapObjects(force, updateCache) : LastGetMapObjectResponse;
                 // If we cannot refresh the map, return the cached response.
-                return LastGetMapObjectResponse;
             }
 
             var lat = Client.CurrentLatitude;
@@ -133,9 +129,9 @@ namespace PokemonGo.RocketAPI.Rpc
             // Only cache good responses
             if (updateCache &&
                 response.Item1.MapCells.Count > 0 &&
-                (response.Item1.MapCells.Where(x => x.Forts.Count > 0).Count() > 0 ||
-                 response.Item1.MapCells.Where(x => x.NearbyPokemons.Count > 0).Count() > 0 ||
-                 response.Item1.MapCells.Where(x => x.WildPokemons.Count > 0).Count() > 0))
+                (response.Item1.MapCells.Count(x => x.Forts.Count > 0) > 0 ||
+                response.Item1.MapCells.Count(x => x.NearbyPokemons.Count > 0) > 0 ||
+                response.Item1.MapCells.Count(x => x.WildPokemons.Count > 0) > 0))
             {
                 // Good map response since we got at least a fort or pokemon in our cells.
                 LastGetMapObjectResponse = response.Item1;

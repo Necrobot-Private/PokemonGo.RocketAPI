@@ -1,6 +1,7 @@
 ﻿#region using directives
 
 using System.Threading.Tasks;
+using POGOProtos.Data.Player;
 using POGOProtos.Inventory.Item;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
@@ -24,16 +25,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
     public class Inventory : BaseRpc
     {
+        public event OnInventoryUpdateHandler OnInventoryUpdated;
+        public ConcurrentDictionary<string, InventoryItem> InventoryItems = new ConcurrentDictionary<string, InventoryItem>();
+
         public Inventory(Client client) : base(client)
         {
         }
 
-        public event OnInventoryUpdateHandler OnInventoryUpdated;
-        public ConcurrentDictionary<string, InventoryItem> InventoryItems = new ConcurrentDictionary<string, InventoryItem>();
-
         private static string GetPokemonHashKey(ulong id)
         {
-            return $"PokemonData.{id}";
+            return "PokemonData."+id;
         }
 
         private static string GetInventoryItemHashKey(InventoryItem item)
@@ -47,10 +48,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 return "AppliedItems";
 
             if (delta.AvatarItem != null)
-                return $"AvatarItem.{delta.AvatarItem.AvatarTemplateId}";
+                return "AvatarItem."+delta.AvatarItem.AvatarTemplateId;
 
             if (delta.Candy != null)
-                return $"Candy.{delta.Candy.FamilyId}";
+                return "Candy."+delta.Candy.FamilyId;
 
             if (delta.EggIncubators != null)
                 return "EggIncubators";
@@ -59,7 +60,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 return "InventoryUpgrades";
 
             if (delta.Item != null)
-                return $"Item.{delta.Item.ItemId}";
+                return "Item."+delta.Item.ItemId;
 
             if (delta.PlayerCamera != null)
                 return "PlayerCamera";
@@ -71,13 +72,13 @@ namespace PokemonGo.RocketAPI.Rpc
                 return "PlayerStats";
 
             if (delta.PokedexEntry != null)
-                return $"PokedexEntry.{delta.PokedexEntry.PokemonId}";
+                return "PokedexEntry."+delta.PokedexEntry.PokemonId;
 
             if (delta.PokemonData != null)
                 return GetPokemonHashKey(delta.PokemonData.Id);
 
             if (delta.Quest != null)
-                return $"Quest.{delta.Quest.QuestType}";
+                return "Quest."+delta.Quest.QuestType;
 
             throw new Exception("Unexpected inventory error. Could not generate hash code.");
         }
@@ -166,7 +167,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public PokemonData GetPokemon(ulong pokemonId)
         {
-            return GetPokemons().Where(p => p.Id == pokemonId).FirstOrDefault();
+            return GetPokemons().FirstOrDefault(p => p.Id == pokemonId);
         }
         
         public async Task<ReleasePokemonResponse> TransferPokemon(ulong pokemonId)
@@ -654,6 +655,40 @@ namespace PokemonGo.RocketAPI.Rpc
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
+        }
+        public IEnumerable<ItemData> GetItemsData(){
+            var items = InventoryItems.Values.Select(x => x.InventoryItemData.Item)
+                .Where(x=> x!=null);
+            return items;
+        }
+
+        public ItemData GetItemData( ItemId itemId)
+        {
+            return GetItemsData()?.FirstOrDefault(p => p.ItemId == itemId);
+        }
+
+        public int GetItemsCount()
+        {
+            return InventoryItems.Values.Sum(p => p.InventoryItemData.Item.Count);
+        }
+
+        public IEnumerable<PlayerStats> GetPlayerStats()
+        {
+            return InventoryItems.Values.Select(i => i.InventoryItemData?.PlayerStats)
+                .Where(i => i != null);
+        }
+
+        public IEnumerable<EggIncubator> GetIncubators()
+        {
+            return InventoryItems.Values.Where(x => x.InventoryItemData.EggIncubators != null)
+                    .SelectMany(i => i.InventoryItemData.EggIncubators.EggIncubator)
+                    .Where(i => i != null);
+        }
+
+        public IEnumerable<PokemonData> GetEggs()
+        {
+            return  InventoryItems.Values.Select(i => i.InventoryItemData?.PokemonData)
+               .Where(p => p != null && p.IsEgg);
         }
     }
 }

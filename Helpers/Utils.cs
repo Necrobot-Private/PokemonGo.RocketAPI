@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace PokemonGo.RocketAPI.Helpers
 {
-    public class Utils
+    public static class Utils
     {
         public static ulong FloatAsUlong(double value)
         {
@@ -19,9 +19,7 @@ namespace PokemonGo.RocketAPI.Helpers
         {
             var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1);
 
-            if (ms)
-                return (long)Math.Round(timeSpan.TotalMilliseconds);
-            return (long)Math.Round(timeSpan.TotalSeconds);
+            return ms ? (long)Math.Round(timeSpan.TotalMilliseconds) : (long)Math.Round(timeSpan.TotalSeconds);
         }
         
         public static uint GenerateLocation1(byte[] authTicket, double lat, double lng, double alt)
@@ -48,10 +46,7 @@ namespace PokemonGo.RocketAPI.Helpers
         }
         public static ulong CastToUnsigned(long number)
         {
-            unchecked
-            {
-                return (ulong)number;
-            }
+            return (ulong)number;
         }
     }
 }

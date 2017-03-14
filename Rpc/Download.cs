@@ -10,7 +10,6 @@ using System;
 using PokemonGo.RocketAPI.Helpers;
 using Google.Protobuf;
 using Google.Protobuf.Collections;
-using static POGOProtos.Networking.Responses.DownloadItemTemplatesResponse.Types;
 
 #endregion
 
@@ -22,7 +21,7 @@ namespace PokemonGo.RocketAPI.Rpc
         {
         }
 
-        public RepeatedField<ItemTemplate> ItemTemplates { get; set; }
+        public RepeatedField<DownloadItemTemplatesResponse.Types.ItemTemplate> ItemTemplates { get; set; }
 
         public async Task<DownloadItemTemplatesResponse> GetItemTemplates()
         {
