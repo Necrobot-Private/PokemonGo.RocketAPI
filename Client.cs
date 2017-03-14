@@ -198,7 +198,7 @@ namespace PokemonGo.RocketAPI
             try
             {
                 var httpClient = new System.Net.Http.HttpClient();
-                var requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://pgorelease.nianticlabs.com/plfe/version");
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, Constants.VersionUrl);
                 requestMessage.Headers.Add("User-Agent", "Niantic App");
 
                 HttpResponseMessage response = httpClient.SendAsync(requestMessage).Result;
