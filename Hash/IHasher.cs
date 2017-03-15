@@ -4,6 +4,6 @@ namespace PokemonGo.RocketAPI.Hash
 {
     public interface IHasher
     {
-        Task<HashResponseContent> RequestHashesAsync(HashRequestContent request);
+        HashResponseContent RequestHashes(HashRequestContent request);
     }
 }

@@ -21,7 +21,7 @@ namespace PokemonGo.RocketAPI.Rpc
         }
 
 
-        public async Task<ClaimCodenameResponse> ClaimCodename(string codename)
+        public  ClaimCodenameResponse ClaimCodename(string codename)
         {
             var claimCodenameRequest = new Request
             {
@@ -32,10 +32,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(claimCodenameRequest, Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(claimCodenameRequest, Client));
 
             Tuple<ClaimCodenameResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, ClaimCodenameResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -52,7 +52,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
         
-        public async Task<EchoResponse> SendEcho()
+        public  EchoResponse SendEcho()
         {
             var sendEchoRequest = new Request
             {
@@ -60,10 +60,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 RequestMessage = ((IMessage)new EchoMessage()).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(sendEchoRequest, Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(sendEchoRequest, Client));
 
             Tuple<EchoResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, EchoResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -80,7 +80,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<EncounterTutorialCompleteResponse> MarkTutorialComplete(
+        public  EncounterTutorialCompleteResponse MarkTutorialComplete(
             RepeatedField<TutorialState> toComplete)
         {
             var markTutorialCompleteRequest = new Request
@@ -94,10 +94,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(markTutorialCompleteRequest, Client));
+            var request = GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(markTutorialCompleteRequest, Client));
 
             Tuple<EncounterTutorialCompleteResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, EncounterTutorialCompleteResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -115,8 +115,8 @@ namespace PokemonGo.RocketAPI.Rpc
         }
 
 
-        private Random randomizer = new Random();
-        public async Task RandomAPICall()
+        private readonly Random randomizer = new Random();
+        public  void RandomAPICall()
         {
 
             var apiIndex = randomizer.Next(0, 3);
@@ -124,20 +124,18 @@ namespace PokemonGo.RocketAPI.Rpc
             switch (apiIndex)
             {
                 case 1:
-                    await Client.Inventory.GetInventory();
+                     Client.Inventory.GetInventory();
                     break;
 
                 case 2:
-                    await Client.Player.CheckChallenge();
+                     Client.Player.CheckChallenge();
                     break;
 
                 case 3:
-                    await Client.Player.GetNewlyAwardedBadges();
+                     Client.Player.GetNewlyAwardedBadges();
                     break;
                 case 4:
-                    await Client.Player.GetPlayerProfile();
-                    break;
-                default:
+                     Client.Player.GetPlayerProfile();
                     break;
             }
 

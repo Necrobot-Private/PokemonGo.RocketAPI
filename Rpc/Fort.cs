@@ -24,7 +24,7 @@ namespace PokemonGo.RocketAPI.Rpc
         {
         }
 
-        public async Task<FortDetailsResponse> GetFort(string fortId, double fortLatitude, double fortLongitude)
+        public FortDetailsResponse GetFort(string fortId, double fortLatitude, double fortLongitude)
         {
             var getFortRequest = new Request
             {
@@ -37,10 +37,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getFortRequest, Client));
+            var request = GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getFortRequest, Client));
 
             Tuple<FortDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, FortDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -57,7 +57,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<FortSearchResponse> SearchFort(string fortId, double fortLat, double fortLng)
+        public FortSearchResponse SearchFort(string fortId, double fortLat, double fortLng)
         {
             var searchFortRequest = new Request
             {
@@ -72,10 +72,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(searchFortRequest, Client));
+            var request = GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(searchFortRequest, Client));
 
             Tuple<FortSearchResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, FortSearchResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -102,7 +102,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<AddFortModifierResponse> AddFortModifier(string fortId, ItemId modifierType)
+        public AddFortModifierResponse AddFortModifier(string fortId, ItemId modifierType)
         {
             var addFortModifierRequest = new Request
             {
@@ -116,10 +116,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(addFortModifierRequest, Client));
+            var request = GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(addFortModifierRequest, Client));
 
             Tuple<AddFortModifierResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, AddFortModifierResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -136,7 +136,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<AttackGymResponse> AttackGym(string fortId, string battleId, List<BattleAction> battleActions,
+        public AttackGymResponse AttackGym(string fortId, string battleId, List<BattleAction> battleActions,
             BattleAction lastRetrievedAction)
         {
             var message = new AttackGymMessage
@@ -158,10 +158,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 RequestMessage = message.ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(attackGymRequest, Client));
+            var request = GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(attackGymRequest, Client));
 
             Tuple<AttackGymResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, AttackGymResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -178,7 +178,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<FortDeployPokemonResponse> FortDeployPokemon(string fortId, ulong pokemonId)
+        public FortDeployPokemonResponse FortDeployPokemon(string fortId, ulong pokemonId)
         {
             var fortDeployPokemonRequest = new Request
             {
@@ -192,10 +192,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(fortDeployPokemonRequest, Client));
+            var request = GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(fortDeployPokemonRequest, Client));
 
             Tuple<FortDeployPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, FortDeployPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -212,7 +212,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<FortRecallPokemonResponse> FortRecallPokemon(string fortId, ulong pokemonId)
+        public FortRecallPokemonResponse FortRecallPokemon(string fortId, ulong pokemonId)
         {
             var fortRecallPokemonRequest = new Request
             {
@@ -226,10 +226,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(fortRecallPokemonRequest, Client));
+            var request = GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(fortRecallPokemonRequest, Client));
 
             Tuple<FortRecallPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, FortRecallPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -246,7 +246,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<GetGymDetailsResponse> GetGymDetails(string gymId, double gymLat, double gymLng)
+        public GetGymDetailsResponse GetGymDetails(string gymId, double gymLat, double gymLng)
         {
             var getGymDetailsRequest = new Request
             {
@@ -261,10 +261,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getGymDetailsRequest, Client));
+            var request = GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getGymDetailsRequest, Client));
 
             Tuple<GetGymDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, GetGymDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -281,7 +281,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<StartGymBattleResponse> StartGymBattle(string gymId, ulong defendingPokemonId,
+        public StartGymBattleResponse StartGymBattle(string gymId, ulong defendingPokemonId,
             IEnumerable<ulong> attackingPokemonIds)
         {
             var startGymBattleRequest = new Request
@@ -297,10 +297,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(startGymBattleRequest, Client));
+            var request = GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(startGymBattleRequest, Client));
 
             Tuple<StartGymBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, StartGymBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);

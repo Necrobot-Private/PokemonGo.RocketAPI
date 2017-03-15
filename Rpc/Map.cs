@@ -73,7 +73,7 @@ namespace PokemonGo.RocketAPI.Rpc
         /// <param name="force">For thread wait until next api call available to use</param>
         /// <param name="updateCache">Allow update cache, in some case we don't want update cache, snipe pokemon is an example</param>
         /// <returns></returns>
-        public async Task<GetMapObjectsResponse> GetMapObjects(bool force = false, bool updateCache=true)
+        public  GetMapObjectsResponse GetMapObjects(bool force = false, bool updateCache=true)
         {
             if (force)
             {
@@ -81,12 +81,12 @@ namespace PokemonGo.RocketAPI.Rpc
                 //wait until get map available
                 if (t > 0)
                 {
-                    await Task.Delay(t);
+                    Task.Delay(t).Wait();
                 }
             }
             if (!CanRefreshMap())
             {
-                return force ? await GetMapObjects(force, updateCache) : LastGetMapObjectResponse;
+                return force ?  GetMapObjects(force, updateCache) : LastGetMapObjectResponse;
                 // If we cannot refresh the map, return the cached response.
             }
 
@@ -107,10 +107,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 RequestMessage = getMapObjectsMessage.ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getMapObjectsRequest, Client));
+            var request = GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getMapObjectsRequest, Client));
 
             Tuple<GetMapObjectsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, GetMapObjectsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -147,7 +147,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<GetIncensePokemonResponse> GetIncensePokemons()
+        public  GetIncensePokemonResponse GetIncensePokemons()
         {
             var getIncensePokemonsRequest = new Request
             {
@@ -159,10 +159,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getIncensePokemonsRequest, Client));
+            var request = GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getIncensePokemonsRequest, Client));
 
             Tuple<GetIncensePokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, GetIncensePokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);

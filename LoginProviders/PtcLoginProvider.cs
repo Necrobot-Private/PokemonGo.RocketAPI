@@ -38,7 +38,7 @@ namespace PokemonGo.RocketAPI.LoginProviders
         /// Retrieves an <see cref="AccessToken"/> by logging into the Pokemon Trainer Club website.
         /// </summary>
         /// <returns>Returns an <see cref="AccessToken"/>.</returns>
-        public async Task<AccessToken> GetAccessToken()
+        public AccessToken GetAccessToken()
         {
             using (var httpClientHandler = new HttpClientHandler())
             {
@@ -46,9 +46,9 @@ namespace PokemonGo.RocketAPI.LoginProviders
                 using (var httpClient = new System.Net.Http.HttpClient(httpClientHandler))
                 {
                     httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.LoginUserAgent);
-                    var loginData = await GetLoginData(httpClient);
-                    var ticket = await PostLogin(httpClient, _username, _password, loginData);
-                    var accessToken = await PostLoginOauth(httpClient, ticket);
+                    var loginData =  GetLoginData(httpClient);
+                    var ticket =  PostLogin(httpClient, _username, _password, loginData);
+                    var accessToken =  PostLoginOauth(httpClient, ticket);
                     accessToken.Username = _username;
                     //Logger.Debug("Authenticated through PTC.");
                     return accessToken;
@@ -61,10 +61,10 @@ namespace PokemonGo.RocketAPI.LoginProviders
         /// </summary>
         /// <param name="httpClient">An initialized <see cref="HttpClient" />.</param>
         /// <returns><see cref="LoginData" /> for <see cref="PostLogin" />.</returns>
-        private async Task<LoginData> GetLoginData(System.Net.Http.HttpClient httpClient)
+        private LoginData GetLoginData(System.Net.Http.HttpClient httpClient)
         {
-            var loginDataResponse = await httpClient.GetAsync(Constants.LoginUrl);
-            var loginData = JsonConvert.DeserializeObject<LoginData>(await loginDataResponse.Content.ReadAsStringAsync());
+            var loginDataResponse = httpClient.GetAsync(Constants.LoginUrl).Result;
+            var loginData = JsonConvert.DeserializeObject<LoginData>( loginDataResponse.Content.ReadAsStringAsync().Result);
             return loginData;
         }
 
@@ -76,19 +76,19 @@ namespace PokemonGo.RocketAPI.LoginProviders
         /// <param name="password">The user's PTC password.</param>
         /// <param name="loginData"><see cref="LoginData" /> taken from PTC website using <see cref="GetLoginData" />.</param>
         /// <returns></returns>
-        private async Task<string> PostLogin(System.Net.Http.HttpClient httpClient, string username, string password, LoginData loginData)
+        private string PostLogin(System.Net.Http.HttpClient httpClient, string username, string password, LoginData loginData)
         {
             var loginResponse =
-                await httpClient.PostAsync(Constants.LoginUrl, new FormUrlEncodedContent(new Dictionary<string, string>
+                httpClient.PostAsync(Constants.LoginUrl, new FormUrlEncodedContent(new Dictionary<string, string>
                 {
                     {"lt", loginData.Lt},
                     {"execution", loginData.Execution},
                     {"_eventId", "submit"},
                     {"username", username},
                     {"password", password}
-                }));
+                })).Result;
 
-            var loginResponseDataRaw = await loginResponse.Content.ReadAsStringAsync();
+            var loginResponseDataRaw = loginResponse.Content.ReadAsStringAsync().Result;
             if (!loginResponseDataRaw.Contains("{"))
             {
                 var locationQuery = loginResponse.Headers.Location.Query;
@@ -108,19 +108,19 @@ namespace PokemonGo.RocketAPI.LoginProviders
         /// <param name="httpClient"></param>
         /// <param name="ticket"></param>
         /// <returns></returns>
-        private async Task<AccessToken> PostLoginOauth(System.Net.Http.HttpClient httpClient, string ticket)
+        private  AccessToken PostLoginOauth(System.Net.Http.HttpClient httpClient, string ticket)
         {
             var loginResponse =
-                await httpClient.PostAsync(Constants.LoginOauthUrl, new FormUrlEncodedContent(new Dictionary<string, string>
+                httpClient.PostAsync(Constants.LoginOauthUrl, new FormUrlEncodedContent(new Dictionary<string, string>
                 {
                     {"client_id", "mobile-app_pokemon-go"},
                     {"redirect_uri", "https://www.nianticlabs.com/pokemongo/error"},
                     {"client_secret", "w8ScCUXJQc6kXKw8FiOhd8Fixzht18Dq3PEVkUCP5ZPxtgyWsbTvWHFLm2wNY0JR"},
                     {"grant_type", "refresh_token"},
                     {"code", ticket}
-                }));
+                })).Result;
 
-            var loginResponseDataRaw = await loginResponse.Content.ReadAsStringAsync();
+            var loginResponseDataRaw = loginResponse.Content.ReadAsStringAsync().Result;
 
             var oAuthData = Regex.Match(loginResponseDataRaw, "access_token=(?<accessToken>.*?)&expires=(?<expires>\\d+)");
             if (!oAuthData.Success)

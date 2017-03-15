@@ -35,10 +35,10 @@ namespace PokemonGo.RocketAPI.LoginProviders
         /// Retrieves an <see cref="AccessToken"/> by logging into through the Google Play Services OAuth.
         /// </summary>
         /// <returns>Returns an <see cref="AccessToken"/>.</returns>
-        public async Task<AccessToken> GetAccessToken()
+        public  AccessToken GetAccessToken()
         {
             var googleClient = new GPSOAuthClient(_username, _password);
-            var masterLoginResponse = await googleClient.PerformMasterLogin();
+            var masterLoginResponse = googleClient.PerformMasterLogin().Result;
 
             if (masterLoginResponse.ContainsKey("Error"))
             {
@@ -51,8 +51,8 @@ namespace PokemonGo.RocketAPI.LoginProviders
             {
                 throw new Exception("Token was missing from master login response.");
             }
-            var oauthResponse = await googleClient.PerformOAuth(masterLoginResponse["Token"], Constants.GoogleAuthService,
-                Constants.GoogleAuthApp, Constants.GoogleAuthClientSig);
+            var oauthResponse =  googleClient.PerformOAuth(masterLoginResponse["Token"], Constants.GoogleAuthService,
+                Constants.GoogleAuthApp, Constants.GoogleAuthClientSig).Result;
             if (!oauthResponse.ContainsKey("Auth"))
             {
                 throw new Exception("Auth token was missing from oauth login response.");

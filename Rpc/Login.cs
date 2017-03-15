@@ -48,7 +48,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return true;
         }
         
-        public static async Task<AccessToken> GetValidAccessToken(Client client, bool forceRefresh = false, bool isCached = false)
+        public static  AccessToken GetValidAccessToken(Client client, bool forceRefresh = false, bool isCached = false)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace PokemonGo.RocketAPI.Rpc
                     }
                 }
 
-                await Reauthenticate(client, isCached);
+                Reauthenticate(client, isCached);
                 return client.AccessToken;
             }
             finally
@@ -113,7 +113,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 File.Delete(fileName);
         }
 
-        private static async Task Reauthenticate(Client client, bool isCached)
+        private static  void Reauthenticate(Client client, bool isCached)
         {
             var tries = 0;
             while (!IsValidAccessToken(client.AccessToken))
@@ -124,7 +124,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
                 try
                 {
-                    client.AccessToken = await client.LoginProvider.GetAccessToken();
+                    client.AccessToken =  client.LoginProvider.GetAccessToken();
                 }
                 catch (Exception ex)
                 {
@@ -141,7 +141,7 @@ namespace PokemonGo.RocketAPI.Rpc
                     {
                         var sleepSeconds = Math.Min(60, ++tries * 5);
                         //Logger.Error($"Reauthentication failed, trying again in {sleepSeconds} seconds.");
-                        await Task.Delay(TimeSpan.FromMilliseconds(sleepSeconds * 1000));
+                        Task.Delay(TimeSpan.FromMilliseconds(sleepSeconds * 1000)).Wait();
                     }
                     else
                     {
@@ -158,23 +158,18 @@ namespace PokemonGo.RocketAPI.Rpc
             }
         }
 
-        public async Task<GetPlayerResponse> DoLogin()
+        public GetPlayerResponse DoLogin()
         {
-            Client.Reset();
+             Client.Reset();
 
-            // Don't wait for background start of killswitch.
-            // jjskuld - Ignore CS4014 warning for now.
-#pragma warning disable 4014
-            Client.KillswitchTask.Start();
-#pragma warning restore 4014
-            
-            var player = await Client.Player.GetPlayer(false); // Set false because initial GetPlayer does not use common requests.
+             var player = Client.Player.GetPlayer(false); // Set false because initial GetPlayer does not use common requests.
+             
+             RandomHelper.RandomSleep(300);
+             Client.Download.GetRemoteConfigVersion();
+             Client.Download.GetAssetDigest();
+             Client.Download.GetItemTemplates();
 
-            await Client.Download.GetRemoteConfigVersion();
-            await Client.Download.GetAssetDigest();
-            await Client.Download.GetItemTemplates();
-
-            await Client.Player.GetPlayerProfile();
+             Client.Player.GetPlayerProfile();
 
             return player;
         }

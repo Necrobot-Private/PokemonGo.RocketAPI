@@ -37,9 +37,9 @@ namespace PokemonGo.RocketAPI.Authentication
         /// <param name="initialLongitude">The initial longitude you will spawn at after logging into PokémonGo.</param>
         /// <param name="deviceInfo">The <see cref="DeviceInfo"/> used by the <see cref="Session"/>, keep null if you want a randomly generated <see cref="DeviceInfo"/>.</param>
         /// <returns></returns>
-        public static async Task<Session> GetSession(ILoginProvider loginProvider, double initialLatitude, double initialLongitude, DeviceInfo deviceInfo = null)
+        public static  Session GetSession(ILoginProvider loginProvider, double initialLatitude, double initialLongitude, DeviceInfo deviceInfo = null)
         {
-            return new Session(loginProvider, await loginProvider.GetAccessToken(), new GeoCoordinate(initialLatitude, initialLongitude), deviceInfo);
+            return new Session(loginProvider, loginProvider.GetAccessToken(), new GeoCoordinate(initialLatitude, initialLongitude), deviceInfo);
         }
 
         /// <summary>
@@ -68,9 +68,9 @@ namespace PokemonGo.RocketAPI.Authentication
         /// <param name="coordinate">The initial coordinate you will spawn at after logging into PokémonGo.</param>
         /// <param name="deviceInfo">The <see cref="DeviceInfo"/> used by the <see cref="Session"/>, keep null if you want a randomly generated <see cref="DeviceInfo"/>.</param>
         /// <returns></returns>
-        public static async Task<Session> GetSession(ILoginProvider loginProvider, GeoCoordinate coordinate, DeviceInfo deviceInfo = null)
+        public static  Session GetSession(ILoginProvider loginProvider, GeoCoordinate coordinate, DeviceInfo deviceInfo = null)
         {
-            return new Session(loginProvider, await loginProvider.GetAccessToken(), coordinate, deviceInfo);
+            return new Session(loginProvider, loginProvider.GetAccessToken(), coordinate, deviceInfo);
         }
         
     }
