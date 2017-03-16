@@ -189,9 +189,9 @@ namespace PokemonGo.RocketAPI.Helpers
 
             var hashRequest = new HashRequestContent()
             {
-                Latitude = currentLocation.Latitude,
-                Longitude = currentLocation.Longitude,
-                Altitude = requestEnvelope.Accuracy,
+                Latitude64 = BitConverter.DoubleToInt64Bits(currentLocation.Latitude),
+                Longitude64 = BitConverter.DoubleToInt64Bits(currentLocation.Longitude),
+                Accuracy64 = BitConverter.DoubleToInt64Bits(requestEnvelope.Accuracy),
                 AuthTicket = ticketBytes,
                 SessionData = _sessionHash.ToByteArray(),
                 Requests = new List<byte[]>(),

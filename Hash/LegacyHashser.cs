@@ -14,9 +14,8 @@ namespace PokemonGo.RocketAPI.Hash
 
             var hashed = new HashResponseContent()
             {
-
-                LocationAuthHash =  Utils.GenerateLocation1(request.AuthTicket, request.Latitude, request.Longitude, request.Altitude),
-                LocationHash = Utils.GenerateLocation2(request.Latitude, request.Longitude, request.Altitude),
+                LocationAuthHash =  Utils.GenerateLocation1(request.AuthTicket, BitConverter.Int64BitsToDouble(request.Latitude64), BitConverter.Int64BitsToDouble(request.Longitude64), BitConverter.Int64BitsToDouble(request.Accuracy64)),
+                LocationHash = Utils.GenerateLocation2(BitConverter.Int64BitsToDouble(request.Latitude64), BitConverter.Int64BitsToDouble(request.Longitude64), BitConverter.Int64BitsToDouble(request.Accuracy64)),
                 RequestHashes = new List<long>()
             };
             foreach (var req in request.Requests)
