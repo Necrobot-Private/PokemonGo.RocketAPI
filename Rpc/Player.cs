@@ -30,37 +30,9 @@ namespace PokemonGo.RocketAPI.Rpc
 
             return;
 
-            //var updatePlayerLocationRequest = new Request
-            //{
-            //    RequestType = RequestType.PlayerUpdate,
-            //    RequestMessage = new PlayerUpdateMessage
-            //    {
-            //        Latitude = Client.CurrentLatitude,
-            //        Longitude = Client.CurrentLongitude
-            //    }.ToByteString()
-            //};
-
-            //var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(updatePlayerLocationRequest, Client));
-
-            //Tuple<PlayerUpdateResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-            //    await
-            //        PostProtoPayload
-            //            <Request, PlayerUpdateResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-            //                CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
-
-            //CheckChallengeResponse checkChallengeResponse = response.Item2;
-            //CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            //GetInventoryResponse getInventoryResponse = response.Item4;
-            //CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
-
-            //DownloadSettingsResponse downloadSettingsResponse = response.Item6;
-            //CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
-
-            //return response.Item1;
         }
 
-        public async Task<SetBuddyPokemonResponse> SelectBuddy(ulong pokemonId)
+        public  SetBuddyPokemonResponse SelectBuddy(ulong pokemonId)
         {
             var selectBuddyRequest = new Request
             {
@@ -71,10 +43,9 @@ namespace PokemonGo.RocketAPI.Rpc
                 }.ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(selectBuddyRequest, Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(selectBuddyRequest, Client));
 
             Tuple<SetBuddyPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
                     PostProtoPayload
                         <Request, SetBuddyPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -103,7 +74,7 @@ namespace PokemonGo.RocketAPI.Rpc
             Client.CurrentSpeed = speed;
         }
 
-        public async Task<GetPlayerResponse> GetPlayer(bool addCommonRequests = true)
+        public  GetPlayerResponse GetPlayer(bool addCommonRequests = true)
         {
             var getPlayerRequest = new Request
             {
@@ -113,10 +84,10 @@ namespace PokemonGo.RocketAPI.Rpc
             
             if (addCommonRequests)
             {
-                var requestEnvelope = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getPlayerRequest, Client));
+                var requestEnvelope =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getPlayerRequest, Client));
 
                 Tuple<GetPlayerResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                    await
+                    
                         PostProtoPayload
                             <Request, GetPlayerResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                                 CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(requestEnvelope);
@@ -137,15 +108,15 @@ namespace PokemonGo.RocketAPI.Rpc
             }
             else
             {
-                var requestEnvelope = await GetRequestBuilder().GetRequestEnvelope(new Request[] { getPlayerRequest });
-                GetPlayerResponse getPlayerResponse = await PostProtoPayload<Request, GetPlayerResponse>(requestEnvelope);
+                var requestEnvelope =  GetRequestBuilder().GetRequestEnvelope(new Request[] { getPlayerRequest });
+                GetPlayerResponse getPlayerResponse =  PostProtoPayload<Request, GetPlayerResponse>(requestEnvelope);
                 CommonRequest.ProcessGetPlayerResponse(Client, getPlayerResponse);
 
                 return getPlayerResponse;
             }
         }
 
-        public async Task<GetPlayerProfileResponse> GetPlayerProfile()
+        public  GetPlayerProfileResponse GetPlayerProfile()
         {
             var getPlayerProfileRequest = new Request
             {
@@ -156,10 +127,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }.ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getPlayerProfileRequest, Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getPlayerProfileRequest, Client));
 
             Tuple<GetPlayerProfileResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, GetPlayerProfileResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -176,7 +147,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<CheckAwardedBadgesResponse> GetNewlyAwardedBadges()
+        public  CheckAwardedBadgesResponse GetNewlyAwardedBadges()
         {
             var getNewlyAwardedBadgesRequest = new Request
             {
@@ -184,10 +155,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 RequestMessage = new CheckAwardedBadgesMessage().ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getNewlyAwardedBadgesRequest, Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getNewlyAwardedBadgesRequest, Client));
 
             Tuple<CheckAwardedBadgesResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, CheckAwardedBadgesResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -204,7 +175,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<CollectDailyBonusResponse> CollectDailyBonus()
+        public  CollectDailyBonusResponse CollectDailyBonus()
         {
             var collectDailyBonusRequest = new Request
             {
@@ -212,10 +183,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 RequestMessage = new CollectDailyBonusMessage().ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(collectDailyBonusRequest, Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(collectDailyBonusRequest, Client));
 
             Tuple<CollectDailyBonusResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, CollectDailyBonusResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -232,7 +203,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<CollectDailyDefenderBonusResponse> CollectDailyDefenderBonus()
+        public  CollectDailyDefenderBonusResponse CollectDailyDefenderBonus()
         {
             var collectDailyDefenderBonusRequest = new Request
             {
@@ -240,10 +211,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 RequestMessage = new CollectDailyDefenderBonusMessage().ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(collectDailyDefenderBonusRequest, Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(collectDailyDefenderBonusRequest, Client));
 
             Tuple<CollectDailyDefenderBonusResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, CollectDailyDefenderBonusResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -260,7 +231,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<EquipBadgeResponse> EquipBadge(BadgeType type)
+        public  EquipBadgeResponse EquipBadge(BadgeType type)
         {
             var equipBadgeRequest = new Request
             {
@@ -271,10 +242,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }.ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(equipBadgeRequest, Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(equipBadgeRequest, Client));
 
             Tuple<EquipBadgeResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, EquipBadgeResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -291,7 +262,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<LevelUpRewardsResponse> GetLevelUpRewards(int level)
+        public  LevelUpRewardsResponse GetLevelUpRewards(int level)
         {
             var levelUpRewardsRequest = new Request
             {
@@ -301,11 +272,10 @@ namespace PokemonGo.RocketAPI.Rpc
                     Level = level
                 }.ToByteString()
             };
-
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(levelUpRewardsRequest, Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(levelUpRewardsRequest, Client));
 
             Tuple<LevelUpRewardsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, LevelUpRewardsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -322,7 +292,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<SetAvatarResponse> SetAvatar(PlayerAvatar playerAvatar)
+        public  SetAvatarResponse SetAvatar(PlayerAvatar playerAvatar)
         {
             var setAvatarRequest = new Request
             {
@@ -333,10 +303,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }.ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setAvatarRequest, Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setAvatarRequest, Client));
 
             Tuple<SetAvatarResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, SetAvatarResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -353,7 +323,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<SetContactSettingsResponse> SetContactSetting(ContactSettings contactSettings)
+        public  SetContactSettingsResponse SetContactSetting(ContactSettings contactSettings)
         {
             var setContactSettingRequest = new Request
             {
@@ -364,10 +334,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }.ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setContactSettingRequest, Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setContactSettingRequest, Client));
 
             Tuple<SetContactSettingsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, SetContactSettingsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -384,7 +354,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<SetPlayerTeamResponse> SetPlayerTeam(TeamColor teamColor)
+        public  SetPlayerTeamResponse SetPlayerTeam(TeamColor teamColor)
         {
             var setPlayerTeamRequest = new Request
             {
@@ -395,10 +365,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }.ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setPlayerTeamRequest, Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setPlayerTeamRequest, Client));
 
             Tuple<SetPlayerTeamResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, SetPlayerTeamResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -415,12 +385,12 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<CheckChallengeResponse> CheckChallenge()
+        public  CheckChallengeResponse CheckChallenge()
         {
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.GetCommonRequests(Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.GetCommonRequests(Client));
 
             Tuple<CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
@@ -439,7 +409,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<VerifyChallengeResponse> VerifyChallenge(string token)
+        public  VerifyChallengeResponse VerifyChallenge(string token)
         {
             var verifyChallengeRequest = new Request
             {
@@ -450,10 +420,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 }.ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(verifyChallengeRequest, Client));
+            var request =  GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(verifyChallengeRequest, Client));
 
             Tuple<VerifyChallengeResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
+                
                     PostProtoPayload
                         <Request, VerifyChallengeResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);

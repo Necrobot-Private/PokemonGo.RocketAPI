@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 
 namespace PokemonGo.RocketAPI.Hash
 {
-    public class LegacyHashser   : IHasher
+    public class LegacyHashser : IHasher
     {
-        public async Task<HashResponseContent> RequestHashesAsync(HashRequestContent request)
+        public  HashResponseContent RequestHashes(HashRequestContent request)
         {
-            await Task.Delay(0); // Just to get rid of warning. Remove this line if the below code uses async calls.
 
             var hashed = new HashResponseContent()
             {

@@ -100,7 +100,7 @@ namespace PokemonGo.RocketAPI.Authentication
         /// <summary>
         /// Ensures the <see cref="Session" /> gets reauthenticated, no matter how long it takes.
         /// </summary>
-        internal async Task Reauthenticate()
+        internal void Reauthenticate()
         {
             ReauthenticateMutex.WaitOne();
             if (AccessToken.IsExpired)
@@ -111,7 +111,7 @@ namespace PokemonGo.RocketAPI.Authentication
                 {
                     try
                     {
-                        accessToken = await LoginProvider.GetAccessToken();
+                        accessToken = LoginProvider.GetAccessToken();
                     }
                     catch (Exception )
                     {
@@ -122,8 +122,7 @@ namespace PokemonGo.RocketAPI.Authentication
                         if (accessToken == null)
                         {
                             var sleepSeconds = Math.Min(60, ++tries*5);
-                           // Logger.Error($"Reauthentication failed, trying again in {sleepSeconds} seconds.");
-                            await Task.Delay(TimeSpan.FromMilliseconds(sleepSeconds * 1000));
+                            Task.Delay(TimeSpan.FromMilliseconds(sleepSeconds * 1000)).Wait();
                         }
                     }
                 }
