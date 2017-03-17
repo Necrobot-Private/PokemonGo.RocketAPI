@@ -69,7 +69,7 @@ namespace PokemonGo.RocketAPI.Helpers
             return _course;
         }
 
-        private RequestEnvelope.Types.PlatformRequest GenerateSignature(RequestEnvelope requestEnvelope, GeoCoordinate currentLocation)
+        private async Task<RequestEnvelope.Types.PlatformRequest> GenerateSignature(RequestEnvelope requestEnvelope, GeoCoordinate currentLocation)
         {
             byte[] ticketBytes = requestEnvelope.AuthTicket != null ? requestEnvelope.AuthTicket.ToByteArray() : requestEnvelope.AuthInfo.ToByteArray();
 
@@ -210,7 +210,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 hashRequest.Requests.Add(request.ToByteArray());
             }
 
-            var res = _client.Hasher.RequestHashesAsync(hashRequest).Result;
+            var res = await _client.Hasher.RequestHashesAsync(hashRequest);
 
             foreach (var item in res.RequestHashes)
             {
@@ -266,7 +266,7 @@ namespace PokemonGo.RocketAPI.Helpers
             }
 
             var currentLocation = new GeoCoordinate(requestEnvelope.Latitude, requestEnvelope.Longitude, _client.CurrentAltitude);
-            requestEnvelope.PlatformRequests.Add(GenerateSignature(requestEnvelope, currentLocation));
+            requestEnvelope.PlatformRequests.Add(await GenerateSignature(requestEnvelope, currentLocation));
         }
 
         public async Task<RequestEnvelope> GetRequestEnvelope(IEnumerable<Request> customRequests)
@@ -323,7 +323,7 @@ namespace PokemonGo.RocketAPI.Helpers
                     RequestMessage = plat8Message.ToByteString()
                 });
             }
-            e.PlatformRequests.Add(GenerateSignature(e, currentLocation));
+            e.PlatformRequests.Add(await GenerateSignature(e, currentLocation));
 
             return e;
         }

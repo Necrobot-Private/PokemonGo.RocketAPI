@@ -18,6 +18,7 @@ using PokemonGo.RocketAPI.LoginProviders;
 using POGOProtos.Settings;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -193,7 +194,7 @@ namespace PokemonGo.RocketAPI
             return CurrentApiEmulationVersion < MinimumClientVersion;
         }
 
-        public static Version GetMinimumRequiredVersionFromUrl()
+        public static async Task<Version> GetMinimumRequiredVersionFromUrl()
         {
             try
             {
@@ -201,8 +202,8 @@ namespace PokemonGo.RocketAPI
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get, Constants.VersionUrl);
                 requestMessage.Headers.Add("User-Agent", "Niantic App");
 
-                HttpResponseMessage response = httpClient.SendAsync(requestMessage).Result;
-                var responseAsString = response.Content.ReadAsStringAsync().Result;
+                HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
+                var responseAsString = await response.Content.ReadAsStringAsync();
 
                 var version = responseAsString.Replace("\u0006", "").Replace("\n", "");
                 return new Version(version);
