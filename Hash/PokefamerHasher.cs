@@ -41,7 +41,7 @@ namespace PokemonGo.RocketAPI.Hash
             {
                 try
                 {
-                    return await InternalRequestHashesAsync(request);
+                    return await InternalRequestHashesAsync(request).ConfigureAwait(false);
                 }
                 catch (HasherException hashEx)
                 {
@@ -59,7 +59,7 @@ namespace PokemonGo.RocketAPI.Hash
                 {
                     retry--;
                 }
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(false);
             } while (retry > 0);
 
             throw new HasherException("Pokefamer Hash API server might down");
@@ -96,7 +96,7 @@ namespace PokemonGo.RocketAPI.Hash
                 Stat stat = new Stat() { Timestamp = DateTime.Now };
                 try
                 {
-                    response = await client.PostAsync(apiEndPoint, content);
+                    response = await client.PostAsync(apiEndPoint, content).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -152,12 +152,12 @@ namespace PokemonGo.RocketAPI.Hash
                 {
                     // All good. Return the hashes back to the caller. :D
                     case HttpStatusCode.OK:
-                        return JsonConvert.DeserializeObject<HashResponseContent>(await response.Content.ReadAsStringAsync());
+                        return JsonConvert.DeserializeObject<HashResponseContent>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
 
                     // Returned when something in your request is "invalid". Also when X-AuthToken is not set.
                     // See the error message for why it is bad.
                     case HttpStatusCode.BadRequest:
-                        string responseText = await response.Content.ReadAsStringAsync();
+                        string responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                         if (responseText.Contains("Unauthorized"))
                         {
                             APIConfiguration.Logger.LogDebug($"Unauthorized : {key}  ");
@@ -176,7 +176,7 @@ namespace PokemonGo.RocketAPI.Hash
                     // This error code is returned when you have exhausted your current "hashes per second" value
                     // You should queue up your requests, and retry in a second.
                     case (HttpStatusCode)429:
-                        APIConfiguration.Logger.LogInfo($"Your request has been limited. {await response.Content.ReadAsStringAsync()}");
+                        APIConfiguration.Logger.LogInfo($"Your request has been limited. {await response.Content.ReadAsStringAsync().ConfigureAwait(false)}");
                         long ratePeriodEndsAtTimestamp;
                         IEnumerable<string> ratePeriodEndHeaderValues;
                         if (response.Headers.TryGetValues("X-RatePeriodEnd", out ratePeriodEndHeaderValues))
@@ -193,9 +193,9 @@ namespace PokemonGo.RocketAPI.Hash
                         long timeToWaitInSeconds = ratePeriodEndsAtTimestamp - Utils.GetTime(false);
 
                         if (timeToWaitInSeconds > 0)
-                            await Task.Delay((int)(timeToWaitInSeconds * 1000));  // Wait until next rate-limit period begins.
+                            await Task.Delay((int)(timeToWaitInSeconds * 1000)).ConfigureAwait(false);  // Wait until next rate-limit period begins.
 
-                        return await RequestHashesAsync(request);
+                        return await RequestHashesAsync(request).ConfigureAwait(false);
                     default:
                         throw new HasherException($"Hash API server ({client.BaseAddress}{apiEndPoint}) might down!");
                 }

@@ -46,9 +46,9 @@ namespace PokemonGo.RocketAPI.LoginProviders
                 using (var httpClient = new System.Net.Http.HttpClient(httpClientHandler))
                 {
                     httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.LoginUserAgent);
-                    var loginData = await GetLoginData(httpClient);
-                    var ticket = await PostLogin(httpClient, _username, _password, loginData);
-                    var accessToken = await PostLoginOauth(httpClient, ticket);
+                    var loginData = await GetLoginData(httpClient).ConfigureAwait(false);
+                    var ticket = await PostLogin(httpClient, _username, _password, loginData).ConfigureAwait(false);
+                    var accessToken = await PostLoginOauth(httpClient, ticket).ConfigureAwait(false);
                     accessToken.Username = _username;
                     //Logger.Debug("Authenticated through PTC.");
                     return accessToken;
@@ -63,8 +63,8 @@ namespace PokemonGo.RocketAPI.LoginProviders
         /// <returns><see cref="LoginData" /> for <see cref="PostLogin" />.</returns>
         private async Task<LoginData> GetLoginData(System.Net.Http.HttpClient httpClient)
         {
-            var loginDataResponse = await httpClient.GetAsync(Constants.LoginUrl);
-            var loginData = JsonConvert.DeserializeObject<LoginData>(await loginDataResponse.Content.ReadAsStringAsync());
+            var loginDataResponse = await httpClient.GetAsync(Constants.LoginUrl).ConfigureAwait(false);
+            var loginData = JsonConvert.DeserializeObject<LoginData>(await loginDataResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
             return loginData;
         }
 
@@ -86,9 +86,9 @@ namespace PokemonGo.RocketAPI.LoginProviders
                     {"_eventId", "submit"},
                     {"username", username},
                     {"password", password}
-                }));
+                })).ConfigureAwait(false);
 
-            var loginResponseDataRaw = await loginResponse.Content.ReadAsStringAsync();
+            var loginResponseDataRaw = await loginResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (!loginResponseDataRaw.Contains("{"))
             {
                 var locationQuery = loginResponse.Headers.Location.Query;
@@ -118,9 +118,9 @@ namespace PokemonGo.RocketAPI.LoginProviders
                     {"client_secret", "w8ScCUXJQc6kXKw8FiOhd8Fixzht18Dq3PEVkUCP5ZPxtgyWsbTvWHFLm2wNY0JR"},
                     {"grant_type", "refresh_token"},
                     {"code", ticket}
-                }));
+                })).ConfigureAwait(false);
 
-            var loginResponseDataRaw = await loginResponse.Content.ReadAsStringAsync();
+            var loginResponseDataRaw = await loginResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var oAuthData = Regex.Match(loginResponseDataRaw, "access_token=(?<accessToken>.*?)&expires=(?<expires>\\d+)");
             if (!oAuthData.Success)

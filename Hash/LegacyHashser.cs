@@ -11,7 +11,7 @@ namespace PokemonGo.RocketAPI.Hash
     {
         public async Task<HashResponseContent> RequestHashesAsync(HashRequestContent request)
         {
-            await Task.Delay(0); // Just to get rid of warning. Remove this line if the below code uses async calls.
+            await Task.Delay(0).ConfigureAwait(false); // Just to get rid of warning. Remove this line if the below code uses async calls.
 
             var hashed = new HashResponseContent()
             {
