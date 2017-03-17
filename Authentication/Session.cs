@@ -111,7 +111,7 @@ namespace PokemonGo.RocketAPI.Authentication
                 {
                     try
                     {
-                        accessToken = await LoginProvider.GetAccessToken();
+                        accessToken = await LoginProvider.GetAccessToken().ConfigureAwait(false);
                     }
                     catch (Exception )
                     {
@@ -123,7 +123,7 @@ namespace PokemonGo.RocketAPI.Authentication
                         {
                             var sleepSeconds = Math.Min(60, ++tries*5);
                            // Logger.Error($"Reauthentication failed, trying again in {sleepSeconds} seconds.");
-                            await Task.Delay(TimeSpan.FromMilliseconds(sleepSeconds * 1000));
+                            await Task.Delay(TimeSpan.FromMilliseconds(sleepSeconds * 1000)).ConfigureAwait(false);
                         }
                     }
                 }
