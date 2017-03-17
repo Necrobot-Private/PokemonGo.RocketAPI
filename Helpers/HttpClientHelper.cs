@@ -25,8 +25,8 @@ namespace PokemonGo.RocketAPI.Helpers
 
             using (var tempHttpClient = new System.Net.Http.HttpClient(handler))
             {
-                var response = await tempHttpClient.PostAsync(url, new FormUrlEncodedContent(keyValuePairs));
-                return await response.Content.ReadAsAsync<TResponse>();
+                var response = await tempHttpClient.PostAsync(url, new FormUrlEncodedContent(keyValuePairs)).ConfigureAwait(false);
+                return await response.Content.ReadAsAsync<TResponse>().ConfigureAwait(false);
             }
         }
     }

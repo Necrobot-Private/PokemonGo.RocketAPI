@@ -86,7 +86,7 @@ namespace PokemonGo.RocketAPI.Rpc
                     }
                 }
 
-                await Reauthenticate(client, isCached);
+                await Reauthenticate(client, isCached).ConfigureAwait(false);
                 return client.AccessToken;
             }
             finally
@@ -124,7 +124,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
                 try
                 {
-                    client.AccessToken = await client.LoginProvider.GetAccessToken();
+                    client.AccessToken = await client.LoginProvider.GetAccessToken().ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -141,7 +141,7 @@ namespace PokemonGo.RocketAPI.Rpc
                     {
                         var sleepSeconds = Math.Min(60, ++tries * 5);
                         //Logger.Error($"Reauthentication failed, trying again in {sleepSeconds} seconds.");
-                        await Task.Delay(TimeSpan.FromMilliseconds(sleepSeconds * 1000));
+                        await Task.Delay(TimeSpan.FromMilliseconds(sleepSeconds * 1000)).ConfigureAwait(false);
                     }
                     else
                     {
@@ -168,13 +168,13 @@ namespace PokemonGo.RocketAPI.Rpc
             Client.KillswitchTask.Start();
 #pragma warning restore 4014
             
-            var player = await Client.Player.GetPlayer(false); // Set false because initial GetPlayer does not use common requests.
+            var player = await Client.Player.GetPlayer(false).ConfigureAwait(false); // Set false because initial GetPlayer does not use common requests.
 
-            await Client.Download.GetRemoteConfigVersion();
-            await Client.Download.GetAssetDigest();
-            await Client.Download.GetItemTemplates();
+            await Client.Download.GetRemoteConfigVersion().ConfigureAwait(false);
+            await Client.Download.GetAssetDigest().ConfigureAwait(false);
+            await Client.Download.GetItemTemplates().ConfigureAwait(false);
 
-            await Client.Player.GetPlayerProfile();
+            await Client.Player.GetPlayerProfile().ConfigureAwait(false);
 
             return player;
         }
