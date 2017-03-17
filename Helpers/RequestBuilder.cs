@@ -210,7 +210,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 hashRequest.Requests.Add(request.ToByteArray());
             }
 
-            var res = await _client.Hasher.RequestHashesAsync(hashRequest);
+            var res = await _client.Hasher.RequestHashesAsync(hashRequest).ConfigureAwait(false);
 
             foreach (var item in res.RequestHashes)
             {
@@ -233,7 +233,7 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public async Task RegenerateRequestEnvelopeWithNewAccessToken(RequestEnvelope requestEnvelope)
         {
-            var accessToken = await Rpc.Login.GetValidAccessToken(_client, true /* force refresh */);
+            var accessToken = await Rpc.Login.GetValidAccessToken(_client, true /* force refresh */).ConfigureAwait(false);
 
             requestEnvelope.AuthTicket = null;
             requestEnvelope.AuthInfo = new RequestEnvelope.Types.AuthInfo
@@ -266,7 +266,7 @@ namespace PokemonGo.RocketAPI.Helpers
             }
 
             var currentLocation = new GeoCoordinate(requestEnvelope.Latitude, requestEnvelope.Longitude, _client.CurrentAltitude);
-            requestEnvelope.PlatformRequests.Add(await GenerateSignature(requestEnvelope, currentLocation));
+            requestEnvelope.PlatformRequests.Add(await GenerateSignature(requestEnvelope, currentLocation).ConfigureAwait(false));
         }
 
         public async Task<RequestEnvelope> GetRequestEnvelope(IEnumerable<Request> customRequests)
@@ -295,7 +295,7 @@ namespace PokemonGo.RocketAPI.Helpers
             }
             else
             {
-                var accessToken = await Rpc.Login.GetValidAccessToken(_client);
+                var accessToken = await Rpc.Login.GetValidAccessToken(_client).ConfigureAwait(false);
                 e.AuthInfo = new RequestEnvelope.Types.AuthInfo
                 {
                     Provider = accessToken.ProviderID,
@@ -323,7 +323,7 @@ namespace PokemonGo.RocketAPI.Helpers
                     RequestMessage = plat8Message.ToByteString()
                 });
             }
-            e.PlatformRequests.Add(await GenerateSignature(e, currentLocation));
+            e.PlatformRequests.Add(await GenerateSignature(e, currentLocation).ConfigureAwait(false));
 
             return e;
         }
@@ -334,7 +334,7 @@ namespace PokemonGo.RocketAPI.Helpers
             {
                 RequestType = type,
                 RequestMessage = message.ToByteString()
-            } });
+            } }).ConfigureAwait(false);
         }
 
         public double GenRandom(double num)

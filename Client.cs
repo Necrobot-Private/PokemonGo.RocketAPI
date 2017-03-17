@@ -202,8 +202,8 @@ namespace PokemonGo.RocketAPI
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get, Constants.VersionUrl);
                 requestMessage.Headers.Add("User-Agent", "Niantic App");
 
-                HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
-                var responseAsString = await response.Content.ReadAsStringAsync();
+                HttpResponseMessage response = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+                var responseAsString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 var version = responseAsString.Replace("\u0006", "").Replace("\n", "");
                 return new Version(version);

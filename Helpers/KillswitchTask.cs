@@ -26,7 +26,7 @@ namespace PokemonGo.RocketAPI.Helpers
             while (!_killswitchCancellation.IsCancellationRequested)
             {
 
-                Version version = await Client.GetMinimumRequiredVersionFromUrl();
+                Version version = await Client.GetMinimumRequiredVersionFromUrl().ConfigureAwait(false);
                 if (version != null)
                     _client.MinimumClientVersion = version;
             
@@ -36,7 +36,7 @@ namespace PokemonGo.RocketAPI.Helpers
 
                 try
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(30), _killswitchCancellation.Token); // Check every 30s
+                    await Task.Delay(TimeSpan.FromSeconds(30), _killswitchCancellation.Token).ConfigureAwait(false); // Check every 30s
                 }
                 // cancelled
                 catch (OperationCanceledException)
@@ -59,7 +59,7 @@ namespace PokemonGo.RocketAPI.Helpers
             _killswitchTask = CheckKillSwitch(firstCheckCompleted);
 
             // wait for first check to complete
-            await firstCheckCompleted.Task;
+            await firstCheckCompleted.Task.ConfigureAwait(false);
         }
 
         internal void Stop()

@@ -34,13 +34,13 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(encounterPokemonRequest, Client));
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(encounterPokemonRequest, Client)).ConfigureAwait(false);
 
             Tuple<EncounterResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
                         <Request, EncounterResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
             CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
@@ -67,13 +67,13 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(useCaptureItemRequest, Client));
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(useCaptureItemRequest, Client)).ConfigureAwait(false);
 
             Tuple<UseItemCaptureResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
                         <Request, UseItemCaptureResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
             CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
@@ -101,13 +101,13 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(useCaptureItemRequest, Client));
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(useCaptureItemRequest, Client)).ConfigureAwait(false);
 
             Tuple<UseItemEncounterResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
                         <Request, UseItemEncounterResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
             CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
@@ -140,13 +140,13 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(catchPokemonRequest, Client));
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(catchPokemonRequest, Client)).ConfigureAwait(false);
 
             Tuple<CatchPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
                         <Request, CatchPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
             CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
@@ -172,13 +172,13 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(encounterIncensePokemonRequest, Client));
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(encounterIncensePokemonRequest, Client)).ConfigureAwait(false);
 
             Tuple<IncenseEncounterResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
                         <Request, IncenseEncounterResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
             CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
@@ -206,13 +206,13 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(encounterLurePokemonRequest, Client));
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(encounterLurePokemonRequest, Client)).ConfigureAwait(false);
 
             Tuple<DiskEncounterResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
                         <Request, DiskEncounterResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
             CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
@@ -237,13 +237,13 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(encounterTutorialCompleteRequest, Client));
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(encounterTutorialCompleteRequest, Client)).ConfigureAwait(false);
 
             Tuple<EncounterTutorialCompleteResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
                         <Request, EncounterTutorialCompleteResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request);
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
             CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
