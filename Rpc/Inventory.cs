@@ -667,6 +667,12 @@ namespace PokemonGo.RocketAPI.Rpc
             return GetItemsData()?.FirstOrDefault(p => p.ItemId == itemId);
         }
 
+        public int GetItemCount(ItemId itemId)
+        {
+            var itemData = GetItemData(itemId);
+            return (itemData!=null)? itemData.Count:0;
+        }
+
         public int GetItemsCount()
         {
             return InventoryItems.Values.Sum(p => p.InventoryItemData.Item.Count);
