@@ -9,7 +9,6 @@ using POGOProtos.Networking.Platform.Requests;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Enums;
 using Troschuetz.Random;
-using static POGOProtos.Networking.Envelopes.Signature.Types;
 using System.Threading.Tasks;
 using PokemonGo.RocketAPI.Hash;
 using Newtonsoft.Json;
@@ -104,7 +103,7 @@ namespace PokemonGo.RocketAPI.Helpers
             if (sig.TimestampSinceStart < 5000)
                 sig.TimestampSinceStart = (ulong)TRandomDevice.Next(5000, 8000);
 
-            var sen = new SensorInfo()
+            var sen = new Signature.Types.SensorInfo()
             {
                 LinearAccelerationX = TRandomDevice.Triangular(-3, 1, 0),
                 LinearAccelerationY = TRandomDevice.Triangular(-2, 3, 0),
@@ -176,7 +175,7 @@ namespace PokemonGo.RocketAPI.Helpers
 
             if (_client.Platform == Platform.Ios)
             {
-                sig.ActivityStatus = new ActivityStatus();
+                sig.ActivityStatus = new Signature.Types.ActivityStatus();
                 sig.ActivityStatus.Stationary = true;
                 sig.ActivityStatus.Tilting |= TRandomDevice.NextDouble() > 0.50;
 
