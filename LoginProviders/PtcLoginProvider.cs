@@ -64,7 +64,11 @@ namespace PokemonGo.RocketAPI.LoginProviders
         private async Task<LoginData> GetLoginData(System.Net.Http.HttpClient httpClient)
         {
             var loginDataResponse = await httpClient.GetAsync(Constants.LoginUrl).ConfigureAwait(false);
-            var loginData = JsonConvert.DeserializeObject<LoginData>(await loginDataResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
+            if (!loginDataResponse.IsSuccessStatusCode)
+                throw new Exception($"Unexpected response from Pokemon SSO OAuth Login Url: Status code {loginDataResponse.StatusCode}");
+            
+            var jsonData = await loginDataResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var loginData = JsonConvert.DeserializeObject<LoginData>(jsonData);
             return loginData;
         }
 
