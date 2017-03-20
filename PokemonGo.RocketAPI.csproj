@@ -220,7 +220,6 @@
     <Compile Include="Extensions\RandomExtension.cs" />
     <Compile Include="Hash\PokefamerHasher.cs" />
     <Compile Include="Hash\IHasher.cs" />
-    <Compile Include="Hash\LegacyHashser.cs" />
     <Compile Include="Hash\HashModel.cs" />
     <Compile Include="Helpers\CommonRequest.cs" />
     <Compile Include="Helpers\DeviceInfo.cs" />
