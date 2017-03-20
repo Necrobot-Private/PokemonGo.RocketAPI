@@ -206,7 +206,6 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Encrypt\ICrypt.cs" />
     <Compile Include="Encrypt\Crypt.cs" />
-    <Compile Include="Encrypt\LegacyCrypt.cs" />
     <Compile Include="Exceptions\APIBadRequestExceltion.cs" />
     <Compile Include="Exceptions\AuthConfigException.cs" />
     <Compile Include="Exceptions\CaptchaException.cs" />
@@ -224,7 +223,6 @@
     <Compile Include="Hash\LegacyHashser.cs" />
     <Compile Include="Hash\HashModel.cs" />
     <Compile Include="Helpers\CommonRequest.cs" />
-    <Content Include="Helpers\Crypt.cs" />
     <Compile Include="Helpers\DeviceInfo.cs" />
     <Compile Include="Helpers\DeviceInfoHelper.cs" />
     <Compile Include="Helpers\DeviceInfoUtil.cs" />
