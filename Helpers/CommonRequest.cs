@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace PokemonGo.RocketAPI.Helpers
 {
-    public class CommonRequest
+    public static class CommonRequest
     {
         public static Request GetDownloadRemoteConfigVersionMessageRequest(Client client)
         {
@@ -107,7 +107,7 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public static List<Request> GetCommonRequests(Client client, params RequestType[] excludes)
         {
-            List<Request> commonRequestsList = new List<Request>();
+            var commonRequestsList = new List<Request>();
             commonRequestsList.Add(new Request
             {
                 RequestType = RequestType.CheckChallenge,
