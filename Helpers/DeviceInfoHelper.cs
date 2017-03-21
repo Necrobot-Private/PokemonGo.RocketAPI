@@ -76,8 +76,8 @@ namespace PokemonGo.RocketAPI.Helpers
             var deviceInfo = new Signature.Types.DeviceInfo();
 
             // iOS device id (UDID) are 16 bytes long. <<-- WRONG see that https://www.theiphonewiki.com/wiki/UDID
-            // Must have 40 hex digits.
-            var  deviceId = new Random().NextHexNumber(40).ToLower();
+            // Must have 40 hex digits, but Chrales that we need use 32
+            var  deviceId = new Random().NextHexNumber(32).ToLower();
 
             deviceInfo.DeviceId = deviceId;
             deviceInfo.FirmwareType = IosVersions[new Random().Next(IosVersions.Length)];
