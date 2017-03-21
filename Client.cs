@@ -102,6 +102,7 @@ namespace PokemonGo.RocketAPI
                 CurrentApiEmulationVersion = new Version(API_VERSION); // Make sure to update the constant above.
                 UnknownPlat8Field = "90f6a704505bccac73cec99b07794993e6fd5a12";
             }
+            /*
             else
             if (settings.UseLegacyAPI)
             {
@@ -112,6 +113,7 @@ namespace PokemonGo.RocketAPI
                 AppVersion = 4500;
                 CurrentApiEmulationVersion = new Version("0.45.0");
             }
+            */
             else
             {
                 throw new AuthConfigException("No API method being select in your auth.json");

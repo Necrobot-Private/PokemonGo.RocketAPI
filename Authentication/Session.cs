@@ -9,7 +9,7 @@ using PokemonGo.RocketAPI.Authentication.Data;
 using PokemonGo.RocketAPI.LoginProviders;
 using PokemonGo.RocketAPI.HttpClient;
 using PokemonGo.RocketAPI.Util.Device;
-using System.Device.Location;
+using GeoCoordinatePortable;
 
 namespace PokemonGo.RocketAPI.Authentication
 {
