@@ -2,14 +2,15 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using POGOProtos.Networking.Envelopes;
 using POGOProtos.Settings;
 using static POGOProtos.Networking.Envelopes.Signature.Types;
+using PokemonGo.RocketAPI.Helpers;
 using PokemonGo.RocketAPI.Rpc;
 using PokemonGo.RocketAPI.Authentication.Data;
 using PokemonGo.RocketAPI.LoginProviders;
 using PokemonGo.RocketAPI.HttpClient;
-using PokemonGo.RocketAPI.Util.Device;
-using GeoCoordinatePortable;
+using System.Device.Location;
 
 namespace PokemonGo.RocketAPI.Authentication
 {
@@ -38,7 +39,7 @@ namespace PokemonGo.RocketAPI.Authentication
         // public IDataCache DataCache { get; set; } = new MemoryDataCache();
         // public Templates Templates { get; private set; }
 
-        internal Session(ILoginProvider loginProvider, AccessToken accessToken, GeoCoordinate geoCoordinate, DeviceInfo deviceInfo = null)
+        internal Session(ILoginProvider loginProvider, AccessToken accessToken, GeoCoordinate geoCoordinate, Signature.Types.DeviceInfo deviceInfo = null)
         {
             if (!ValidLoginProviders.Contains(loginProvider.ProviderId))
             {
@@ -46,7 +47,7 @@ namespace PokemonGo.RocketAPI.Authentication
             }
 
             HttpClient = new PokemonHttpClient();
-            DeviceInfo = deviceInfo ?? DeviceInfoUtil.GetRandomDevice(this);
+            DeviceInfo = deviceInfo ?? DeviceInfoHelper.GetRandomIosDevice();
             AccessToken = accessToken;
             LoginProvider = loginProvider;
            // Player = new Player(geoCoordinate);
