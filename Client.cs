@@ -136,7 +136,7 @@ namespace PokemonGo.RocketAPI
             // We can no longer emulate Android so for now just overwrite settings with randomly generated iOS device info.
             if (Platform == Platform.Android)
             {
-                DeviceInfo iosInfo = DeviceInfoHelper.GetRandomIosDevice();
+                Signature.Types.DeviceInfo iosInfo = DeviceInfoHelper.GetRandomIosDevice();
                 settings.DeviceId = iosInfo.DeviceId;
                 settings.DeviceBrand = iosInfo.DeviceBrand;
                 settings.DeviceModel = iosInfo.DeviceModel;
