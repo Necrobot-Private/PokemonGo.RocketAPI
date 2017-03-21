@@ -8,7 +8,7 @@ using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
 using System.Linq;
-using System.Device.Location;
+using GeoCoordinatePortable;
 
 #endregion
 
