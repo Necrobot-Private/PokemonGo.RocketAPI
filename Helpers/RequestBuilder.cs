@@ -12,7 +12,7 @@ using Troschuetz.Random;
 using System.Threading.Tasks;
 using PokemonGo.RocketAPI.Hash;
 using Newtonsoft.Json;
-using System.Device.Location;
+using GeoCoordinatePortable;
 
 #endregion
 
