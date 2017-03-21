@@ -126,6 +126,7 @@
       <HintPath>$(SolutionDir)\packages\System.AppContext.4.3.0\lib\net46\System.AppContext.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Collections" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -162,6 +163,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime" />
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
       <Private>True</Private>
@@ -186,6 +188,7 @@
       <HintPath>$(SolutionDir)\packages\System.Text.Encodings.Web.4.3.0\lib\netstandard1.0\System.Text.Encodings.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Threading.Tasks" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -225,9 +228,7 @@
     <Compile Include="Hash\IHasher.cs" />
     <Compile Include="Hash\HashModel.cs" />
     <Compile Include="Helpers\CommonRequest.cs" />
-    <Compile Include="Helpers\DeviceInfo.cs" />
     <Compile Include="Helpers\DeviceInfoHelper.cs" />
-    <Compile Include="Helpers\DeviceInfoUtil.cs" />
     <Compile Include="Helpers\HashBuilder.cs" />
     <Compile Include="Helpers\HtmlRemoval.cs" />
     <Compile Include="Helpers\KillSwitchTask.cs" />

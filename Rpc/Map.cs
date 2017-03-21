@@ -1,6 +1,7 @@
 ﻿#region using directives
 
 using System;
+using System.Device.Location;
 using System.Threading.Tasks;
 using Google.Protobuf;
 using PokemonGo.RocketAPI.Helpers;
@@ -8,7 +9,6 @@ using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
 using System.Linq;
-using GeoCoordinatePortable;
 
 #endregion
 
