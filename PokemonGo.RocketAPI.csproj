@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -228,9 +228,7 @@
     <Compile Include="Hash\IHasher.cs" />
     <Compile Include="Hash\HashModel.cs" />
     <Compile Include="Helpers\CommonRequest.cs" />
-    <Compile Include="Helpers\DeviceInfo.cs" />
     <Compile Include="Helpers\DeviceInfoHelper.cs" />
-    <Compile Include="Helpers\DeviceInfoUtil.cs" />
     <Compile Include="Helpers\HashBuilder.cs" />
     <Compile Include="Helpers\HtmlRemoval.cs" />
     <Compile Include="Helpers\KillSwitchTask.cs" />
