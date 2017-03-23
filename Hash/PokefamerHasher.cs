@@ -22,6 +22,7 @@ namespace PokemonGo.RocketAPI.Hash
             public long ResponseTime { get; set; }
         }
         private string apiKey;
+        private List<KeyValuePair<string, int>> apiKeys = null;
         public bool VerboseLog { get; set; }
         private List<Stat> statistics = new List<Stat>();
         private string apiEndPoint;
@@ -161,6 +162,10 @@ namespace PokemonGo.RocketAPI.Hash
                         if (responseText.Contains("Unauthorized"))
                         {
                             APIConfiguration.Logger.LogDebug($"Unauthorized : {key}  ");
+                            if (this.apiKeys.Count()> 1){
+                                this.apiKeys.RemoveAll(x => x.Key == key);
+                                return await RequestHashesAsync(request).ConfigureAwait(false);
+                            }
                             throw new HasherException($"Your API key {maskedKey} is incorrect or expired, please check auth.json (Pokefamer message : {responseText})");
                         }
                         Console.WriteLine($"Bad request sent to the hashing server! {responseText}");
@@ -170,6 +175,10 @@ namespace PokemonGo.RocketAPI.Hash
                     // This error code is returned when your "key" is not in a valid state. (Expired, invalid, etc)
                     case HttpStatusCode.Unauthorized:
                         APIConfiguration.Logger.LogDebug($"Unauthorized : {key}  ");
+                        if (this.apiKeys.Count()> 1){
+                            this.apiKeys.RemoveAll(x => x.Key == key);
+                            return await RequestHashesAsync(request).ConfigureAwait(false);
+                        }
 
                         throw new HasherException($"You are not authorized to use this service.  Please check that your API key {maskedKey} is correct.");
 
@@ -177,6 +186,10 @@ namespace PokemonGo.RocketAPI.Hash
                     // You should queue up your requests, and retry in a second.
                     case (HttpStatusCode)429:
                         APIConfiguration.Logger.LogInfo($"Your request has been limited. {await response.Content.ReadAsStringAsync().ConfigureAwait(false)}");
+                        if (this.apiKeys.Count()> 1){
+                            return await RequestHashesAsync(request).ConfigureAwait(false);
+                        }
+
                         long ratePeriodEndsAtTimestamp;
                         IEnumerable<string> ratePeriodEndHeaderValues;
                         if (response.Headers.TryGetValues("X-RatePeriodEnd", out ratePeriodEndHeaderValues))
@@ -205,7 +218,6 @@ namespace PokemonGo.RocketAPI.Hash
             return null;
         }
 
-        List<KeyValuePair<string, int>> apiKeys = null;
         private void UpdateRate(string key, int remain)
         {
             this.apiKeys.RemoveAll(x => x.Key == key);
