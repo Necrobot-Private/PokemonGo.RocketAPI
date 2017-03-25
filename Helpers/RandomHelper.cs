@@ -29,6 +29,17 @@ namespace PokemonGo.RocketAPI.Helpers
         public static void RandomSleep(int average)
         {
             RandomSleep(average-100, average+100);
-        }        
+        }
+
+        public async static Task RandomDelay(int average)
+        {
+            await RandomDelay(average-100, average+100);
+        }
+
+        public async static Task RandomDelay(int min, int max)
+        {
+            await Task.Delay(  (_random.Next(min, max)));
+        }
+
     }
 }
