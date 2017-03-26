@@ -103,7 +103,7 @@ namespace PokemonGo.RocketAPI.Rpc
             Client.CurrentSpeed = speed;
         }
 
-        public async Task<GetPlayerResponse> GetPlayer(bool addCommonRequests = true)
+        public async Task<GetPlayerResponse> GetPlayer(bool addCommonRequests = true, bool addChallengeRequests = false)
         {
             var getPlayerRequest = new Request
             {
@@ -135,8 +135,21 @@ namespace PokemonGo.RocketAPI.Rpc
                 
                 return response.Item1;
             }
-            else
-            {
+            if (addChallengeRequests){
+                var challengeRequest = new Request
+                {
+                    RequestType = RequestType.CheckChallenge,
+                    RequestMessage = new CheckChallengeMessage().ToByteString()
+                };
+                var requestEnvelope = await GetRequestBuilder().GetRequestEnvelope(new Request[] { getPlayerRequest,challengeRequest }).ConfigureAwait(false);
+                
+                Tuple<GetPlayerResponse,CheckChallengeResponse> response = await PostProtoPayload<Request, GetPlayerResponse, CheckChallengeResponse>(requestEnvelope).ConfigureAwait(false);
+                
+                CommonRequest.ProcessGetPlayerResponse(Client, response.Item1);
+
+                return response.Item1;
+                
+            }else{
                 var requestEnvelope = await GetRequestBuilder().GetRequestEnvelope(new Request[] { getPlayerRequest }).ConfigureAwait(false);
                 GetPlayerResponse getPlayerResponse = await PostProtoPayload<Request, GetPlayerResponse>(requestEnvelope).ConfigureAwait(false);
                 CommonRequest.ProcessGetPlayerResponse(Client, getPlayerResponse);
