@@ -210,9 +210,10 @@ namespace PokemonGo.RocketAPI
                 var version = responseAsString.Replace("\u0006", "").Replace("\n", "");
                 return new Version(version);
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-                APIConfiguration.Logger.LogError(ex.ToString());
+                var errorMessage = $"The Niantic version check URL ({Constants.VersionUrl}) is returning an invalid version. This indicates that Niantic has changed something on their server and may indicate a forced API change. You may want to stop botting to be safe.";
+                APIConfiguration.Logger.LogError(errorMessage);
             }
             return null;
         }
