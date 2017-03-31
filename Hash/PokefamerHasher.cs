@@ -16,6 +16,9 @@ namespace PokemonGo.RocketAPI.Hash
 {
     public class PokefamerHasher : IHasher
     {
+        public static string PokeHashURL = "https://pokehash.buddyauth.com/";
+        public static string PokeHashURL2 = "http://pokehash.buddyauth.com/";
+        
         public class Stat
         {
             public DateTime Timestamp { get; set; }
@@ -67,6 +70,7 @@ namespace PokemonGo.RocketAPI.Hash
 
         }
         private DateTime lastPrintVerbose = DateTime.Now;
+        
 
         private async Task<HashResponseContent> InternalRequestHashesAsync(HashRequestContent request)
         {
@@ -79,7 +83,7 @@ namespace PokemonGo.RocketAPI.Hash
             {
                 // The URL to the hashing server.
                 // Do not include "api/v1/hash" unless you know why you're doing it, and want to modify this code.
-                client.BaseAddress = new Uri("http://pokehash.buddyauth.com/");
+                client.BaseAddress = new Uri(PokeHashURL);
 
                 // By default, all requests (and this example) are in JSON.
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -99,9 +103,17 @@ namespace PokemonGo.RocketAPI.Hash
                 {
                     response = await client.PostAsync(apiEndPoint, content).ConfigureAwait(false);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    throw ex;
+                    try
+                    {
+                        client.BaseAddress = new Uri(PokeHashURL2);
+                        response = await client.PostAsync(apiEndPoint, content).ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
                 }
                 finally
                 {
@@ -113,6 +125,7 @@ namespace PokemonGo.RocketAPI.Hash
 
                     fullStats.APICalles++;
                     fullStats.TotalTimes += watcher.ElapsedMilliseconds;
+                     
 
                     stat.ResponseTime = watcher.ElapsedMilliseconds;
                     statistics.Add(stat);
@@ -136,6 +149,14 @@ namespace PokemonGo.RocketAPI.Hash
                         maxRequestCount = Convert.ToInt32(headers.First());
                     }
 
+                    if (response.Headers.TryGetValues("X-AuthTokenExpiration", out headers))
+                    {
+                        uint secondsToExpiration = 0;
+                        secondsToExpiration = Convert.ToUInt32(headers.First());
+                        fullStats.Expired = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)
+                            .AddSeconds(secondsToExpiration).ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss");
+                    }
+
                     IEnumerable<string> requestRemains;
                     if (response.Headers.TryGetValues("X-RateRequestsRemaining", out requestRemains))
                     {
@@ -144,6 +165,9 @@ namespace PokemonGo.RocketAPI.Hash
                         fullStats.HealthyRate = (double)(requestRemain) / maxRequestCount;
                         UpdateRate(key, requestRemain);
                     }
+                    
+
+                    
                     APIConfiguration.Logger.HashStatusUpdate(fullStats);
 
                 }

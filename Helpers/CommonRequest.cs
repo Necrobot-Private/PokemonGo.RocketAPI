@@ -192,6 +192,12 @@ namespace PokemonGo.RocketAPI.Helpers
             if (getPlayerResponse == null)
                 return;
 
+            if (getPlayerResponse.Banned)
+                APIConfiguration.Logger.LogError("Error: This account seems be banned");
+
+            if ( getPlayerResponse.Warn)
+                APIConfiguration.Logger.LogInfo("Warning: This account seems be flagged");
+
             if (getPlayerResponse.PlayerData != null)
                 client.Player.PlayerData = getPlayerResponse.PlayerData;
         }
