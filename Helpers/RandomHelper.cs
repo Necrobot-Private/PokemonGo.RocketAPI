@@ -1,7 +1,6 @@
 ﻿#region using directives
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 #endregion
@@ -30,16 +29,15 @@ namespace PokemonGo.RocketAPI.Helpers
         {
             RandomSleep(average-100, average+100);
         }
-
-        public async static Task RandomDelay(int average)
-        {
-            await RandomDelay(average-100, average+100);
-        }
-
-        public async static Task RandomDelay(int min, int max)
-        {
-            await Task.Delay(  (_random.Next(min, max)));
-        }
-
+  		
+		public async static Task RandomDelay(int average)
+		{
+			await RandomDelay(average-100, average+100);
+		}
+		
+		public async static Task RandomDelay(int min, int max)
+		{
+			await Task.Delay((_random.Next(min, max)));
+		}
     }
 }

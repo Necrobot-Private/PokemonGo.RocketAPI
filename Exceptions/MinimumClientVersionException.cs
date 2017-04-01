@@ -8,8 +8,8 @@ namespace PokemonGo.RocketAPI.Exceptions
         public Version MinimumClientVersion;
         public MinimumClientVersionException(Version currentApiVersion, Version minimumClientVersion) : base()
         {
-            this.CurrentApiVersion = currentApiVersion;
-            this.MinimumClientVersion = minimumClientVersion;
+            CurrentApiVersion = currentApiVersion;
+            MinimumClientVersion = minimumClientVersion;
         }
     }
 }

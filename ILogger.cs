@@ -1,6 +1,5 @@
 ﻿using PokemonGo.RocketAPI.Logging;
 using System;
-using System.Linq;
 
 namespace PokemonGo.RocketAPI
 {

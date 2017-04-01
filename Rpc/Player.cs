@@ -135,27 +135,27 @@ namespace PokemonGo.RocketAPI.Rpc
                 
                 return response.Item1;
             }
-            if (addChallengeRequests){
-                var challengeRequest = new Request
-                {
-                    RequestType = RequestType.CheckChallenge,
-                    RequestMessage = new CheckChallengeMessage().ToByteString()
-                };
+            if (addChallengeRequests)
+            {
+				var challengeRequest = new Request
+				{
+					RequestType = RequestType.CheckChallenge,
+					RequestMessage = new CheckChallengeMessage().ToByteString()
+				};
                 var requestEnvelope = await GetRequestBuilder().GetRequestEnvelope(new Request[] { getPlayerRequest,challengeRequest }).ConfigureAwait(false);
-                
-                Tuple<GetPlayerResponse,CheckChallengeResponse> response = await PostProtoPayload<Request, GetPlayerResponse, CheckChallengeResponse>(requestEnvelope).ConfigureAwait(false);
-                
-                CommonRequest.ProcessGetPlayerResponse(Client, response.Item1);
-
-                return response.Item1;
-                
-            }else{
-                var requestEnvelope = await GetRequestBuilder().GetRequestEnvelope(new Request[] { getPlayerRequest }).ConfigureAwait(false);
+				Tuple<GetPlayerResponse,CheckChallengeResponse> response = await PostProtoPayload<Request, GetPlayerResponse, CheckChallengeResponse>(requestEnvelope).ConfigureAwait(false);
+				CommonRequest.ProcessGetPlayerResponse(Client, response.Item1);
+				
+				return response.Item1;
+            }
+			else
+			{
+				var requestEnvelope = await GetRequestBuilder().GetRequestEnvelope(new Request[] { getPlayerRequest }).ConfigureAwait(false);
                 GetPlayerResponse getPlayerResponse = await PostProtoPayload<Request, GetPlayerResponse>(requestEnvelope).ConfigureAwait(false);
                 CommonRequest.ProcessGetPlayerResponse(Client, getPlayerResponse);
 
                 return getPlayerResponse;
-            }
+			}
         }
 
         public async Task<GetPlayerProfileResponse> GetPlayerProfile()

@@ -175,8 +175,10 @@ namespace PokemonGo.RocketAPI.Helpers
 
             if (_client.Platform == Platform.Ios)
             {
-                sig.ActivityStatus = new Signature.Types.ActivityStatus();
-                sig.ActivityStatus.Stationary = true;
+                sig.ActivityStatus = new Signature.Types.ActivityStatus()
+                {
+                    Stationary = true
+                };
                 sig.ActivityStatus.Tilting |= TRandomDevice.NextDouble() > 0.50;
 
                 if (TRandomDevice.NextDouble() > 0.95)

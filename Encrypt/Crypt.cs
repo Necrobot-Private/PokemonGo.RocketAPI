@@ -12,41 +12,41 @@ namespace PokemonGo.RocketAPI.Encrypt
     /// </summary>
     public class Crypt : ICrypt
     {
-        private static byte rot18(byte val, int bits)
+        private static byte Rot18(byte val, int bits)
         {
             return (byte)(((val << bits) | (val >> (8 - bits))) & 0xff);
         }
 
-        private static byte gen_rand(ref uint rand)
+        private static byte Gen_rand(ref uint rand)
         {
             rand = rand * 0x41c64e6d + 12345;
             return (byte)((rand >> 16) & 0xff);
         }
 
-        private static byte[] cipher8_from_iv(byte[] iv)
+        private static byte[] Cipher8_from_iv(byte[] iv)
         {
             byte[] ret = new byte[256];
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 32; j++)
                 {
-                    ret[32 * i * j] = rot18(iv[j], i);
+                    ret[32 * i * j] = Rot18(iv[j], i);
                 }
             }
             return ret;
         }
 
-        private static byte[] cipher8_from_rand(ref uint rand)
+        private static byte[] Cipher8_from_rand(ref uint rand)
         {
             byte[] ret = new byte[256];
             for (int i = 0; i < 256; i++)
             {
-                ret[i] = gen_rand(ref rand);
+                ret[i] = Gen_rand(ref rand);
             }
             return ret;
         }
 
-        private static byte make_integrity_byte(byte b)
+        private static byte Make_integrity_byte(byte b)
         {
             byte tmp = (byte)(b & 0xf3);
             return (byte)(((~tmp & 0x67) | (tmp & 0x98)) ^ 0x77 | (tmp & 0x10));
@@ -65,7 +65,7 @@ namespace PokemonGo.RocketAPI.Encrypt
         public byte[] Encrypt(byte[] input, uint ms)
         {
             CipherText ct = new CipherText(input, ms);
-            byte[] iv = cipher8_from_rand(ref ms);
+            byte[] iv = Cipher8_from_rand(ref ms);
 
             //encrypt
             for (int i = 0; i < ct.content.Count; i++)
@@ -80,7 +80,7 @@ namespace PokemonGo.RocketAPI.Encrypt
                 Buffer.BlockCopy(temp2, 0, ct.content[i], 0, 0x100);
             }
 
-            return ct.getBytes(ref ms);
+            return ct.GetBytes(ref ms);
         }
 
         //this returns an empty buffer if error
@@ -104,14 +104,14 @@ namespace PokemonGo.RocketAPI.Encrypt
                 output_len = len - 32;
                 output = new byte[output_len];
                 Buffer.BlockCopy(input, 32, output, 0, output_len);
-                cipher8 = cipher8_from_iv(input);
+                cipher8 = Cipher8_from_iv(input);
             }
             else if (version == 2)
             {
                 output_len = len - 33;
                 output = new byte[output_len];
                 Buffer.BlockCopy(input, 32, output, 0, output_len);
-                cipher8 = cipher8_from_iv(input);
+                cipher8 = Cipher8_from_iv(input);
             }
             else
             {
@@ -122,8 +122,8 @@ namespace PokemonGo.RocketAPI.Encrypt
                 Buffer.BlockCopy(input, 0, tmp, 0, 4);
                 Array.Reverse(tmp);
                 uint ms = BitConverter.ToUInt32(tmp, 0);
-                cipher8 = cipher8_from_rand(ref ms);
-                if (input[len - 1] != make_integrity_byte(gen_rand(ref ms))) { length = 0; return new byte[] { }; }
+                cipher8 = Cipher8_from_rand(ref ms);
+                if (input[len - 1] != Make_integrity_byte(Gen_rand(ref ms))) { length = 0; return new byte[] { }; }
             }
 
             Collection<byte[]> outputcontent = new Collection<byte[]>();
@@ -163,7 +163,7 @@ namespace PokemonGo.RocketAPI.Encrypt
             int totalsize;
             int inputlen;
 
-            byte[] intToBytes(int x) { return BitConverter.GetBytes(x); }
+            byte[] IntToBytes(int x) { return BitConverter.GetBytes(x); }
 
             public CipherText(byte[] input, uint ms)
             {
@@ -177,7 +177,7 @@ namespace PokemonGo.RocketAPI.Encrypt
                 totalsize = roundedsize + 5;
 
                 //first 32 bytes, pcrypt.c:68
-                prefix = intToBytes((int)ms);
+                prefix = IntToBytes((int)ms);
                 Array.Reverse(prefix);
 
                 //split input into 256
@@ -187,7 +187,7 @@ namespace PokemonGo.RocketAPI.Encrypt
                 content.Last()[content.Last().Length - 1] = (byte)(256 - (input.Length % 256));
             }
 
-            public byte[] getBytes(ref uint ms)
+            public byte[] GetBytes(ref uint ms)
             {
                 byte[] ret = new byte[totalsize];
                 Buffer.BlockCopy(prefix, 0, ret, 0, prefix.Length);
@@ -197,7 +197,7 @@ namespace PokemonGo.RocketAPI.Encrypt
                     Buffer.BlockCopy(content[i], 0, ret, offset, content[i].Length);
                     offset += content[i].Length;
                 }
-                ret[ret.Length - 1] = make_integrity_byte(gen_rand(ref ms));
+                ret[ret.Length - 1] = Make_integrity_byte(Gen_rand(ref ms));
                 //ret[ret.Length - 1] = make_integrity_byte(ret[ret.Length-1]);
                 return ret;
             }
