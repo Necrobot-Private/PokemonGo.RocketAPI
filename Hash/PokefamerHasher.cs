@@ -139,7 +139,7 @@ namespace PokemonGo.RocketAPI.Hash
                     }
 
                     int maxRequestCount = 0;
-                    if (response.Headers.TryGetValues("X-MaxRequestCount", out IEnumerable<string> headers))
+                    if (response.Headers.TryGetValues("X-MaxRequestCount", out headers))
                     {
                         // Get the rate-limit period ends at timestamp in seconds.
                         maxRequestCount = Convert.ToInt32(headers.First());
@@ -148,11 +148,11 @@ namespace PokemonGo.RocketAPI.Hash
 					if (response.Headers.TryGetValues("X-AuthTokenExpiration", out headers))
 					{
 						uint secondsToExpiration = 0;
-						fullStats.Expired = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)
+						fullStats.Expired = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
 							.AddSeconds(secondsToExpiration).ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss");
 					}
 
-                    if (response.Headers.TryGetValues("X-RateRequestsRemaining", out IEnumerable<string> requestRemains))
+                    if (response.Headers.TryGetValues("X-RateRequestsRemaining", out requestRemains))
                     {
                         // Get the rate-limit period ends at timestamp in seconds.
                         int requestRemain = Convert.ToInt32(requestRemains.First());
@@ -222,6 +222,9 @@ namespace PokemonGo.RocketAPI.Hash
         }
 
         List<KeyValuePair<string, int>> apiKeys = null;
+        IEnumerable<string> requestRemains;
+        IEnumerable<string> headers;
+
         private void UpdateRate(string key, int remain)
         {
             apiKeys.RemoveAll(x => x.Key == key);
