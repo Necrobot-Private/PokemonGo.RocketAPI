@@ -111,8 +111,7 @@
       <HintPath>$(SolutionDir)\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PommaLabs.Thrower, Version=4.0.0.0, Culture=neutral, PublicKeyToken=2f204b7110a52060, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)\packages\Thrower.4.0.7\lib\net45\PommaLabs.Thrower.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>$(SolutionDir)\packages\Thrower.4.1.2\lib\net45\PommaLabs.Thrower.dll</HintPath>
     </Reference>
     <Reference Include="S2Geometry, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\S2Geometry.1.0.3\lib\portable-net45+wp8+win8\S2Geometry.dll</HintPath>
@@ -288,7 +287,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\POGOProtos\POGOProtos.csproj">
