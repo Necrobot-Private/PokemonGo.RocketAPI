@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using PokemonGo.RocketAPI.Enums;
 using PokemonGo.RocketAPI.Exceptions;
-using PokemonGo.RocketAPI.Helpers;
 using POGOProtos.Networking.Responses;
 using System.IO;
 using Newtonsoft.Json;
@@ -169,21 +168,25 @@ namespace PokemonGo.RocketAPI.Rpc
             Client.KillswitchTask.Start();
 #pragma warning restore 4014
             
-            var player = await Client.Player.GetPlayer(false,true).ConfigureAwait(false); // Set false because initial GetPlayer does not use common requests.
-            APIConfiguration.Logger.LogDebug("GetPlayer done.");
-            await RandomHelper.RandomDelay(10000).ConfigureAwait(false);
+            var player = await Client.Player.GetPlayer(false,true).ConfigureAwait(false);
+			APIConfiguration.Logger.LogDebug("GetPlayer done.")
+			await RandomHelper.RandomDelay(10000).ConfigureAwait(false);
+			
             await Client.Download.GetRemoteConfigVersion().ConfigureAwait(false);
-            APIConfiguration.Logger.LogDebug("GetRemoteConfigVersion done.");
-            await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+			APIConfiguration.Logger.LogDebug("GetRemoteConfigVersion done.");
+			await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+			
             await Client.Download.GetAssetDigest().ConfigureAwait(false);
-            APIConfiguration.Logger.LogDebug("GetAssetDigest done.");
-            await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+			APIConfiguration.Logger.LogDebug("GetAssetDigest done.");
+			await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+			
             await Client.Download.GetItemTemplates().ConfigureAwait(false);
-            APIConfiguration.Logger.LogDebug("GetItemTemplates done.");
-            await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+			APIConfiguration.Logger.LogDebug("GetItemTemplates done.");
+			await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+			
             await Client.Player.GetPlayerProfile().ConfigureAwait(false);
-            APIConfiguration.Logger.LogDebug("GetPlayerProfile done.");
-            await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+			APIConfiguration.Logger.LogDebug("GetPlayerProfile done.");
+			await RandomHelper.RandomDelay(300).ConfigureAwait(false);
 
             return player;
         }

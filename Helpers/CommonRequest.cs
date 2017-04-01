@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace PokemonGo.RocketAPI.Helpers
 {
-    public static class CommonRequest
+    public class CommonRequest
     {
         public static Request GetDownloadRemoteConfigVersionMessageRequest(Client client)
         {
@@ -107,30 +107,31 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public static List<Request> GetCommonRequests(Client client, params RequestType[] excludes)
         {
-            var commonRequestsList = new List<Request>();
-            commonRequestsList.Add(new Request
+            List<Request> commonRequestsList = new List<Request>
             {
-                RequestType = RequestType.CheckChallenge,
-                RequestMessage = new CheckChallengeMessage().ToByteString()
-            });
-            commonRequestsList.Add(new Request
-            {
-                RequestType = RequestType.GetHatchedEggs,
-                RequestMessage = new GetHatchedEggsMessage().ToByteString()
-            });
-            commonRequestsList.Add(GetDefaultGetInventoryMessage(client));
-            commonRequestsList.Add(new Request
-            {
-                RequestType = RequestType.CheckAwardedBadges,
-                RequestMessage = new CheckAwardedBadgesMessage().ToByteString()
-            });
-            commonRequestsList.Add(GetDownloadSettingsMessageRequest(client));
-            commonRequestsList.Add(new Request
-            {
-                RequestType = RequestType.GetBuddyWalked,
-                RequestMessage = new GetBuddyWalkedMessage().ToByteString()
-            });
-
+                new Request
+                {
+                    RequestType = RequestType.CheckChallenge,
+                    RequestMessage = new CheckChallengeMessage().ToByteString()
+                },
+                new Request
+                {
+                    RequestType = RequestType.GetHatchedEggs,
+                    RequestMessage = new GetHatchedEggsMessage().ToByteString()
+                },
+                GetDefaultGetInventoryMessage(client),
+                new Request
+                {
+                    RequestType = RequestType.CheckAwardedBadges,
+                    RequestMessage = new CheckAwardedBadgesMessage().ToByteString()
+                },
+                GetDownloadSettingsMessageRequest(client),
+                new Request
+                {
+                    RequestType = RequestType.GetBuddyWalked,
+                    RequestMessage = new GetBuddyWalkedMessage().ToByteString()
+                }
+            };
             return commonRequestsList.Where(r => !excludes.Contains(r.RequestType)).ToList();
         }
 
@@ -191,12 +192,12 @@ namespace PokemonGo.RocketAPI.Helpers
         {
             if (getPlayerResponse == null)
                 return;
-
-            if (getPlayerResponse.Banned)
-                APIConfiguration.Logger.LogError("Error: This account seems be banned");
-
-            if ( getPlayerResponse.Warn)
-                APIConfiguration.Logger.LogInfo("Warning: This account seems be flagged");
+			
+			if (getPlayerResponse.Banned)
+				 APIConfiguration.Logger.LogError("Error: This account seems be banned, please use a different account!");
+			 
+			if (getPlayerResponse.Warn)
+				APIConfiguration.Logger.LogInfo("Warning: This account seems be flagged, it's recommended to not bot on this account for now!");
 
             if (getPlayerResponse.PlayerData != null)
                 client.Player.PlayerData = getPlayerResponse.PlayerData;

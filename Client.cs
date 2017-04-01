@@ -12,12 +12,10 @@ using PokemonGo.RocketAPI.Helpers;
 using PokemonGo.RocketAPI.Hash;
 using PokemonGo.RocketAPI.Encrypt;
 using PokemonGo.RocketAPI.Exceptions;
-using POGOProtos.Networking.Responses;
 using PokemonGo.RocketAPI.Authentication.Data;
 using PokemonGo.RocketAPI.LoginProviders;
 using POGOProtos.Settings;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 #endregion
@@ -35,13 +33,13 @@ namespace PokemonGo.RocketAPI
         public Encounter Encounter;
         public Fort Fort;
         public Inventory Inventory;
-        public Rpc.Login Login;
+        public Login Login;
         public Map Map;
         public Misc Misc;
         public Player Player;
         string CaptchaToken;
         public KillSwitchTask KillswitchTask;
-        public Hash.IHasher Hasher;
+        public IHasher Hasher;
         public ICrypt Cryptor;
         internal RequestBuilder RequestBuilder;
         
@@ -138,7 +136,7 @@ namespace PokemonGo.RocketAPI
             // We can no longer emulate Android so for now just overwrite settings with randomly generated iOS device info.
             if (Platform == Platform.Android)
             {
-                Signature.Types.DeviceInfo iosInfo = DeviceInfoHelper.GetRandomIosDevice();
+                DeviceInfo iosInfo = DeviceInfoHelper.GetRandomIosDevice();
                 settings.DeviceId = iosInfo.DeviceId;
                 settings.DeviceBrand = iosInfo.DeviceBrand;
                 settings.DeviceModel = iosInfo.DeviceModel;
@@ -165,7 +163,7 @@ namespace PokemonGo.RocketAPI
             AccessToken = null;
             AuthTicket = null;
             StartTime = Utils.GetTime(true);
-            RequestBuilder = new RequestBuilder(this, this.Settings);
+            RequestBuilder = new RequestBuilder(this, Settings);
             InventoryLastUpdateTimestamp = 0;
             SettingsHash = "";
         }
@@ -212,7 +210,7 @@ namespace PokemonGo.RocketAPI
             }
             catch(Exception)
             {
-                var errorMessage = $"The Niantic version check URL ({Constants.VersionUrl}) is returning an invalid version. This indicates that Niantic has changed something on their server and may indicate a forced API change. You may want to stop botting to be safe.";
+				var errorMessage = $"The Niantic Version Check URL ({Constants.VersionUrl}) has returned an invalid version. This indicates that Niantic has changed something on their server and may indicate a forced API change. You may want to stop botting to be safe.";
                 APIConfiguration.Logger.LogError(errorMessage);
             }
             return null;
