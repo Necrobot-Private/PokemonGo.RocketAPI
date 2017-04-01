@@ -141,7 +141,7 @@ namespace PokemonGo.RocketAPI.Rpc
 				{
 					RequestType = RequestType.CheckChallenge,
 					RequestMessage = new CheckChallengeMessage().ToByteString()
-				}
+				};
                 var requestEnvelope = await GetRequestBuilder().GetRequestEnvelope(new Request[] { getPlayerRequest,challengeRequest }).ConfigureAwait(false);
 				Tuple<GetPlayerResponse,CheckChallengeResponse> response = await PostProtoPayload<Request, GetPlayerResponse, CheckChallengeResponse>(requestEnvelope).ConfigureAwait(false);
 				CommonRequest.ProcessGetPlayerResponse(Client, response.Item1);
