@@ -16,16 +16,15 @@ namespace PokemonGo.RocketAPI.Hash
 {
     public class PokefamerHasher : IHasher
     {
-        public static string PokeHashURL = "https://pokehash.buddyauth.com/";
-        public static string PokeHashURL2 = "http://pokehash.buddyauth.com/";
-        
+		public static string PokeHashURL = "https://pokehash.buddyauth.com/";
+		public static string PokeHashURL2 = "http://pokehash.buddyauth.com/";
+		
         public class Stat
         {
             public DateTime Timestamp { get; set; }
             public long ResponseTime { get; set; }
         }
         private string apiKey;
-        private List<KeyValuePair<string, int>> apiKeys = null;
         public bool VerboseLog { get; set; }
         private List<Stat> statistics = new List<Stat>();
         private string apiEndPoint;
@@ -34,7 +33,7 @@ namespace PokemonGo.RocketAPI.Hash
 
         public PokefamerHasher(string apiKey, bool log, string apiEndPoint)
         {
-            this.VerboseLog = log;
+            VerboseLog = log;
             this.apiKey = apiKey;
             this.apiEndPoint = apiEndPoint;
         }
@@ -66,11 +65,10 @@ namespace PokemonGo.RocketAPI.Hash
                 await Task.Delay(1000).ConfigureAwait(false);
             } while (retry > 0);
 
-            throw new HasherException("Pokefamer Hash API server might down");
+            throw new HasherException("Pokefamer Hash API server might be down");
 
         }
         private DateTime lastPrintVerbose = DateTime.Now;
-        
 
         private async Task<HashResponseContent> InternalRequestHashesAsync(HashRequestContent request)
         {
@@ -106,14 +104,14 @@ namespace PokemonGo.RocketAPI.Hash
                 catch (Exception)
                 {
                     try
-                    {
-                        client.BaseAddress = new Uri(PokeHashURL2);
-                        response = await client.PostAsync(apiEndPoint, content).ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw ex;
-                    }
+					{
+						client.BaseAddress = new Uri(PokeHashURL2);
+						response = await client.PostAsync(apiEndPoint, content).ConfigureAwait(false);
+					}
+					catch (Exception ex)
+					{
+						throw ex;
+					}
                 }
                 finally
                 {
@@ -125,7 +123,6 @@ namespace PokemonGo.RocketAPI.Hash
 
                     fullStats.APICalles++;
                     fullStats.TotalTimes += watcher.ElapsedMilliseconds;
-                     
 
                     stat.ResponseTime = watcher.ElapsedMilliseconds;
                     statistics.Add(stat);
@@ -141,23 +138,20 @@ namespace PokemonGo.RocketAPI.Hash
                         fullStats.MaskedAPIKey = maskedKey;
                     }
 
-                    IEnumerable<string> headers;
                     int maxRequestCount = 0;
                     if (response.Headers.TryGetValues("X-MaxRequestCount", out headers))
                     {
                         // Get the rate-limit period ends at timestamp in seconds.
                         maxRequestCount = Convert.ToInt32(headers.First());
                     }
+					
+					if (response.Headers.TryGetValues("X-AuthTokenExpiration", out headers))
+					{
+						uint secondsToExpiration = 0;
+						fullStats.Expired = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+							.AddSeconds(secondsToExpiration).ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss");
+					}
 
-                    if (response.Headers.TryGetValues("X-AuthTokenExpiration", out headers))
-                    {
-                        uint secondsToExpiration = 0;
-                        secondsToExpiration = Convert.ToUInt32(headers.First());
-                        fullStats.Expired = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)
-                            .AddSeconds(secondsToExpiration).ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss");
-                    }
-
-                    IEnumerable<string> requestRemains;
                     if (response.Headers.TryGetValues("X-RateRequestsRemaining", out requestRemains))
                     {
                         // Get the rate-limit period ends at timestamp in seconds.
@@ -165,9 +159,6 @@ namespace PokemonGo.RocketAPI.Hash
                         fullStats.HealthyRate = (double)(requestRemain) / maxRequestCount;
                         UpdateRate(key, requestRemain);
                     }
-                    
-
-                    
                     APIConfiguration.Logger.HashStatusUpdate(fullStats);
 
                 }
@@ -186,11 +177,7 @@ namespace PokemonGo.RocketAPI.Hash
                         if (responseText.Contains("Unauthorized"))
                         {
                             APIConfiguration.Logger.LogDebug($"Unauthorized : {key}  ");
-                            if (this.apiKeys.Count()> 1){
-                                this.apiKeys.RemoveAll(x => x.Key == key);
-                                return await RequestHashesAsync(request).ConfigureAwait(false);
-                            }
-                            throw new HasherException($"Your API key {maskedKey} is incorrect or expired, please check auth.json (Pokefamer message : {responseText})");
+                            throw new HasherException($"Your API Key: {maskedKey} is incorrect or expired, please check auth.json (Pokefamer Message : {responseText})");
                         }
                         Console.WriteLine($"Bad request sent to the hashing server! {responseText}");
 
@@ -199,10 +186,6 @@ namespace PokemonGo.RocketAPI.Hash
                     // This error code is returned when your "key" is not in a valid state. (Expired, invalid, etc)
                     case HttpStatusCode.Unauthorized:
                         APIConfiguration.Logger.LogDebug($"Unauthorized : {key}  ");
-                        if (this.apiKeys.Count()> 1){
-                            this.apiKeys.RemoveAll(x => x.Key == key);
-                            return await RequestHashesAsync(request).ConfigureAwait(false);
-                        }
 
                         throw new HasherException($"You are not authorized to use this service.  Please check that your API key {maskedKey} is correct.");
 
@@ -210,10 +193,6 @@ namespace PokemonGo.RocketAPI.Hash
                     // You should queue up your requests, and retry in a second.
                     case (HttpStatusCode)429:
                         APIConfiguration.Logger.LogInfo($"Your request has been limited. {await response.Content.ReadAsStringAsync().ConfigureAwait(false)}");
-                        if (this.apiKeys.Count()> 1){
-                            return await RequestHashesAsync(request).ConfigureAwait(false);
-                        }
-
                         long ratePeriodEndsAtTimestamp;
                         IEnumerable<string> ratePeriodEndHeaderValues;
                         if (response.Headers.TryGetValues("X-RatePeriodEnd", out ratePeriodEndHeaderValues))
@@ -242,10 +221,14 @@ namespace PokemonGo.RocketAPI.Hash
             return null;
         }
 
+        List<KeyValuePair<string, int>> apiKeys = null;
+        IEnumerable<string> requestRemains;
+        IEnumerable<string> headers;
+
         private void UpdateRate(string key, int remain)
         {
-            this.apiKeys.RemoveAll(x => x.Key == key);
-            this.apiKeys.Add(new KeyValuePair<string, int>(key, remain));
+            apiKeys.RemoveAll(x => x.Key == key);
+            apiKeys.Add(new KeyValuePair<string, int>(key, remain));
         }
         private string GetAPIKey()
         {
@@ -253,7 +236,7 @@ namespace PokemonGo.RocketAPI.Hash
             {
                 apiKeys = new List<KeyValuePair<string, int>>();
 
-                var allkeys = this.apiKey.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                var allkeys = apiKey.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var item in allkeys)
                 {
                     apiKeys.Add(new KeyValuePair<string, int>(item, int.MaxValue));
