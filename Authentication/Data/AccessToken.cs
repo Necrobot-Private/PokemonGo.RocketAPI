@@ -1,6 +1,5 @@
 ﻿using System;
 using Newtonsoft.Json;
-using POGOProtos.Networking.Envelopes;
 
 namespace PokemonGo.RocketAPI.Authentication.Data
 {

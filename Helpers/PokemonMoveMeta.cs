@@ -75,7 +75,7 @@ namespace PokemonGo.RocketAPI.Helpers
             _type = type;
         }
 
-        private PokemonType getType()
+        private new PokemonType GetType()
         {
             return _type;
         }

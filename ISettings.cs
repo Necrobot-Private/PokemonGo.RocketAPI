@@ -1,6 +1,5 @@
 ﻿#region using directives
 
-using Google.Protobuf;
 using PokemonGo.RocketAPI.Enums;
 
 #endregion
@@ -36,7 +35,6 @@ namespace PokemonGo.RocketAPI
         string UseProxyPort { get; set; }
         string UseProxyUsername { get; set; }
         string UseProxyPassword { get; set; }
-
         bool UsePogoDevHashServer { get; set; }
         bool UseLegacyAPI { get; set; }
         string AuthAPIKey { get; set; }

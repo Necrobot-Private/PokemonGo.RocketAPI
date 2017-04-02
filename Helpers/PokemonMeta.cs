@@ -29,22 +29,22 @@ namespace PokemonGo.RocketAPI.Helpers
                 if (template.PokemonSettings != null)
                 {
                     PokemonSettings pokemonSettings = template.PokemonSettings;
-                    PokemonMeta.PokemonSettings[pokemonSettings.PokemonId] = pokemonSettings;
+                    PokemonSettings[pokemonSettings.PokemonId] = pokemonSettings;
                 }
                 else if (template.MoveSettings != null)
                 {
                     MoveSettings moveSettings = template.MoveSettings;
-                    PokemonMeta.MoveSettings[moveSettings.MovementId] = moveSettings;
+                    MoveSettings[moveSettings.MovementId] = moveSettings;
                 }
                 else if (template.BadgeSettings != null)
                 {
                     BadgeSettings badgeSettings = template.BadgeSettings;
-                    PokemonMeta.BadgeSettings[badgeSettings.BadgeType] = badgeSettings;
+                    BadgeSettings[badgeSettings.BadgeType] = badgeSettings;
                 }
                 else if (template.ItemSettings != null)
                 {
                     ItemSettings itemSettings = template.ItemSettings;
-                    PokemonMeta.ItemSettings[itemSettings.ItemId] = itemSettings;
+                    ItemSettings[itemSettings.ItemId] = itemSettings;
                 }
                 else if (template.BattleSettings != null)
                 {
@@ -74,7 +74,7 @@ namespace PokemonGo.RocketAPI.Helpers
             return BadgeSettings[badge];
         }
 
-        public static ItemSettings getItemSettings(ItemId item)
+        public static ItemSettings GetItemSettings(ItemId item)
         {
             return ItemSettings[item];
         }
