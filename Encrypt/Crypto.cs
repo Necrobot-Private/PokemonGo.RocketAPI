@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace PokemonGo.RocketAPI.Encrypt
 {
@@ -7,12 +7,12 @@ namespace PokemonGo.RocketAPI.Encrypt
     {
         public static byte[] KEY = new byte[]
         {
-            (byte) 0x4F, (byte) 0xEB, (byte) 0x1C, (byte) 0xA5, (byte) 0xF6, (byte) 0x1A, (byte) 0x67, (byte) 0xCE,
-            (byte) 0x43, (byte) 0xF3, (byte) 0xF0, (byte) 0x0C, (byte) 0xB1, (byte) 0x23, (byte) 0x88, (byte) 0x35,
-            (byte) 0xE9, (byte) 0x8B, (byte) 0xE8, (byte) 0x39, (byte) 0xD8, (byte) 0x89, (byte) 0x8F, (byte) 0x5A,
-            (byte) 0x3B, (byte) 0x51, (byte) 0x2E, (byte) 0xA9, (byte) 0x47, (byte) 0x38, (byte) 0xC4, (byte) 0x14
+             0x4F,  0xEB,  0x1C,  0xA5,  0xF6,  0x1A,  0x67,  0xCE,
+             0x43,  0xF3,  0xF0,  0x0C,  0xB1,  0x23,  0x88,  0x35,
+             0xE9,  0x8B,  0xE8,  0x39,  0xD8,  0x89,  0x8F,  0x5A,
+             0x3B,  0x51,  0x2E,  0xA9,  0x47,  0x38,  0xC4,  0x14
         };
-        
+
         public byte[] MakeIv(Rand rand)
         {
             byte[] iv = new byte[TwoFish.BLOCK_SIZE];
@@ -63,7 +63,7 @@ namespace PokemonGo.RocketAPI.Encrypt
                         output[4 + offset + i] ^= iv[i];
                     }
 
-                    byte[] block = TwoFish.blockEncrypt(output, offset + 4, key);
+                    byte[] block = TwoFish.BlockEncrypt(output, offset + 4, key);
                     Array.Copy(block, 0, output, offset + 4, block.Length);
                     Array.Copy(output, 4 + offset, iv, 0, TwoFish.BLOCK_SIZE);
                 }

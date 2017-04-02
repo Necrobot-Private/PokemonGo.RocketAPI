@@ -21,7 +21,7 @@ namespace PokemonGo.RocketAPI.Helpers
         static ulong FINAL_MAGIC1 = 0x6823775b1daad522;
         static UInt32 HASH_SEED = 0x46e945f8;
 
-        private static ulong read_int64(byte[] p, int offset) { return BitConverter.ToUInt64(p, offset); }
+        private static ulong Read_int64(byte[] p, int offset) { return BitConverter.ToUInt64(p, offset); }
 
         public static UInt32 Hash32(byte[] buffer)
         {
@@ -127,8 +127,8 @@ namespace PokemonGo.RocketAPI.Helpers
             {
                 int offset = i * 16;
                 if (offset >= size) break;
-                ulong a = read_int64(chunk, off + offset);
-                ulong b = read_int64(chunk, off + offset + 8);
+                ulong a = Read_int64(chunk, off + offset);
+                ulong b = Read_int64(chunk, off + offset + 8);
                 hash += (new UInt128(a + magic_table[i * 2])) * (new UInt128(b + magic_table[i * 2 + 1]));
             }
             return hash << 2 >> 2;
@@ -259,7 +259,7 @@ namespace PokemonGo.RocketAPI.Helpers
         #endregion
         #region multiplication
 
-        private static UInt128 m64(ulong a, ulong b)
+        private static UInt128 M64(ulong a, ulong b)
         {
             ulong a1 = (a & 0xffffffff), b1 = (b & 0xffffffff),
                 t = (a1 * b1), w3 = (t & 0xffffffff), k = (t >> 32), w1;
@@ -280,14 +280,14 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public static UInt128 operator *(UInt128 a, ulong b)
         {
-            UInt128 ans = m64(a.lo, b);
+            UInt128 ans = M64(a.lo, b);
             ans.hi += (a.hi * b);
             return ans;
         }
 
         public static UInt128 operator *(UInt128 a, UInt128 b)
         {
-            UInt128 ans = m64(a.lo, b.lo);
+            UInt128 ans = M64(a.lo, b.lo);
             ans.hi += (a.hi * b.lo) + (a.lo * b.hi);
             return ans;
         }

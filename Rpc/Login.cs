@@ -2,7 +2,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using PokemonGo.RocketAPI.Enums;
 using PokemonGo.RocketAPI.Exceptions;
 using PokemonGo.RocketAPI.Helpers;
@@ -40,7 +39,7 @@ namespace PokemonGo.RocketAPI.Rpc
                     throw new ArgumentOutOfRangeException(nameof(settings.AuthType), "Unknown AuthType");
             }
         }
-        
+
         private static bool IsValidAccessToken(AccessToken accessToken)
         {
             if (accessToken == null || string.IsNullOrEmpty(accessToken.Token) || accessToken.IsExpired)
@@ -48,7 +47,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
             return true;
         }
-        
+
         public static async Task<AccessToken> GetValidAccessToken(Client client, bool forceRefresh = false, bool isCached = false)
         {
             try
@@ -64,7 +63,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
                 if (IsValidAccessToken(client.AccessToken))
                     return client.AccessToken;
-                
+
                 // If we got here then access token is expired or not loaded into memory.
                 if (isCached)
                 {
@@ -133,7 +132,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
                     if (ex.Message.Contains("15 minutes")) throw new PtcLoginException(ex.Message);
 
-                    if (ex.Message.Contains("You have to log into an browser")) throw new GoogleTwoFactorException(ex.Message);
+                    if (ex.Message.Contains("You have to log into a browser")) throw new GoogleTwoFactorException(ex.Message);
                     //Logger.Error($"Reauthenticate exception was catched: {exception}");
                 }
                 finally
@@ -168,8 +167,8 @@ namespace PokemonGo.RocketAPI.Rpc
 #pragma warning disable 4014
             Client.KillswitchTask.Start();
 #pragma warning restore 4014
-            
-            var player = await Client.Player.GetPlayer(false,true).ConfigureAwait(false); // Set false because initial GetPlayer does not use common requests.
+
+            var player = await Client.Player.GetPlayer(false, true).ConfigureAwait(false); // Set false because initial GetPlayer does not use common requests.
             APIConfiguration.Logger.LogDebug("GetPlayer done.");
             await RandomHelper.RandomDelay(10000).ConfigureAwait(false);
             await Client.Download.GetRemoteConfigVersion().ConfigureAwait(false);
