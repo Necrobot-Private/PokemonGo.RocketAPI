@@ -26,7 +26,7 @@ namespace PokemonGo.RocketAPI
 {
     public class Client : ICaptchaResponseHandler
     {
-        public static string API_VERSION = "0.57.4";
+        public static string API_VERSION = "0.59.1";
 
         public static WebProxy Proxy;
 
@@ -81,7 +81,7 @@ namespace PokemonGo.RocketAPI
             {
                 if (string.IsNullOrEmpty(settings.AuthAPIKey)) throw new AuthConfigException("You selected Pogodev API but not provide proper API Key");
 
-                Cryptor = new Crypt();
+                Cryptor = new Crypto();
 
                 // This value will determine which version of the hashing service you will receive.
                 // Currently supported versions:
@@ -92,14 +92,17 @@ namespace PokemonGo.RocketAPI
                 // v127_2 -> Pogo iOS 1.27.2
                 // v127_3 -> Pogo iOS 1.27.3
                 // v127_4 -> Pogo iOS 1.27.4
+                // v129_1 -> Pogo iOS 1.29.1
 
-                ApiEndPoint = "api/v127_4/hash";
+                ApiEndPoint = "api/v129_1/hash";
                 Hasher = new PokefamerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog, ApiEndPoint);
 
                 // These 4 constants below need to change if we update the hashing server API version that is used.
-                Unknown25 = -816976800928766045;
-                AppVersion = 5704;
-                CurrentApiEmulationVersion = new Version(API_VERSION); // Make sure to update the constant above.
+                Unknown25 = -3226782243204485589;
+
+                // WARNING! IF YOU CHANGE THE APPVERSION BELOW ALSO UPDATE THE API_VERSION AT THE TOP OF THE FILE!
+                AppVersion = 5901;
+                CurrentApiEmulationVersion = new Version(API_VERSION); 
                 UnknownPlat8Field = "90f6a704505bccac73cec99b07794993e6fd5a12";
             }
             /*
