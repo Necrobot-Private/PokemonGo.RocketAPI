@@ -10,12 +10,10 @@ using System.Collections.Generic;
 using Google.Protobuf;
 using System;
 using PokemonGo.RocketAPI.Helpers;
-using Google.Protobuf.Collections;
 using POGOProtos.Inventory;
 using System.Linq;
 using POGOProtos.Data;
 using System.Collections.Concurrent;
-using POGOProtos.Enums;
 
 #endregion
 

@@ -12,12 +12,10 @@ using PokemonGo.RocketAPI.Helpers;
 using PokemonGo.RocketAPI.Hash;
 using PokemonGo.RocketAPI.Encrypt;
 using PokemonGo.RocketAPI.Exceptions;
-using POGOProtos.Networking.Responses;
 using PokemonGo.RocketAPI.Authentication.Data;
 using PokemonGo.RocketAPI.LoginProviders;
 using POGOProtos.Settings;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 #endregion
@@ -44,7 +42,7 @@ namespace PokemonGo.RocketAPI
         public Hash.IHasher Hasher;
         public ICrypt Cryptor;
         internal RequestBuilder RequestBuilder;
-        
+
         public ISettings Settings { get; }
 
         public double CurrentLatitude { get; internal set; }
@@ -53,11 +51,11 @@ namespace PokemonGo.RocketAPI
         public double CurrentAccuracy { get; internal set; }
         public float CurrentSpeed { get; internal set; }
 
-        public AuthType AuthType 
+        public AuthType AuthType
         { get { return Settings.AuthType; } set { Settings.AuthType = value; } }
-            
+
         internal string ApiUrl { get; set; }
-        internal AuthTicket AuthTicket { get; set; }                
+        internal AuthTicket AuthTicket { get; set; }
 
         internal string SettingsHash { get; set; }
         public GlobalSettings GlobalSettings { get; set; }
@@ -74,12 +72,12 @@ namespace PokemonGo.RocketAPI
         //public POGOLib.Net.Session AuthSession { get; set; }
         public ILoginProvider LoginProvider { get; set; }
         public AccessToken AccessToken { get; set; }
-        
+
         public Client(ISettings settings)
         {
             if (settings.UsePogoDevHashServer)
             {
-                if (string.IsNullOrEmpty(settings.AuthAPIKey)) throw new AuthConfigException("You selected Pogodev API but not provide proper API Key");
+                if (string.IsNullOrEmpty(settings.AuthAPIKey)) throw new AuthConfigException("You have selected Pogodev API but not provide proper API Key");
 
                 Cryptor = new Crypto();
 
@@ -102,7 +100,7 @@ namespace PokemonGo.RocketAPI
 
                 // WARNING! IF YOU CHANGE THE APPVERSION BELOW ALSO UPDATE THE API_VERSION AT THE TOP OF THE FILE!
                 AppVersion = 5901;
-                CurrentApiEmulationVersion = new Version(API_VERSION); 
+                CurrentApiEmulationVersion = new Version(API_VERSION);
                 UnknownPlat8Field = "90f6a704505bccac73cec99b07794993e6fd5a12";
             }
             /*
@@ -121,7 +119,7 @@ namespace PokemonGo.RocketAPI
             {
                 throw new AuthConfigException("No API method being select in your auth.json");
             }
-            
+
             Settings = settings;
             Proxy = InitProxy();
             PokemonHttpClient = new PokemonHttpClient();
@@ -172,7 +170,7 @@ namespace PokemonGo.RocketAPI
             InventoryLastUpdateTimestamp = 0;
             SettingsHash = "";
         }
-        
+
         public void SetCaptchaToken(string token)
         {
             CaptchaToken = token;
@@ -213,7 +211,7 @@ namespace PokemonGo.RocketAPI
                 var version = responseAsString.Replace("\u0006", "").Replace("\n", "");
                 return new Version(version);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 var errorMessage = $"The Niantic version check URL ({Constants.VersionUrl}) is returning an invalid version. This indicates that Niantic has changed something on their server and may indicate a forced API change. You may want to stop botting to be safe.";
                 APIConfiguration.Logger.LogError(errorMessage);
