@@ -1,7 +1,6 @@
 ﻿#region using directives
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 #endregion
@@ -40,6 +39,5 @@ namespace PokemonGo.RocketAPI.Helpers
         {
             await Task.Delay(  (_random.Next(min, max)));
         }
-
     }
 }

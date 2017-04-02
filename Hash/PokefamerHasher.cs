@@ -34,7 +34,7 @@ namespace PokemonGo.RocketAPI.Hash
 
         public PokefamerHasher(string apiKey, bool log, string apiEndPoint)
         {
-            this.VerboseLog = log;
+            VerboseLog = log;
             this.apiKey = apiKey;
             this.apiEndPoint = apiEndPoint;
         }
@@ -66,11 +66,10 @@ namespace PokemonGo.RocketAPI.Hash
                 await Task.Delay(1000).ConfigureAwait(false);
             } while (retry > 0);
 
-            throw new HasherException("Pokefamer Hash API server might down");
+            throw new HasherException("Pokefamer Hash API server might be down");
 
         }
         private DateTime lastPrintVerbose = DateTime.Now;
-        
 
         private async Task<HashResponseContent> InternalRequestHashesAsync(HashRequestContent request)
         {
@@ -125,7 +124,6 @@ namespace PokemonGo.RocketAPI.Hash
 
                     fullStats.APICalles++;
                     fullStats.TotalTimes += watcher.ElapsedMilliseconds;
-                     
 
                     stat.ResponseTime = watcher.ElapsedMilliseconds;
                     statistics.Add(stat);
@@ -165,9 +163,6 @@ namespace PokemonGo.RocketAPI.Hash
                         fullStats.HealthyRate = (double)(requestRemain) / maxRequestCount;
                         UpdateRate(key, requestRemain);
                     }
-                    
-
-                    
                     APIConfiguration.Logger.HashStatusUpdate(fullStats);
 
                 }
@@ -190,7 +185,7 @@ namespace PokemonGo.RocketAPI.Hash
                                 this.apiKeys.RemoveAll(x => x.Key == key);
                                 return await RequestHashesAsync(request).ConfigureAwait(false);
                             }
-                            throw new HasherException($"Your API key {maskedKey} is incorrect or expired, please check auth.json (Pokefamer message : {responseText})");
+                            throw new HasherException($"Your API Key: {maskedKey} is incorrect or expired, please check auth.json (Pokefamer Message : {responseText})");
                         }
                         Console.WriteLine($"Bad request sent to the hashing server! {responseText}");
 
@@ -244,8 +239,8 @@ namespace PokemonGo.RocketAPI.Hash
 
         private void UpdateRate(string key, int remain)
         {
-            this.apiKeys.RemoveAll(x => x.Key == key);
-            this.apiKeys.Add(new KeyValuePair<string, int>(key, remain));
+            apiKeys.RemoveAll(x => x.Key == key);
+            apiKeys.Add(new KeyValuePair<string, int>(key, remain));
         }
         private string GetAPIKey()
         {
@@ -253,7 +248,7 @@ namespace PokemonGo.RocketAPI.Hash
             {
                 apiKeys = new List<KeyValuePair<string, int>>();
 
-                var allkeys = this.apiKey.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                var allkeys = apiKey.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var item in allkeys)
                 {
                     apiKeys.Add(new KeyValuePair<string, int>(item, int.MaxValue));
