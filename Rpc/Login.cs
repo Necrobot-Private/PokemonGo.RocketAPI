@@ -20,14 +20,14 @@ namespace PokemonGo.RocketAPI.Rpc
 
     public class Login : BaseRpc
     {
-        private static Semaphore ReauthenticateMutex { get; } = new Semaphore(1, 1);
+        private Semaphore ReauthenticateMutex { get; } = new Semaphore(1, 1);
         public Login(Client client) : base(client)
         {
             Client.LoginProvider = SetLoginType(client.Settings);
             Client.ApiUrl = Constants.RpcUrl;
         }
 
-        private static ILoginProvider SetLoginType(ISettings settings)
+        private ILoginProvider SetLoginType(ISettings settings)
         {
             switch (settings.AuthType)
             {
@@ -40,15 +40,15 @@ namespace PokemonGo.RocketAPI.Rpc
             }
         }
 
-        private static bool IsValidAccessToken(AccessToken accessToken)
+        private bool IsValidAccessToken()
         {
-            if (accessToken == null || string.IsNullOrEmpty(accessToken.Token) || accessToken.IsExpired)
+            if (Client.AccessToken == null || string.IsNullOrEmpty(Client.AccessToken.Token) || Client.AccessToken.IsExpired)
                 return false;
 
             return true;
         }
 
-        public static async Task<AccessToken> GetValidAccessToken(Client client, bool forceRefresh = false, bool isCached = false)
+        public async Task<AccessToken> GetValidAccessToken(bool forceRefresh = false, bool isCached = false)
         {
             try
             {
@@ -56,18 +56,18 @@ namespace PokemonGo.RocketAPI.Rpc
 
                 if (forceRefresh)
                 {
-                    client.AccessToken.Expire();
+                    Client.AccessToken.Expire();
                     if (isCached)
-                        DeleteSavedAccessToken(client);
+                        DeleteSavedAccessToken();
                 }
 
-                if (IsValidAccessToken(client.AccessToken))
-                    return client.AccessToken;
+                if (IsValidAccessToken())
+                    return Client.AccessToken;
 
                 // If we got here then access token is expired or not loaded into memory.
                 if (isCached)
                 {
-                    var loginProvider = client.LoginProvider;
+                    var loginProvider = Client.LoginProvider;
                     var cacheDir = Path.Combine(Directory.GetCurrentDirectory(), "Cache");
                     var fileName = Path.Combine(cacheDir, $"{loginProvider.UserId}-{loginProvider.ProviderId}.json");
 
@@ -80,14 +80,14 @@ namespace PokemonGo.RocketAPI.Rpc
 
                         if (!accessToken.IsExpired)
                         {
-                            client.AccessToken = accessToken;
+                            Client.AccessToken = accessToken;
                             return accessToken;
                         }
                     }
                 }
 
-                await Reauthenticate(client, isCached).ConfigureAwait(false);
-                return client.AccessToken;
+                await Reauthenticate(isCached).ConfigureAwait(false);
+                return Client.AccessToken;
             }
             finally
             {
@@ -95,36 +95,36 @@ namespace PokemonGo.RocketAPI.Rpc
             }
         }
 
-        private static void SaveAccessToken(AccessToken accessToken)
+        private void SaveAccessToken()
         {
-            if (!IsValidAccessToken(accessToken))
+            if (!IsValidAccessToken())
                 return;
 
-            var fileName = Path.Combine(Directory.GetCurrentDirectory(), "Cache", $"{accessToken.Uid}.json");
+            var fileName = Path.Combine(Directory.GetCurrentDirectory(), "Cache", $"{Client.AccessToken.Uid}.json");
 
-            File.WriteAllText(fileName, JsonConvert.SerializeObject(accessToken, Formatting.Indented));
+            File.WriteAllText(fileName, JsonConvert.SerializeObject(Client.AccessToken, Formatting.Indented));
         }
 
-        private static void DeleteSavedAccessToken(Client client)
+        private void DeleteSavedAccessToken()
         {
             var cacheDir = Path.Combine(Directory.GetCurrentDirectory(), "Cache");
-            var fileName = Path.Combine(cacheDir, $"{client.AccessToken?.Uid}-{client.LoginProvider.ProviderId}.json");
+            var fileName = Path.Combine(cacheDir, $"{Client.AccessToken?.Uid}-{Client.LoginProvider.ProviderId}.json");
             if (File.Exists(fileName))
                 File.Delete(fileName);
         }
 
-        private static async Task Reauthenticate(Client client, bool isCached)
+        private async Task Reauthenticate(bool isCached)
         {
             var tries = 0;
-            while (!IsValidAccessToken(client.AccessToken))
+            while (!IsValidAccessToken())
             {
                 // If expired, then we always delete the saved access token if it exists.
                 if (isCached)
-                    DeleteSavedAccessToken(client);
+                    DeleteSavedAccessToken();
 
                 try
                 {
-                    client.AccessToken = await client.LoginProvider.GetAccessToken().ConfigureAwait(false);
+                    Client.AccessToken = await Client.LoginProvider.GetAccessToken().ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -137,7 +137,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 }
                 finally
                 {
-                    if (!IsValidAccessToken(client.AccessToken))
+                    if (!IsValidAccessToken())
                     {
                         var sleepSeconds = Math.Min(60, ++tries * 5);
                         //Logger.Error($"Reauthentication failed, trying again in {sleepSeconds} seconds.");
@@ -147,7 +147,7 @@ namespace PokemonGo.RocketAPI.Rpc
                     {
                         // We have successfully refreshed the token so save it.
                         if (isCached)
-                            SaveAccessToken(client.AccessToken);
+                            SaveAccessToken();
                     }
 
                     if (tries == 5)

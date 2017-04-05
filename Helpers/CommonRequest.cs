@@ -135,7 +135,6 @@ namespace PokemonGo.RocketAPI.Helpers
             return commonRequestsList.Where(r => !excludes.Contains(r.RequestType)).ToList();
         }
 
-        private static object locker = new object();
         public static void ProcessGetInventoryResponse(Client client, GetInventoryResponse getInventoryResponse)
         {
             if (getInventoryResponse == null)

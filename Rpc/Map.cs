@@ -126,12 +126,17 @@ namespace PokemonGo.RocketAPI.Rpc
 
             LastRpcMapObjectsRequestMs = Util.TimeUtil.GetCurrentTimestampInMilliseconds();
 
+            var numCells = response.Item1.MapCells.Count;
+            var numCellsWithForts = response.Item1.MapCells.Count(x => x.Forts.Count > 0);
+            var numCellsWithNearbyPokemon = response.Item1.MapCells.Count(x => x.NearbyPokemons.Count > 0);
+            var numCellsWithWildPokemon = response.Item1.MapCells.Count(x => x.WildPokemons.Count > 0);
+
             // Only cache good responses
             if (updateCache &&
-                response.Item1.MapCells.Count > 0 &&
-                (response.Item1.MapCells.Count(x => x.Forts.Count > 0) > 0 ||
-                response.Item1.MapCells.Count(x => x.NearbyPokemons.Count > 0) > 0 ||
-                response.Item1.MapCells.Count(x => x.WildPokemons.Count > 0) > 0))
+                numCells > 0 &&
+                (numCellsWithForts > 0 ||
+                numCellsWithNearbyPokemon > 0 ||
+                numCellsWithWildPokemon > 0))
             {
                 // Good map response since we got at least a fort or pokemon in our cells.
                 LastGetMapObjectResponse = response.Item1;
