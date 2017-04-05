@@ -239,7 +239,7 @@ namespace PokemonGo.RocketAPI.Helpers
 
         public async Task RegenerateRequestEnvelopeWithNewAccessToken(RequestEnvelope requestEnvelope)
         {
-            var accessToken = await Rpc.Login.GetValidAccessToken(_client, true /* force refresh */).ConfigureAwait(false);
+            var accessToken = await _client.Login.GetValidAccessToken(true /* force refresh */).ConfigureAwait(false);
 
             requestEnvelope.AuthTicket = null;
             requestEnvelope.AuthInfo = new RequestEnvelope.Types.AuthInfo
@@ -301,7 +301,7 @@ namespace PokemonGo.RocketAPI.Helpers
             }
             else
             {
-                var accessToken = await Rpc.Login.GetValidAccessToken(_client).ConfigureAwait(false);
+                var accessToken = await _client.Login.GetValidAccessToken().ConfigureAwait(false);
                 e.AuthInfo = new RequestEnvelope.Types.AuthInfo
                 {
                     Provider = accessToken.ProviderID,
