@@ -137,7 +137,9 @@ namespace PokemonGo.RocketAPI.Extensions
                 case ResponseEnvelope.Types.StatusCode.InvalidPlatformRequest:
                     break;
                 case ResponseEnvelope.Types.StatusCode.SessionInvalidated:
-                    throw new SessionInvalidatedException("SESSION INVALIDATED EXCEPTION");
+                    // Retry the request with a new access token.
+                    await apiClient.RequestBuilder.RegenerateRequestEnvelopeWithNewAccessToken(requestEnvelope).ConfigureAwait(false);
+                    return await PerformRemoteProcedureCall<TRequest>(client, apiClient, requestEnvelope).ConfigureAwait(false);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
