@@ -24,8 +24,7 @@ namespace PokemonGo.RocketAPI
 {
     public class Client : ICaptchaResponseHandler
     {
-        //public static string API_VERSION = "0.57.4";
-        public static string API_VERSION = "0.59.1"; // 0.59.1
+        public static string API_VERSION = "0.61.0"; // 0.61.0
 
         public static WebProxy Proxy;
 
@@ -34,13 +33,13 @@ namespace PokemonGo.RocketAPI
         public Encounter Encounter;
         public Fort Fort;
         public Inventory Inventory;
-        public Rpc.Login Login;
+        public Login Login;
         public Map Map;
         public Misc Misc;
         public Player Player;
         string CaptchaToken;
         public KillSwitchTask KillswitchTask;
-        public Hash.IHasher Hasher;
+        public IHasher Hasher;
         public ICrypt Cryptor;
         internal RequestBuilder RequestBuilder;
 
@@ -80,8 +79,7 @@ namespace PokemonGo.RocketAPI
             {
                 if (string.IsNullOrEmpty(settings.AuthAPIKey)) throw new AuthConfigException("You have selected Pogodev API but not provide proper API Key");
 
-                //Cryptor = new Crypt();
-                Cryptor = new Crypto(); // 0.59.1
+                Cryptor = new Crypto(); // 0.61.0
 
                 // This value will determine which version of the hashing service you will receive.
                 // Currently supported versions:
@@ -93,19 +91,20 @@ namespace PokemonGo.RocketAPI
                 // v127_3 -> Pogo iOS 1.27.3
                 // v127_4 -> Pogo iOS 1.27.4
                 // v129_1 -> Pogo iOS 1.29.1
+                // v131_0 -> Pogo iOS 1.31.0
 
-                //ApiEndPoint = "api/v127_4/hash";
-                ApiEndPoint = "api/v129_1/hash"; // 0.59.1
+                ApiEndPoint = "api/v131_0/hash"; // 0.61.0
 		
                 Hasher = new PokefamerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog, ApiEndPoint);
 
                 // These 4 constants below need to change if we update the hashing server API version that is used.
-                //Unknown25 = -816976800928766045;
-                Unknown25 = -3226782243204485589; // 0.59.1
+                //Unknown25 = -816976800928766045; // 0.45.0
+		//Unknown25 = -3226782243204485589; // 0.59.1
+                Unknown25 = 1296456256998993698; // 0.61.0
 				
                 // WARNING! IF YOU CHANGE THE APPVERSION BELOW ALSO UPDATE THE API_VERSION AT THE TOP OF THE FILE!
                 //AppVersion = 5704;
-                AppVersion = 5901; // 0.59.1
+                AppVersion = 6100; // 0.61.0
 		
                 CurrentApiEmulationVersion = new Version(API_VERSION);
                 UnknownPlat8Field = "90f6a704505bccac73cec99b07794993e6fd5a12";
@@ -130,7 +129,7 @@ namespace PokemonGo.RocketAPI
             Settings = settings;
             Proxy = InitProxy();
             PokemonHttpClient = new PokemonHttpClient();
-            Login = new Rpc.Login(this);
+            Login = new Login(this);
             Player = new Player(this);
             Download = new Download(this);
             Inventory = new Inventory(this);
