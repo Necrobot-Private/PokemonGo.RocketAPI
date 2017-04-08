@@ -162,8 +162,7 @@ namespace PokemonGo.RocketAPI.Extensions
             try
             {
                 mutex.WaitOne();
-                RequestEnvelope r;
-                while (rpcQueue.TryDequeue(out r))
+                while (rpcQueue.TryDequeue(out RequestEnvelope r))
                 {
                     var diff = Math.Max(0, DateTime.Now.Millisecond - lastRpc);
                     if (diff < minDiff)
