@@ -94,8 +94,10 @@ public class Client : ICaptchaResponseHandler
                 // v127_3 -> Pogo iOS 1.27.3
                 // v127_4 -> Pogo iOS 1.27.4
                 // v129_1 -> Pogo iOS 1.29.1
+                // v131   -> Pogo iOs 1.31
 
                 //ApiEndPoint = "api/v127_4/hash";
+                //TODO: 131
                 ApiEndPoint = "api/v129_1/hash"; // 0.59.1
                 //ApiEndPoint = "api/v131/hash"; // 0.61.0
 
