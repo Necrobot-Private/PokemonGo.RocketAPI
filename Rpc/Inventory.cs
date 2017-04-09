@@ -93,8 +93,7 @@ namespace PokemonGo.RocketAPI.Rpc
         {
             try
             {
-                InventoryItem toRemove;
-                return InventoryItems.TryRemove(key, out toRemove);
+                return InventoryItems.TryRemove(key, out InventoryItem toRemove);
             }
             catch (ArgumentNullException)
             {
