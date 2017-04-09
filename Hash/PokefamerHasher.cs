@@ -139,9 +139,8 @@ namespace PokemonGo.RocketAPI.Hash
                         fullStats.MaskedAPIKey = maskedKey;
                     }
 
-                    IEnumerable<string> headers;
                     int maxRequestCount = 0;
-                    if (response.Headers.TryGetValues("X-MaxRequestCount", out headers))
+                    if (response.Headers.TryGetValues("X-MaxRequestCount", out IEnumerable<string> headers))
                     {
                         // Get the rate-limit period ends at timestamp in seconds.
                         maxRequestCount = Convert.ToInt32(headers.First());
@@ -155,8 +154,7 @@ namespace PokemonGo.RocketAPI.Hash
                             .AddSeconds(secondsToExpiration).ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss");
                     }
 
-                    IEnumerable<string> requestRemains;
-                    if (response.Headers.TryGetValues("X-RateRequestsRemaining", out requestRemains))
+                    if (response.Headers.TryGetValues("X-RateRequestsRemaining", out IEnumerable<string> requestRemains))
                     {
                         // Get the rate-limit period ends at timestamp in seconds.
                         int requestRemain = Convert.ToInt32(requestRemains.First());
