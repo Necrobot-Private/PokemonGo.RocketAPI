@@ -98,8 +98,10 @@ namespace PokemonGo.RocketAPI
                 Hasher = new PokefamerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog, ApiEndPoint);
 
                 // These 4 constants below need to change if we update the hashing server API version that is used.
-                //Unknown25 = -816976800928766045;
-                Unknown25 = 1296456256998993698; // 0.59.1
+
+                //Unknown25 = -816976800928766045; // 0.59.1
+                Unknown25 = 1296456256998993698; // 0.61.0
+
 				
                 // WARNING! IF YOU CHANGE THE APPVERSION BELOW ALSO UPDATE THE API_VERSION AT THE TOP OF THE FILE!
                 //AppVersion = 5704;
