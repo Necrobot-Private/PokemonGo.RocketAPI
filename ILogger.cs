@@ -10,6 +10,8 @@ namespace PokemonGo.RocketAPI
         void LogCritical(string message, dynamic data);
         void HashStatusUpdate(HashInfo info);
         void LogError(string message);
+        void LogFlaggedInit(string message);
+        void LogErrorInit(string message);
     }
 
     public class DefaultConsoleLogger : ILogger
@@ -35,6 +37,16 @@ namespace PokemonGo.RocketAPI
         }
 
         public void LogInfo(string message)
+        {
+            Console.WriteLine(message);
+        }
+
+        public void LogFlaggedInit(string message)
+        {
+            Console.WriteLine(message);
+        }
+
+        public void LogErrorInit(string message)
         {
             Console.WriteLine(message);
         }
