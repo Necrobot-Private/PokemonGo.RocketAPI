@@ -172,7 +172,7 @@ namespace PokemonGo.RocketAPI.Rpc
             var player = await Client.Player.GetPlayer(true, true).ConfigureAwait(false); // Set false because initial GetPlayer does not use common requests.
             if (player.Warn)
             {
-            APIConfiguration.Logger.LogInfo("Warning: This account seems to be flagged, it's recommended to not use bot on this account for now!");
+            APIConfiguration.Logger.LogInfo("Warning: This account seems to be flagged, it is recommended to not use bot on this account for now!");
             /*
                 DialogResult result = MessageBox.Show("Warning: This account seems to be flagged, it's recommended to not use bot on this account for now!\n\r\n\rExit Bot ?","Flagged account", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 switch (result)
