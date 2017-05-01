@@ -172,12 +172,12 @@ namespace PokemonGo.RocketAPI.Rpc
             var player = await Client.Player.GetPlayer(false, true).ConfigureAwait(false); // Set false because initial GetPlayer does not use common requests.
             if (player.Warn)
             {
-                APIConfiguration.Logger.LogFlaggedInit($"Warning: This account {Client.Player.PlayerData.Username} seems to be flagged, it is recommended to not use bot on this account for now!");
+                APIConfiguration.Logger.LogFlaggedInit($"This account {Client.Player.PlayerData.Username} seems to be flagged, it is recommended to not use bot on this account for now!");
             }
 
             if (player.Banned)
             {
-                 APIConfiguration.Logger.LogErrorInit("Error: This account seems to be banned");
+                 APIConfiguration.Logger.LogErrorInit("This account seems to be banned");
             }
             APIConfiguration.Logger.LogDebug("GetPlayer done.");
             await RandomHelper.RandomDelay(10000).ConfigureAwait(false);
