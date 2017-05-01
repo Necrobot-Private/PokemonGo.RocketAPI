@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using PokemonGo.RocketAPI.LoginProviders;
 using PokemonGo.RocketAPI.Authentication.Data;
+using System.Windows.Forms;
 
 #endregion
 
@@ -168,7 +169,28 @@ namespace PokemonGo.RocketAPI.Rpc
             Client.KillswitchTask.Start();
 #pragma warning restore 4014
 
-            var player = await Client.Player.GetPlayer(false, true).ConfigureAwait(false); // Set false because initial GetPlayer does not use common requests.
+            var player = await Client.Player.GetPlayer(true, true).ConfigureAwait(false); // Set false because initial GetPlayer does not use common requests.
+            if (player.Warn)
+            {
+                DialogResult result = MessageBox.Show("Warning: This account seems be flagged, it's recommended to not bot on this account for now!\n\r\n\rExit Bot ?","Flagged account", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                switch (result)
+                {
+                    case DialogResult.Yes:
+                        Environment.Exit(0);
+                        break;
+                }
+            }
+            if (player.Banned)
+            {
+                DialogResult result = MessageBox.Show("Error: This account seems be banned", "Banned account", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                switch (result)
+                {
+                    case DialogResult.OK:
+                        Environment.Exit(0);
+                        break;
+                }
+
+            }
             APIConfiguration.Logger.LogDebug("GetPlayer done.");
             await RandomHelper.RandomDelay(10000).ConfigureAwait(false);
             await Client.Download.GetRemoteConfigVersion().ConfigureAwait(false);
