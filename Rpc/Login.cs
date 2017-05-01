@@ -185,7 +185,7 @@ namespace PokemonGo.RocketAPI.Rpc
             }
             if (player.Banned)
             {
-            APIConfiguration.Logger.LogError("Error: This account seems be banned");
+            APIConfiguration.Logger.LogError("Error: This account seems to be banned");
             /*
                 DialogResult result = MessageBox.Show("Error: This account seems be banned", "Banned account", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 switch (result)
