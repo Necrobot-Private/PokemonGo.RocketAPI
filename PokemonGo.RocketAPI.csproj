@@ -217,6 +217,7 @@
     <Compile Include="Authentication\Session.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Encrypt\Cipher.cs" />
+    <Compile Include="Encrypt\Crypto.cs" />
     <Compile Include="Encrypt\ICrypt.cs" />
     <Compile Include="Encrypt\Crypt.cs" />
     <Compile Include="Encrypt\Rand.cs" />
