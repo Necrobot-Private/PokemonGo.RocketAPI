@@ -217,9 +217,7 @@
     <Compile Include="Authentication\Session.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Encrypt\Cipher.cs" />
-    <Compile Include="Encrypt\Crypto.cs" />
     <Compile Include="Encrypt\ICrypt.cs" />
-    <Compile Include="Encrypt\Crypt.cs" />
     <Compile Include="Encrypt\Rand.cs" />
     <Compile Include="Encrypt\TwoFish.cs" />
     <Compile Include="Exceptions\APIBadRequestExceltion.cs" />
@@ -247,9 +245,6 @@
     <Compile Include="Helpers\PokemonMeta.cs" />
     <Compile Include="Helpers\PokemonMetaRegistry.cs" />
     <Compile Include="Helpers\PokemonMoveMeta.cs" />
-    <Compile Include="Helpers\Shuffle\Shuffles.cs" />
-    <Compile Include="Helpers\Shuffle\UnShuffle.cs" />
-    <Compile Include="Helpers\Shuffle\UnShuffle2.cs" />
     <Compile Include="Helpers\TimeUtil.cs" />
     <Compile Include="HttpClient\PokemonClient.cs" />
     <Compile Include="Enums\AuthType.cs" />
