@@ -79,7 +79,7 @@ namespace PokemonGo.RocketAPI
             {
                 if (string.IsNullOrEmpty(settings.AuthAPIKey)) throw new AuthConfigException("You have selected Pogodev API but not provide proper API Key");
 
-                Cryptor = new Crypto(); // 0.61.0
+                Cryptor = new Cipher(); // 0.61.0
 
                 // This value will determine which version of the hashing service you will receive.
                 // Currently supported versions:
