@@ -1,12 +1,4 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Xelwon
- * Date: 08/05/2017
- * Time: 1:08
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-namespace PokemonGo.RocketAPI.Encrypt
+﻿namespace PokemonGo.RocketAPI.Encrypt
 {
     /// <summary>
     /// Description of Rand.

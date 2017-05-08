@@ -1,11 +1,3 @@
-/*
- * Created by SharpDevelop.
- * User: Xelwon
- * Date: 08/05/2017
- * Time: 0:53
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
 using System;
 
 namespace PokemonGo.RocketAPI.Encrypt
@@ -15,13 +7,6 @@ namespace PokemonGo.RocketAPI.Encrypt
     /// </summary>
     public class Cipher : ICrypt
     {
-        // :-*
-        // #pogodev_ftw
-        // #makepokemongogreatagain
-        // #pokefarmer_ftw
-        // ... :))
-
-        // So what's this?
         // This little function is an "extra" "encryption" on top of the UK 6 encryption.
         //
         // Integrity byte changed to 0x23.
@@ -78,10 +63,6 @@ namespace PokemonGo.RocketAPI.Encrypt
             newxbox[1] = v5;
         }
 
-
-        // How to implement?
-        // Oh, yes, here you are:
-        //
         public byte[] Encrypt(byte[] uncryptedSignature, uint msSinceStart)
         {
             var rnd = new Rand(msSinceStart);
