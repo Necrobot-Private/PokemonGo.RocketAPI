@@ -102,10 +102,11 @@ namespace PokemonGo.RocketAPI
                 // These 4 constants below need to change if we update the hashing server API version that is used.
                 //Unknown25 = -816976800928766045;
                 Unknown25 = 1296456256998993698; // 0.61.0
-				
+
                 // WARNING! IF YOU CHANGE THE APPVERSION BELOW ALSO UPDATE THE API_VERSION AT THE TOP OF THE FILE!
                 //AppVersion = 5704;
-                AppVersion = 6100; // 0.61.0
+                //AppVersion = 6100; // 0.61.0
+                AppVersion = 6310; // 0.63.1
 		
                 CurrentApiEmulationVersion = new Version(API_VERSION);
                 UnknownPlat8Field = "90f6a704505bccac73cec99b07794993e6fd5a12";
