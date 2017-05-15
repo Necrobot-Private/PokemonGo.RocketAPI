@@ -105,7 +105,7 @@ namespace PokemonGo.RocketAPI
                 AppVersion = 6301; // 0.63.1
 		
                 CurrentApiEmulationVersion = new Version(API_VERSION);
-                UnknownPlat8Field = "90f6a704505bccac73cec99b07794993e6fd5a12";
+                UnknownPlat8Field = "15c79df0558009a4242518d2ab65de2a59e09499";
             }
             /*
             else
