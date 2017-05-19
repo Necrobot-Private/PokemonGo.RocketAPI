@@ -5,7 +5,8 @@ branches:
 skip_tags: true
 image: Visual Studio 2017
 configuration: Release
-platform: x86
+#platform: x86
+platform: Any CPU
 # environment variables
 environment:
   SolutionDirectory: .
