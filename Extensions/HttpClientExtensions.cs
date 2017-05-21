@@ -153,14 +153,15 @@ namespace PokemonGo.RocketAPI.Extensions
 
         public static async Task<ResponseEnvelope> PerformThrottledRemoteProcedureCall<TRequest>(this System.Net.Http.HttpClient client, Client apiClient, RequestEnvelope requestEnvelope) where TRequest : IMessage<TRequest>
         {
+#pragma warning disable IDE0018 // Inline variable declaration - Build.Bat Error Happens if We Do
             rpcQueue.Enqueue(requestEnvelope);
             var count = rpcQueue.Count;
+            RequestEnvelope r;
             ResponseEnvelope ret;
-
             try
             {
                 mutex.WaitOne();
-                while (rpcQueue.TryDequeue(out RequestEnvelope r))
+                while (rpcQueue.TryDequeue(out r))
                 {
                     var diff = Math.Max(0, DateTime.Now.Millisecond - lastRpc);
                     if (diff < minDiff)
@@ -179,6 +180,7 @@ namespace PokemonGo.RocketAPI.Extensions
                 mutex.Release();
             }
             return ret;
+#pragma warning restore IDE0018 // Inline variable declaration - Build.Bat Error Happens if We Do
         }
     }
 }

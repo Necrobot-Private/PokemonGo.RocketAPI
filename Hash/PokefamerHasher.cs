@@ -138,9 +138,11 @@ namespace PokemonGo.RocketAPI.Hash
                         fullStats.Slowest = Math.Max(fullStats.Slowest, watcher.ElapsedMilliseconds);
                         fullStats.MaskedAPIKey = maskedKey;
                     }
-
+#pragma warning disable IDE0018 // Inline variable declaration - Build.Bat Error Happens if We Do
                     int maxRequestCount = 0;
-                    if (response.Headers.TryGetValues("X-MaxRequestCount", out IEnumerable<string> headers))
+                    IEnumerable<string> headers;
+                    IEnumerable<string> requestRemains;
+                    if (response.Headers.TryGetValues("X-MaxRequestCount", out headers))
                     {
                         // Get the rate-limit period ends at timestamp in seconds.
                         maxRequestCount = Convert.ToInt32(headers.First());
@@ -150,11 +152,11 @@ namespace PokemonGo.RocketAPI.Hash
                     {
                         uint secondsToExpiration = 0;
                         secondsToExpiration = Convert.ToUInt32(headers.First());
-                        fullStats.Expired = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)
+                        fullStats.Expired = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                             .AddSeconds(secondsToExpiration).ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss");
                     }
 
-                    if (response.Headers.TryGetValues("X-RateRequestsRemaining", out IEnumerable<string> requestRemains))
+                    if (response.Headers.TryGetValues("X-RateRequestsRemaining", out requestRemains))
                     {
                         // Get the rate-limit period ends at timestamp in seconds.
                         int requestRemain = Convert.ToInt32(requestRemains.First());
@@ -162,7 +164,7 @@ namespace PokemonGo.RocketAPI.Hash
                         UpdateRate(key, requestRemain);
                     }
                     APIConfiguration.Logger.HashStatusUpdate(fullStats);
-
+#pragma warning restore IDE0018 // Inline variable declaration - Build.Bat Error Happens if We Do
                 }
 
                 // TODO: Fix this up with proper retry-after when we get rate limited.

@@ -91,14 +91,17 @@ namespace PokemonGo.RocketAPI.Rpc
 
         private bool RemoveInventoryItem(string key)
         {
+#pragma warning disable IDE0018 // Inline variable declaration - Build.Bat Error Happens if We Do
+            InventoryItem toRemove;
             try
             {
-                return InventoryItems.TryRemove(key, out InventoryItem toRemove);
+                return InventoryItems.TryRemove(key, out toRemove);
             }
             catch (ArgumentNullException)
             {
                 return false;
             }
+#pragma warning restore IDE0018 // Inline variable declaration - Build.Bat Error Happens if We Do
         }
 
         private void AddRemoveOrUpdateItem(InventoryItem item)
