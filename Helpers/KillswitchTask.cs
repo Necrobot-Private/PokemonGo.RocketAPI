@@ -26,7 +26,7 @@ namespace PokemonGo.RocketAPI.Helpers
             while (!_killswitchCancellation.IsCancellationRequested)
             {
 
-                Version version = await Client.GetMinimumRequiredVersionFromUrl().ConfigureAwait(false);
+                Version version = Client.GetMinimumRequiredVersionFromUrl();
                 if (version != null)
                     _client.MinimumClientVersion = version;
             

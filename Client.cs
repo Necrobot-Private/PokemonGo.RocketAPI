@@ -96,7 +96,7 @@ namespace PokemonGo.RocketAPI
 
                 ApiEndPoint = "api/v133_1/hash"; // 0.63.1
 		
-                Hasher = new PokefamerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog, ApiEndPoint);
+                Hasher = new PokefarmerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog, ApiEndPoint);
 
                 // These 4 constants below need to change if we update the hashing server API version that is used.
                 Unknown25 = 0x4A3889A251CCAD52; // 0.63.1
@@ -121,7 +121,7 @@ namespace PokemonGo.RocketAPI
             */
             else
             {
-                throw new AuthConfigException("No API method being select in your auth.json");
+                throw new AuthConfigException("No API method was selected in auth.json");
             }
 
             Settings = settings;
@@ -201,23 +201,17 @@ namespace PokemonGo.RocketAPI
             return CurrentApiEmulationVersion < MinimumClientVersion;
         }
 
-        public static async Task<Version> GetMinimumRequiredVersionFromUrl()
+        public static Version GetMinimumRequiredVersionFromUrl()
         {
             try
             {
-                var httpClient = new System.Net.Http.HttpClient();
-                var requestMessage = new HttpRequestMessage(HttpMethod.Get, Constants.VersionUrl);
-                requestMessage.Headers.Add("User-Agent", "Niantic App");
-
-                HttpResponseMessage response = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
-                var responseAsString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-                var version = responseAsString.Replace("\u0006", "").Replace("\n", "");
+                var Client = new WebClient();
+                var version = Client.DownloadString(Constants.VersionUrl).Replace("\u0006", "").Replace("\n", "");
                 return new Version(version);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                var errorMessage = $"The Niantic version check URL ({Constants.VersionUrl}) is returning an invalid version. This indicates that Niantic has changed something on their server and may indicate a forced API change. You may want to stop botting to be safe.";
+                var errorMessage = $"The Niantic version check URL ({Constants.VersionUrl}) is returning the following error(s): {ex.Message}";
                 APIConfiguration.Logger.LogError(errorMessage);
             }
             return null;
