@@ -215,7 +215,7 @@
     <Compile Include="Exceptions\PtcLoginException.cs" />
     <Compile Include="Exceptions\SessionInvalidatedException.cs" />
     <Compile Include="Extensions\RandomExtension.cs" />
-    <Compile Include="Hash\PokefamerHasher.cs" />
+    <Compile Include="Hash\PokefarmerHasher.cs" />
     <Compile Include="Hash\IHasher.cs" />
     <Compile Include="Hash\HashModel.cs" />
     <Compile Include="Helpers\CommonRequest.cs" />
