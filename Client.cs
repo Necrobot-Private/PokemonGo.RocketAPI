@@ -25,9 +25,9 @@ namespace PokemonGo.RocketAPI
     public class Client : ICaptchaResponseHandler
     {
         public static string API_VERSION = "0.63.4"; // 0.63.x
-
+        
         public static WebProxy Proxy;
-
+        
         internal readonly PokemonHttpClient PokemonHttpClient;
         public Download Download;
         public Encounter Encounter;
@@ -93,6 +93,7 @@ namespace PokemonGo.RocketAPI
                 // v129_1 -> Pogo iOS 1.29.1
                 // v131_0 -> Pogo iOS 1.31.0
                 // v133_1 -> Pogo iOS 1.33.1
+                // v133_4 -> Pogo iOS 1.33.4
 
                 ApiEndPoint = "api/v133_1/hash"; // 0.63.x
 		
