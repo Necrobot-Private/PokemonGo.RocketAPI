@@ -173,6 +173,12 @@ namespace PokemonGo.RocketAPI.Rpc
             if (player.Warn)
             {
                 APIConfiguration.Logger.LogFlaggedInit($"This account {Client.Player.PlayerData.Username} seems to be flagged, it is recommended to not use bot on this account for now!");
+                if (Client.Settings.AutoExitBotIfAccountFlagged)
+                {
+                    APIConfiguration.Logger.LogFlaggedInit("\n\rThe bot will close in 10 seconds.");
+                    Thread.Sleep(10000);
+                    Environment.Exit(0);
+                }
             }
 
             if (player.Banned)

@@ -39,5 +39,6 @@ namespace PokemonGo.RocketAPI
         bool UseLegacyAPI { get; set; }
         string AuthAPIKey { get; set; }
         bool DisplayVerboseLog { get; set; }
+        bool AutoExitBotIfAccountFlagged { get; set; }
     }
 }
