@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using PokemonGo.RocketAPI.Hash;
 using Newtonsoft.Json;
 using GeoCoordinatePortable;
+using POGOProtos.Networking.Requests.Messages;
 
 #endregion
 
@@ -270,6 +271,15 @@ namespace PokemonGo.RocketAPI.Helpers
                 {
                     Type = PlatformRequestType.UnknownPtr8,
                     RequestMessage = plat8Message.ToByteString()
+                });
+            }
+
+            if (requestEnvelope.Requests.Count > 0 && requestEnvelope.Requests[0].RequestType == RequestType.GetMapObjects)
+            {
+                requestEnvelope.Requests.Add(new Request
+                {
+                    RequestType = RequestType.GetInbox,
+                    RequestMessage = new GetInboxMessage { }.ToByteString() // Honestly I have no idea what goes here
                 });
             }
 
