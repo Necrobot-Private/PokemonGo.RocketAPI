@@ -46,6 +46,7 @@ namespace PokemonGo.RocketAPI.LoginProviders
                 using (var httpClient = new System.Net.Http.HttpClient(httpClientHandler))
                 {
                     httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.LoginUserAgent);
+                    httpClient.DefaultRequestHeaders.Add(Constants.LoginManufactor, Constants.LoginManufactorVersion);
                     var loginData = await GetLoginData(httpClient).ConfigureAwait(false);
                     var ticket = await PostLogin(httpClient, _username, _password, loginData).ConfigureAwait(false);
                     var accessToken = await PostLoginOauth(httpClient, ticket).ConfigureAwait(false);
