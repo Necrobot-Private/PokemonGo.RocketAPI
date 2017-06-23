@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using PokemonGo.RocketAPI.Hash;
 using Newtonsoft.Json;
 using GeoCoordinatePortable;
+using POGOProtos.Networking.Requests.Messages;
 
 #endregion
 
@@ -273,6 +274,15 @@ namespace PokemonGo.RocketAPI.Helpers
                 });
             }
 
+            if (requestEnvelope.Requests.Count > 0 && requestEnvelope.Requests[0].RequestType == RequestType.GetMapObjects)
+            {
+                requestEnvelope.Requests.Add(new Request
+                {
+                    RequestType = RequestType.GetInbox,
+                    RequestMessage = new GetInboxMessage { }.ToByteString() // Honestly I have no idea what goes here
+                });
+            }
+
             var currentLocation = new GeoCoordinate(requestEnvelope.Latitude, requestEnvelope.Longitude, _client.CurrentAltitude);
             requestEnvelope.PlatformRequests.Add(await GenerateSignature(requestEnvelope, currentLocation).ConfigureAwait(false));
         }
@@ -331,6 +341,16 @@ namespace PokemonGo.RocketAPI.Helpers
                     RequestMessage = plat8Message.ToByteString()
                 });
             }
+
+            if (e.Requests.Count > 0 && e.Requests[0].RequestType == RequestType.GetMapObjects)
+            {
+                e.Requests.Add(new Request
+                {
+                    RequestType = RequestType.GetInbox,
+                    RequestMessage = new GetInboxMessage { }.ToByteString() // Honestly I have no idea what goes here
+                });
+            }
+
             e.PlatformRequests.Add(await GenerateSignature(e, currentLocation).ConfigureAwait(false));
 
             return e;
