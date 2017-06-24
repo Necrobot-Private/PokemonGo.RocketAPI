@@ -250,14 +250,15 @@ namespace PokemonGo.RocketAPI.Rpc
         {
             var getGymDetailsRequest = new Request
             {
-                RequestType = RequestType.GetGymDetails,
+                RequestType = RequestType.GymGetInfo, // renamed getGymDetails to gymGetInfo
                 RequestMessage = ((IMessage)new GetGymDetailsMessage
                 {
                     GymId = gymId,
                     GymLatitude = gymLat,
                     GymLongitude = gymLng,
                     PlayerLatitude = Client.CurrentLatitude,
-                    PlayerLongitude = Client.CurrentLongitude
+                    PlayerLongitude = Client.CurrentLongitude,
+                    ClientVersion = Client.API_VERSION // real Version ???
                 }).ToByteString()
             };
 
