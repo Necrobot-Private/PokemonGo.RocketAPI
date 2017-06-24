@@ -258,7 +258,7 @@ namespace PokemonGo.RocketAPI.Rpc
                     GymLongitude = gymLng,
                     PlayerLatitude = Client.CurrentLatitude,
                     PlayerLongitude = Client.CurrentLongitude,
-                    ClientVersion = Client.API_VERSION // Client.AppVersion // real Version ???
+                    ClientVersion = Client.API_VERSION // 0.67.1 or Client.AppVersion 6701? // real Version ???
                 }).ToByteString()
             };
 
