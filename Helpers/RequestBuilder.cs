@@ -274,12 +274,13 @@ namespace PokemonGo.RocketAPI.Helpers
                 });
             }
 
-            if (requestEnvelope.Requests.Count > 0 && requestEnvelope.Requests[0].RequestType == RequestType.GetMapObjects)
+            if (requestEnvelope.Requests.Count > 0 &&
+                requestEnvelope.Requests[0].RequestType == RequestType.GetMapObjects)
             {
                 requestEnvelope.Requests.Add(new Request
                 {
                     RequestType = RequestType.GetInbox,
-                    RequestMessage = new GetInboxMessage { }.ToByteString() // Honestly I have no idea what goes here
+                    RequestMessage = ByteString.Empty
                 });
             }
 
@@ -342,12 +343,13 @@ namespace PokemonGo.RocketAPI.Helpers
                 });
             }
 
-            if (e.Requests.Count > 0 && e.Requests[0].RequestType == RequestType.GetMapObjects)
+            if (e.Requests.Count > 0 &&
+                e.Requests[0].RequestType == RequestType.GetMapObjects)
             {
                 e.Requests.Add(new Request
                 {
                     RequestType = RequestType.GetInbox,
-                    RequestMessage = new GetInboxMessage { }.ToByteString() // Honestly I have no idea what goes here
+                    RequestMessage = ByteString.Empty
                 });
             }
 
