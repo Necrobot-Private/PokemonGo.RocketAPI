@@ -246,7 +246,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<GymGetInfoResponse> GetGymDetails(string gymId, double gymLat, double gymLng)
+        public async Task<GetGymDetailsResponse> GetGymDetails(string gymId, double gymLat, double gymLng)
         {
             var getGymDetailsRequest = new Request
             {
