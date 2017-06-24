@@ -246,19 +246,18 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<GetGymDetailsResponse> GetGymDetails(string gymId, double gymLat, double gymLng)
+        public async Task<GymGetInfoResponse> GetGymDetails(string gymId, double gymLat, double gymLng)
         {
             var getGymDetailsRequest = new Request
             {
                 RequestType = RequestType.GymGetInfo, // renamed GetGymDetails to GymGetInfo
-                RequestMessage = ((IMessage)new GetGymDetailsMessage
+                RequestMessage = ((IMessage)new GymGetInfoMessage
                 {
                     GymId = gymId,
-                    GymLatitude = gymLat,
-                    GymLongitude = gymLng,
-                    PlayerLatitude = Client.CurrentLatitude,
-                    PlayerLongitude = Client.CurrentLongitude,
-                    ClientVersion = Client.API_VERSION // 0.67.1 or Client.AppVersion 6701? // real Version ???
+                    PlayerLngDegrees = Client.CurrentLongitude,
+                    PlayerLatDegrees = Client.CurrentLatitude,
+                    GymLatDegrees = gymLat,
+                    GymLngDegrees = gymLng,
                 }).ToByteString()
             };
 
