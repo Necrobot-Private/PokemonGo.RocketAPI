@@ -78,6 +78,9 @@ namespace PokemonGo.RocketAPI.Rpc
             if (delta.Quest != null)
                 return "Quest."+delta.Quest.QuestType;
 
+            if (delta.RaidTickets != null)
+                return delta.RaidTickets.RaidTicket.ToString();
+
             throw new Exception("Unexpected inventory error. Could not generate hash code.");
         }
 
