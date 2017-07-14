@@ -123,10 +123,10 @@ namespace PokemonGo.RocketAPI.LoginProviders
             var loginResponse =
                 await httpClient.PostAsync(Constants.LoginOauthUrl, new FormUrlEncodedContent(new Dictionary<string, string>
                 {
-                    {"client_id", "mobile-app_pokemon-go"},
-                    {"redirect_uri", "https://www.nianticlabs.com/pokemongo/error"},
-                    {"client_secret", "w8ScCUXJQc6kXKw8FiOhd8Fixzht18Dq3PEVkUCP5ZPxtgyWsbTvWHFLm2wNY0JR"},
-                    {"grant_type", "refresh_token"},
+                    {"client_id", Constants.Client_Id},
+                    {"redirect_uri", Constants.Redirect_Uri},
+                    {"client_secret", Constants.Client_Secret},
+                    {"grant_type", Constants.Grant_Type},
                     {"code", ticket}
                 })).ConfigureAwait(false);
 
