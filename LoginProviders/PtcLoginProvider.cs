@@ -45,9 +45,13 @@ namespace PokemonGo.RocketAPI.LoginProviders
                 httpClientHandler.AllowAutoRedirect = false;
                 using (var httpClient = new System.Net.Http.HttpClient(httpClientHandler))
                 {
-                    httpClient.DefaultRequestHeaders.Add(Constants.LoginHost, Constants.LoginHostValue);
-                    httpClient.DefaultRequestHeaders.Add(Constants.LoginManufactor, Constants.LoginManufactorVersion);
+                    httpClient.DefaultRequestHeaders.Accept.Add(Constants.Accept);
+                    httpClient.DefaultRequestHeaders.Host = Constants.LoginHostValue;
+                    httpClient.DefaultRequestHeaders.Connection.Add(Constants.Connection);
                     httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.LoginUserAgent);
+                    httpClient.DefaultRequestHeaders.AcceptLanguage.Add(Constants.AcceptLanguage);
+                    httpClient.DefaultRequestHeaders.AcceptEncoding.Add(Constants.AcceptEncoding);
+                    httpClient.DefaultRequestHeaders.Add(Constants.LoginManufactor, Constants.LoginManufactorVersion);
                     var loginData = await GetLoginData(httpClient).ConfigureAwait(false);
                     var ticket = await PostLogin(httpClient, _username, _password, loginData).ConfigureAwait(false);
                     var accessToken = await PostLoginOauth(httpClient, ticket).ConfigureAwait(false);
@@ -119,10 +123,10 @@ namespace PokemonGo.RocketAPI.LoginProviders
             var loginResponse =
                 await httpClient.PostAsync(Constants.LoginOauthUrl, new FormUrlEncodedContent(new Dictionary<string, string>
                 {
-                    {"client_id", "mobile-app_pokemon-go"},
-                    {"redirect_uri", "https://www.nianticlabs.com/pokemongo/error"},
-                    {"client_secret", "w8ScCUXJQc6kXKw8FiOhd8Fixzht18Dq3PEVkUCP5ZPxtgyWsbTvWHFLm2wNY0JR"},
-                    {"grant_type", "refresh_token"},
+                    {"client_id", Constants.Client_Id},
+                    {"redirect_uri", Constants.Redirect_Uri},
+                    {"client_secret", Constants.Client_Secret},
+                    {"grant_type", Constants.Grant_Type},
                     {"code", ticket}
                 })).ConfigureAwait(false);
 
