@@ -45,13 +45,13 @@ namespace PokemonGo.RocketAPI.LoginProviders
                 httpClientHandler.AllowAutoRedirect = false;
                 using (var httpClient = new System.Net.Http.HttpClient(httpClientHandler))
                 {
-                    httpClient.DefaultRequestHeaders.Accept.Add(Constants.Accept);
+                    httpClient.DefaultRequestHeaders.Accept.TryParseAdd(Constants.Accept);
                     httpClient.DefaultRequestHeaders.Host = Constants.LoginHostValue;
-                    httpClient.DefaultRequestHeaders.Connection.Add(Constants.Connection);
+                    httpClient.DefaultRequestHeaders.Connection.TryParseAdd(Constants.Connection);
                     httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.LoginUserAgent);
-                    httpClient.DefaultRequestHeaders.AcceptLanguage.Add(Constants.AcceptLanguage);
-                    httpClient.DefaultRequestHeaders.AcceptEncoding.Add(Constants.AcceptEncoding);
-                    httpClient.DefaultRequestHeaders.Add(Constants.LoginManufactor, Constants.LoginManufactorVersion);
+                    httpClient.DefaultRequestHeaders.AcceptLanguage.TryParseAdd(Constants.AcceptLanguage);
+                    httpClient.DefaultRequestHeaders.AcceptEncoding.TryParseAdd(Constants.AcceptEncoding);
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation(Constants.LoginManufactor, Constants.LoginManufactorVersion);
                     var loginData = await GetLoginData(httpClient).ConfigureAwait(false);
                     var ticket = await PostLogin(httpClient, _username, _password, loginData).ConfigureAwait(false);
                     var accessToken = await PostLoginOauth(httpClient, ticket).ConfigureAwait(false);

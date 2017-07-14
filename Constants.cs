@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-
+﻿
 namespace PokemonGo.RocketAPI
 {
     public static class Constants
@@ -20,9 +19,9 @@ namespace PokemonGo.RocketAPI
         public const string LoginHostValue = "sso.pokemon.com";
         public const string LoginOauthUrl = "https://sso.pokemon.com/sso/oauth2.0/accessToken";
         public const string Connection = "keep-alive";
-        public static StringWithQualityHeaderValue AcceptLanguage = new StringWithQualityHeaderValue("en-US");
-        public static StringWithQualityHeaderValue AcceptEncoding = new StringWithQualityHeaderValue("gzip-deflate");
-        public static MediaTypeWithQualityHeaderValue Accept = new MediaTypeWithQualityHeaderValue("*/*");
+        public const string AcceptLanguage = "en-US";
+        public const string AcceptEncoding = "gzip-deflate";
+        public const string Accept = "*/*";
         public const string Client_Id = "mobile-app_pokemon-go";
         public const string Redirect_Uri = "https://www.nianticlabs.com/pokemongo/error";
         public const string Client_Secret = "w8ScCUXJQc6kXKw8FiOhd8Fixzht18Dq3PEVkUCP5ZPxtgyWsbTvWHFLm2wNY0JR";
