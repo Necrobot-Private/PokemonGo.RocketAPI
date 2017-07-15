@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace PokemonGo.RocketAPI
 {
     public static class Constants
@@ -26,6 +28,7 @@ namespace PokemonGo.RocketAPI
         public const string Redirect_Uri = "https://www.nianticlabs.com/pokemongo/error";
         public const string Client_Secret = "w8ScCUXJQc6kXKw8FiOhd8Fixzht18Dq3PEVkUCP5ZPxtgyWsbTvWHFLm2wNY0JR";
         public const string Grant_Type = "refresh_token";
+        public static TimeSpan TimeOut = new TimeSpan(0,10,0);
 
         public const string GoogleAuthService = "audience:server:client_id:848232511240-7so421jotr2609rmqakceuu1luuq0ptb.apps.googleusercontent.com";
 
