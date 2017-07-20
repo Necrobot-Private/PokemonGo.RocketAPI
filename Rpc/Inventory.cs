@@ -562,6 +562,40 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
+        public async Task<UseItemCaptureResponse> UseItemCapture(ItemId itemid, ulong encounterid, string spawnpointid)
+        {
+            var useUseItemCaptureRequest = new Request
+            {
+                RequestType = RequestType.UseItemCapture,
+                RequestMessage = ((IMessage)new UseItemCaptureMessage
+                {
+                    ItemId = itemid,
+                    EncounterId = encounterid,
+                    SpawnPointId = spawnpointid
+                }).ToByteString()
+                
+            };
+            
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(useUseItemCaptureRequest, Client)).ConfigureAwait(false);
+
+            Tuple<UseItemCaptureResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, UseItemCaptureResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
         public async Task<UseItemGymResponse> UseItemInGym(string gymId, ItemId itemId)
         {
             var useItemInGymRequest = new Request
