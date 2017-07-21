@@ -44,12 +44,10 @@ namespace PokemonGo.RocketAPI.LoginProviders
             using (var httpClientHandler = new HttpClientHandler())
             {
                 httpClientHandler.AllowAutoRedirect = false;
-                if (Client.UseProxy)
-                {
-                    httpClientHandler.DefaultProxyCredentials = Client.Proxy.Credentials;
-                    httpClientHandler.UseProxy = Client.UseProxy;
-                }
-                              
+                httpClientHandler.AutomaticDecompression = DecompressionMethods.GZip; 
+                httpClientHandler.UseProxy = Client.Proxy != null; 
+                httpClientHandler.Proxy = Client.Proxy;
+                            
                 using (var httpClient = new System.Net.Http.HttpClient(httpClientHandler))
                 {
                     httpClient.DefaultRequestHeaders.Accept.TryParseAdd(Constants.Accept);
@@ -60,7 +58,7 @@ namespace PokemonGo.RocketAPI.LoginProviders
                     httpClient.DefaultRequestHeaders.AcceptEncoding.TryParseAdd(Constants.AcceptEncoding);
                     httpClient.DefaultRequestHeaders.TryAddWithoutValidation(Constants.LoginManufactor, Constants.LoginManufactorVersion);
                     httpClient.Timeout.Add(Constants.TimeOut);
-                    var loginData = await GetLoginData(httpClient).ConfigureAwait(false);
+                    LoginData loginData = await GetLoginData(httpClient).ConfigureAwait(false);
                     var ticket = await PostLogin(httpClient, _username, _password, loginData).ConfigureAwait(false);
                     var accessToken = await PostLoginOauth(httpClient, ticket).ConfigureAwait(false);
                     accessToken.Username = _username;

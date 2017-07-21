@@ -27,7 +27,6 @@ namespace PokemonGo.RocketAPI
         public static string API_VERSION = "0.69.0";
 
         public static WebProxy Proxy;
-        public static bool UseProxy;
 
         internal readonly PokemonHttpClient PokemonHttpClient;
         public Download Download;
@@ -192,7 +191,6 @@ namespace PokemonGo.RocketAPI
 
             if (Settings.UseProxyAuthentication)
                 prox.Credentials = new NetworkCredential(Settings.UseProxyUsername, Settings.UseProxyPassword);
-            UseProxy = true;
             return prox;
         }
 
