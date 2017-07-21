@@ -24,10 +24,9 @@ namespace PokemonGo.RocketAPI
 {
     public class Client : ICaptchaResponseHandler
     {
-        public static string API_VERSION = "0.67.2";
+        public static string API_VERSION = "0.69.0";
 
         public static WebProxy Proxy;
-        public static bool UseProxy;
 
         internal readonly PokemonHttpClient PokemonHttpClient;
         public Download Download;
@@ -105,7 +104,7 @@ namespace PokemonGo.RocketAPI
                 Unknown25 = 0x4AE22D4661C83701;
 				
                 // WARNING! IF YOU CHANGE THE APPVERSION BELOW ALSO UPDATE THE API_VERSION AT THE TOP OF THE FILE!
-                AppVersion = 6702; 
+                AppVersion = 6900; 
 		
                 CurrentApiEmulationVersion = new Version(API_VERSION);
                 UnknownPlat8Field = "15c79df0558009a4242518d2ab65de2a59e09499";
@@ -192,7 +191,6 @@ namespace PokemonGo.RocketAPI
 
             if (Settings.UseProxyAuthentication)
                 prox.Credentials = new NetworkCredential(Settings.UseProxyUsername, Settings.UseProxyPassword);
-            UseProxy = true;
             return prox;
         }
 
