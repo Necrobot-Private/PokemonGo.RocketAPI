@@ -694,8 +694,6 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        //TODO:
-        // revise for pogoprotos not yet released https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L88
         public async Task<ReleasePokemonResponse> UseRareCandy(ulong pokemonId)
         {
             var setFavoritePokemonRequest = new Request
