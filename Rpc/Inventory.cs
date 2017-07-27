@@ -563,40 +563,6 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<UseItemGymResponse> UseItemInGym(string gymId, ItemId itemId)
-        {
-            var useItemInGymRequest = new Request
-            {
-                RequestType = RequestType.UseItemGym,
-                RequestMessage = ((IMessage)new UseItemGymMessage
-                {
-                    ItemId = itemId,
-                    GymId = gymId,
-                    PlayerLatitude = Client.CurrentLatitude,
-                    PlayerLongitude = Client.CurrentLongitude
-                }).ToByteString()
-            };
-
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(useItemInGymRequest, Client)).ConfigureAwait(false);
-
-            Tuple<UseItemGymResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
-                    PostProtoPayload
-                        <Request, UseItemGymResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
-
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetInventoryResponse getInventoryResponse = response.Item4;
-            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
-
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
-            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
-
-            return response.Item1;
-        }
-
         public async Task<NicknamePokemonResponse> NicknamePokemon(ulong pokemonId, string nickName)
         {
             var nicknamePokemonRequest = new Request
@@ -694,72 +660,6 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<SfidaRegistrationResponse> SfidaRegistration(string sfidaId)
-        {
-            var setFavoritePokemonRequest = new Request
-            {
-                RequestType = RequestType.SfidaRegistration,
-                RequestMessage = ((IMessage)new SfidaRegistrationMessage
-                {
-                    SfidaId = sfidaId
-                }).ToByteString()
-            };
-
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setFavoritePokemonRequest, Client)).ConfigureAwait(false);
-
-            Tuple<SfidaRegistrationResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
-                    PostProtoPayload
-                        <Request, SfidaRegistrationResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
-
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetInventoryResponse getInventoryResponse = response.Item4;
-            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
-
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
-            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
-
-            return response.Item1;
-        }
-
-        public async Task<GymFeedPokemonResponse> GymFeedPokemon(string gymId, ItemId item, ulong pokemonId, int startingQuantity = 1)
-        {
-            var setFavoritePokemonRequest = new Request
-            {
-                RequestType = RequestType.GymFeedPokemon,
-                RequestMessage = ((IMessage)new GymFeedPokemonMessage
-                {
-                    GymId = gymId,
-                    Item = item,
-                    PokemonId = pokemonId,
-                    PlayerLatDegrees = Client.CurrentLatitude,
-                    PlayerLngDegrees = Client.CurrentLongitude,
-                    StartingQuantity = startingQuantity
-                }).ToByteString()
-            };
-
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setFavoritePokemonRequest, Client)).ConfigureAwait(false);
-
-            Tuple<GymFeedPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
-                    PostProtoPayload
-                        <Request, GymFeedPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
-
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetInventoryResponse getInventoryResponse = response.Item4;
-            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
-
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
-            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
-
-            return response.Item1;
-        }
 
         //TODO:
         // revise for pogoprotos not yet released https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L88
