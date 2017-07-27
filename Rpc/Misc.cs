@@ -20,7 +20,6 @@ namespace PokemonGo.RocketAPI.Rpc
         {
         }
 
-
         public async Task<ClaimCodenameResponse> ClaimCodename(string codename)
         {
             var claimCodenameRequest = new Request
@@ -114,6 +113,36 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
+        public async Task<SfidaRegistrationResponse> SfidaRegistration(string sfidaId)
+        {
+            var setFavoritePokemonRequest = new Request
+            {
+                RequestType = RequestType.SfidaRegistration,
+                RequestMessage = ((IMessage)new SfidaRegistrationMessage
+                {
+                    SfidaId = sfidaId
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setFavoritePokemonRequest, Client)).ConfigureAwait(false);
+
+            Tuple<SfidaRegistrationResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, SfidaRegistrationResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
 
         private Random randomizer = new Random();
         public async Task RandomAPICall()
@@ -140,7 +169,6 @@ namespace PokemonGo.RocketAPI.Rpc
                 default:
                     break;
             }
-
         }
     }
 }
