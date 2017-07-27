@@ -661,6 +661,39 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
+        public async Task<GetGymBadgeDetailsResponse>GetGymBadgeDetails(string fortId, double latitude, double longitude)
+        {
+            var setFavoritePokemonRequest = new Request
+            {
+                RequestType = RequestType.GetGymBadgeDetails,
+                RequestMessage = ((IMessage)new GetGymBadgeDetailsMessage
+                {
+                    FortId = fortId,
+                    Latitude = latitude,
+                    Longitude = longitude
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setFavoritePokemonRequest, Client)).ConfigureAwait(false);
+
+            Tuple<GetGymBadgeDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, GetGymBadgeDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
         //TODO:
         // revise for pogoprotos not yet released https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L88
         public async Task<ReleasePokemonResponse> UseRareCandy(ulong pokemonId)
