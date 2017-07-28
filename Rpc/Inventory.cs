@@ -563,40 +563,6 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<UseItemGymResponse> UseItemInGym(string gymId, ItemId itemId)
-        {
-            var useItemInGymRequest = new Request
-            {
-                RequestType = RequestType.UseItemGym,
-                RequestMessage = ((IMessage)new UseItemGymMessage
-                {
-                    ItemId = itemId,
-                    GymId = gymId,
-                    PlayerLatitude = Client.CurrentLatitude,
-                    PlayerLongitude = Client.CurrentLongitude
-                }).ToByteString()
-            };
-
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(useItemInGymRequest, Client)).ConfigureAwait(false);
-
-            Tuple<UseItemGymResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
-                await
-                    PostProtoPayload
-                        <Request, UseItemGymResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
-                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
-
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetInventoryResponse getInventoryResponse = response.Item4;
-            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
-
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
-            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
-
-            return response.Item1;
-        }
-
         public async Task<NicknamePokemonResponse> NicknamePokemon(ulong pokemonId, string nickName)
         {
             var nicknamePokemonRequest = new Request
