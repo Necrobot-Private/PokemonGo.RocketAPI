@@ -179,6 +179,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
+        //https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L20
         public async Task<FortDeployPokemonResponse> FortDeployPokemon(string fortId, ulong pokemonId)
         {
             var fortDeployPokemonRequest = new Request
@@ -320,6 +321,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
+        //https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L64
         public async Task<GymFeedPokemonResponse> GymFeedPokemon(string gymId, ItemId item, ulong pokemonId, int startingQuantity = 1)
         {
             var setFavoritePokemonRequest = new Request
@@ -391,6 +393,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
+        //https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L87
         public async Task<GetGymBadgeDetailsResponse> GetGymBadgeDetails(string fortId, double latitude, double longitude)
         {
             var setFavoritePokemonRequest = new Request
@@ -410,6 +413,41 @@ namespace PokemonGo.RocketAPI.Rpc
                 await
                     PostProtoPayload
                         <Request, GetGymBadgeDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        //https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L55
+        public async Task<GymDeployResponse> GymDeploy(string fortId, ulong pokemonId)
+        {
+            var setFavoritePokemonRequest = new Request
+            {
+                RequestType = RequestType.GymDeploy,
+                RequestMessage = ((IMessage)new GymDeployMessage
+                {
+                    FortId = fortId,
+                    PokemonId = pokemonId,
+                    PlayerLatitude = Client.CurrentLatitude,
+                    PlayerLongitude = Client.CurrentLongitude
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setFavoritePokemonRequest, Client)).ConfigureAwait(false);
+
+            Tuple<GymDeployResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, GymDeployResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
