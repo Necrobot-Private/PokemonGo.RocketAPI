@@ -24,8 +24,6 @@ namespace PokemonGo.RocketAPI
 {
     public class Client : ICaptchaResponseHandler
     {
-        public static string API_VERSION = Constants.API_VERSION;
-
         public static WebProxy Proxy;
 
         internal readonly PokemonHttpClient PokemonHttpClient;
@@ -106,7 +104,7 @@ namespace PokemonGo.RocketAPI
                 // WARNING! IF YOU CHANGE THE APPVERSION BELOW ALSO UPDATE THE API_VERSION AT THE TOP OF THE FILE!
                 AppVersion = Constants.AppVersion; 
 		
-                CurrentApiEmulationVersion = new Version(API_VERSION);
+                CurrentApiEmulationVersion = new Version(Constants.API_VERSION);
                 UnknownPlat8Field = Constants.UnknownPlat8Field;
             }
             /*
