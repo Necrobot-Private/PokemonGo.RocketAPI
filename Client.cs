@@ -64,7 +64,7 @@ namespace PokemonGo.RocketAPI
         internal uint AppVersion { get; set; }
         internal string UnknownPlat8Field { get; set; }
         internal long Unknown25 { get; set; }
-        internal string ApiEndPoint { get; set; }
+        public string ApiEndPoint { get; set; }
         public long StartTime { get; set; }
         public Version CurrentApiEmulationVersion { get; set; }
         public Version MinimumClientVersion { get; set; }        // This is version from DownloadSettings, but after login is updated from https://pgorelease.nianticlabs.com/plfe/version
@@ -72,7 +72,7 @@ namespace PokemonGo.RocketAPI
         //public POGOLib.Net.Session AuthSession { get; set; }
         public ILoginProvider LoginProvider { get; set; }
         public AccessToken AccessToken { get; set; }
-
+ 
         public Client(ISettings settings)
         {
             if (settings.UsePogoDevHashServer)
