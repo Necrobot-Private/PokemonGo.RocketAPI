@@ -189,6 +189,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
+        //https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L32
         public async Task<CheckAwardedBadgesResponse> GetNewlyAwardedBadges()
         {
             var getNewlyAwardedBadgesRequest = new Request
@@ -217,6 +218,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
+        //https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L38
         public async Task<CollectDailyBonusResponse> CollectDailyBonus()
         {
             var collectDailyBonusRequest = new Request
@@ -245,6 +247,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
+        //TODO: revise https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L46
         public async Task<CollectDailyDefenderBonusResponse> CollectDailyDefenderBonus()
         {
             var collectDailyDefenderBonusRequest = new Request
@@ -475,6 +478,42 @@ namespace PokemonGo.RocketAPI.Rpc
             // so don't throw any exceptions.
             // CheckChallengeResponse checkChallengeResponse = response.Item2;
             // CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        //https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L83
+        public async Task<ListAvatarCustomizationsResponse> ListAvatarCustomizations(PlayerAvatarType avatarType, int limit, int start)
+        {
+            var setPlayerTeamRequest = new Request
+            {
+                RequestType = RequestType.ListAvatarCustomizations,
+                RequestMessage = new ListAvatarCustomizationsMessage
+                {
+                    AvatarType = avatarType,
+                    //Filters = xxx,
+                    Limit = limit,
+                    //Slot = xxx,
+                    Start = start
+                }.ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setPlayerTeamRequest, Client)).ConfigureAwait(false);
+
+            Tuple<ListAvatarCustomizationsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, ListAvatarCustomizationsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
 
             GetInventoryResponse getInventoryResponse = response.Item4;
             CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
