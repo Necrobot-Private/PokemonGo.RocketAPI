@@ -15,6 +15,7 @@ using System.Linq;
 using POGOProtos.Data;
 using System.Collections.Concurrent;
 using Google.Protobuf.Collections;
+using POGOProtos.Enums;
 
 #endregion
 
@@ -627,25 +628,25 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        //TODO:
-        // revise for pogoprotos not yet released https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L88
-        public async Task<ReleasePokemonResponse> UseRareCandy(ulong pokemonId)
+        //https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L88
+        public async Task<UseItemRareCandyResponse> UseRareCandy(ItemId itemId, PokemonId pokemonId)
         {
-            var setFavoritePokemonRequest = new Request
+            var UseItemRareCandyRequest = new Request
             {
                 RequestType = RequestType.UseItemRareCandy,
-                RequestMessage = ((IMessage)new ReleasePokemonMessage
+                RequestMessage = ((IMessage)new UseItemRareCandyMessage
                 {
+                    ItemId = itemId,
                     PokemonId = pokemonId
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setFavoritePokemonRequest, Client)).ConfigureAwait(false);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(UseItemRareCandyRequest, Client)).ConfigureAwait(false);
 
-            Tuple<ReleasePokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<UseItemRareCandyResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, ReleasePokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                        <Request, UseItemRareCandyResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
@@ -660,23 +661,24 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<ReleasePokemonResponse> UseItemMoveReroll(ulong pokemonId)
+        public async Task<UseItemMoveRerollResponse> UseItemMoveReroll(ItemId itemId, ulong pokemonId)
         {
-            var setFavoritePokemonRequest = new Request
+            var UseItemMoveRerollRequest = new Request
             {
                 RequestType = RequestType.UseItemMoveReroll,
-                RequestMessage = ((IMessage)new ReleasePokemonMessage
+                RequestMessage = ((IMessage)new UseItemMoveRerollMessage
                 {
+                    ItemId = itemId,
                     PokemonId = pokemonId
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setFavoritePokemonRequest, Client)).ConfigureAwait(false);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(UseItemMoveRerollRequest, Client)).ConfigureAwait(false);
 
-            Tuple<ReleasePokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<UseItemMoveRerollResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, ReleasePokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                        <Request, UseItemMoveRerollResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
