@@ -274,15 +274,6 @@ namespace PokemonGo.RocketAPI.Helpers
                 });
             }
 
-            if (requestEnvelope.Requests.Count > 0)
-            {
-                requestEnvelope.Requests.Add(new Request
-                {
-                    RequestType = RequestType.GetInbox,
-                    RequestMessage = new GetInboxMessage {IsHistory = true}.ToByteString()
-                });
-            }
-
             var currentLocation = new GeoCoordinate(requestEnvelope.Latitude, requestEnvelope.Longitude, _client.CurrentAltitude);
             requestEnvelope.PlatformRequests.Add(await GenerateSignature(requestEnvelope, currentLocation).ConfigureAwait(false));
         }
@@ -339,15 +330,6 @@ namespace PokemonGo.RocketAPI.Helpers
                 {
                     Type = PlatformRequestType.UnknownPtr8,
                     RequestMessage = plat8Message.ToByteString()
-                });
-            }
-
-            if (e.Requests.Count > 0)
-            {
-                e.Requests.Add(new Request
-                {
-                    RequestType = RequestType.GetInbox,
-                    RequestMessage = new GetInboxMessage {IsHistory = true}.ToByteString()
                 });
             }
 

@@ -9,6 +9,9 @@ using POGOProtos.Networking.Responses;
 using Google.Protobuf;
 using PokemonGo.RocketAPI.Helpers;
 using System;
+using POGOProtos.Networking.Envelopes;
+using POGOProtos.Networking.Platform.Requests;
+using POGOProtos.Networking.Platform;
 
 #endregion
 
@@ -115,7 +118,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<SfidaRegistrationResponse> SfidaRegistration(string sfidaId)
         {
-            var setFavoritePokemonRequest = new Request
+            var SfidaRegistrationRequest = new Request
             {
                 RequestType = RequestType.SfidaRegistration,
                 RequestMessage = ((IMessage)new SfidaRegistrationMessage
@@ -124,12 +127,45 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setFavoritePokemonRequest, Client)).ConfigureAwait(false);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(SfidaRegistrationRequest, Client)).ConfigureAwait(false);
 
             Tuple<SfidaRegistrationResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
                         <Request, SfidaRegistrationResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<GetInboxResponse> GetInbox(bool isHistory, bool isReverse, long notBeforeMs)
+        {
+            var GetInboxRequest = new Request
+            {
+                RequestType = RequestType.GetInbox,
+                RequestMessage = ((IMessage)new GetInboxMessage
+                {
+                    IsHistory = isHistory,
+                    IsReverse = isReverse,
+                    NotBeforeMs = notBeforeMs,
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(GetInboxRequest, Client)).ConfigureAwait(false);
+
+            Tuple<GetInboxResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, GetInboxResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
