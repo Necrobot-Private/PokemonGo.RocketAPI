@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using PokemonGo.RocketAPI.Hash;
 using Newtonsoft.Json;
 using GeoCoordinatePortable;
-using POGOProtos.Networking.Requests.Messages;
 
 #endregion
 

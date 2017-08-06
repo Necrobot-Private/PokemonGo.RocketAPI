@@ -1,17 +1,14 @@
 ﻿#region using directives
 
-using System.Threading.Tasks;
+using Google.Protobuf;
 using Google.Protobuf.Collections;
 using POGOProtos.Enums;
 using POGOProtos.Networking.Requests;
 using POGOProtos.Networking.Requests.Messages;
 using POGOProtos.Networking.Responses;
-using Google.Protobuf;
 using PokemonGo.RocketAPI.Helpers;
 using System;
-using POGOProtos.Networking.Envelopes;
-using POGOProtos.Networking.Platform.Requests;
-using POGOProtos.Networking.Platform;
+using System.Threading.Tasks;
 
 #endregion
 
