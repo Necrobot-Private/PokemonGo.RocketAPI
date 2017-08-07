@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using PokemonGo.RocketAPI.LoginProviders;
 using PokemonGo.RocketAPI.Authentication.Data;
+using POGOProtos.Enums;
 //using System.Windows.Forms;
 
 #endregion
@@ -183,29 +184,34 @@ namespace PokemonGo.RocketAPI.Rpc
 
             if (player.Banned)
             {
-                 APIConfiguration.Logger.LogErrorInit("This account seems to be banned");
+                APIConfiguration.Logger.LogErrorInit("This account seems to be banned");
             }
 
             APIConfiguration.Logger.LogDebug("GetPlayer done.");
             await RandomHelper.RandomDelay(10000).ConfigureAwait(false);
+
             await Client.Download.GetRemoteConfigVersion().ConfigureAwait(false);
             APIConfiguration.Logger.LogDebug("GetRemoteConfigVersion done.");
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+
             await Client.Download.GetAssetDigest().ConfigureAwait(false);
             APIConfiguration.Logger.LogDebug("GetAssetDigest done.");
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+
             await Client.Download.GetItemTemplates().ConfigureAwait(false);
             APIConfiguration.Logger.LogDebug("GetItemTemplates done.");
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+
             await Client.Player.GetPlayerProfile().ConfigureAwait(false);
             APIConfiguration.Logger.LogDebug("GetPlayerProfile done.");
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+
             GetInboxResponse req = await Client.Misc.GetInbox(true, false, 0L).ConfigureAwait(false);
             APIConfiguration.Logger.LogDebug($"GetInbox done. Notifications: {req.Inbox.Notifications.Count}");
-            foreach (var inbox in req.Inbox.Notifications)
-                APIConfiguration.Logger.LogDebug($"Notification ID: {inbox.NotificationId}\nCategory: {inbox.Category}\nTitleKey: {inbox.TitleKey}\nLabels: {inbox.Labels}\n");// Variables: {inbox.Variables}");
-            //req.Inbox.BuiltinVariables.Clear();
-            //req.Inbox.Notifications.Clear();
+            await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+
+            UpdateNotificationResponse uptNot = await Client.Misc.UpdateNotification().ConfigureAwait(false);
+            APIConfiguration.Logger.LogDebug($"UpdateNotification done. Notifications state: {uptNot.State}");
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
 
             return player;

@@ -9,6 +9,7 @@ using POGOProtos.Networking.Responses;
 using PokemonGo.RocketAPI.Helpers;
 using System;
 using System.Threading.Tasks;
+using static POGOProtos.Networking.Requests.Messages.RegisterPushNotificationMessage.Types;
 
 #endregion
 
@@ -153,7 +154,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 {
                     IsHistory = isHistory,
                     IsReverse = isReverse,
-                    NotBeforeMs = notBeforeMs,
+                    NotBeforeMs = notBeforeMs
                 }).ToByteString()
             };
 
@@ -163,6 +164,100 @@ namespace PokemonGo.RocketAPI.Rpc
                 await
                     PostProtoPayload
                         <Request, GetInboxResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<UpdateNotificationResponse> UpdateNotification()
+        {
+            var UpdateNotificationRequest = new Request
+            {
+                RequestType = RequestType.UpdateNotificationStatus,
+                RequestMessage = ((IMessage)new UpdateNotificationMessage
+                {
+                    State = NotificationState.Viewed
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(UpdateNotificationRequest, Client)).ConfigureAwait(false);
+
+            Tuple<UpdateNotificationResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, UpdateNotificationResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<RegisterPushNotificationResponse> RegisterPushNotification(ApnToken apnToken, GcmToken gcmToken)
+        {
+            var RegisterPushNotificationRequest = new Request
+            {
+                RequestType = RequestType.RegisterPushNotification,
+                RequestMessage = ((IMessage)new RegisterPushNotificationMessage
+                {
+                    ApnToken = apnToken,
+                    GcmToken = gcmToken
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(RegisterPushNotificationRequest, Client)).ConfigureAwait(false);
+
+            Tuple<RegisterPushNotificationResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, RegisterPushNotificationResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetInventoryResponse getInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetInventoryResponse(Client, getInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<OptOutPushNotificationCategoryResponse> OptOutPushNotificationCategory()
+        {
+            var OptOutPushNotificationCategoryRequest = new Request
+            {
+                RequestType = RequestType.OptOutPushNotificationCategory,
+                RequestMessage = ((IMessage)new OptOutPushNotificationCategoryMessage
+                {
+                    //Categories
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(OptOutPushNotificationCategoryRequest, Client)).ConfigureAwait(false);
+
+            Tuple<OptOutPushNotificationCategoryResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, OptOutPushNotificationCategoryResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
