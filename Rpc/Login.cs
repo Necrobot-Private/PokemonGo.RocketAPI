@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using PokemonGo.RocketAPI.LoginProviders;
 using PokemonGo.RocketAPI.Authentication.Data;
+using POGOProtos.Enums;
 //using System.Windows.Forms;
 
 #endregion
@@ -169,7 +170,7 @@ namespace PokemonGo.RocketAPI.Rpc
             Client.KillswitchTask.Start();
 #pragma warning restore 4014
 
-            var player = await Client.Player.GetPlayer(false, true).ConfigureAwait(false); // Set false because initial GetPlayer does not use common requests.
+            GetPlayerResponse player = await Client.Player.GetPlayer(false, true).ConfigureAwait(false); // Set false because initial GetPlayer does not use common requests.
             if (player.Warn)
             {
                 APIConfiguration.Logger.LogFlaggedInit($"This account {Client.Player.PlayerData.Username} seems to be flagged, it is recommended to not use bot on this account for now!");
@@ -183,21 +184,34 @@ namespace PokemonGo.RocketAPI.Rpc
 
             if (player.Banned)
             {
-                 APIConfiguration.Logger.LogErrorInit("This account seems to be banned");
+                APIConfiguration.Logger.LogErrorInit("This account seems to be banned");
             }
+
             APIConfiguration.Logger.LogDebug("GetPlayer done.");
             await RandomHelper.RandomDelay(10000).ConfigureAwait(false);
+
             await Client.Download.GetRemoteConfigVersion().ConfigureAwait(false);
             APIConfiguration.Logger.LogDebug("GetRemoteConfigVersion done.");
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+
             await Client.Download.GetAssetDigest().ConfigureAwait(false);
             APIConfiguration.Logger.LogDebug("GetAssetDigest done.");
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+
             await Client.Download.GetItemTemplates().ConfigureAwait(false);
             APIConfiguration.Logger.LogDebug("GetItemTemplates done.");
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+
             await Client.Player.GetPlayerProfile().ConfigureAwait(false);
             APIConfiguration.Logger.LogDebug("GetPlayerProfile done.");
+            await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+
+            GetInboxResponse req = await Client.Misc.GetInbox(true, false, 0L).ConfigureAwait(false);
+            APIConfiguration.Logger.LogDebug($"GetInbox done. Notifications: {req.Inbox.Notifications.Count}");
+            await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+
+            UpdateNotificationResponse uptNot = await Client.Misc.UpdateNotification().ConfigureAwait(false);
+            APIConfiguration.Logger.LogDebug($"UpdateNotification done. Notifications state: {uptNot.State}");
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
 
             return player;

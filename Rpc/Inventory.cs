@@ -14,7 +14,6 @@ using POGOProtos.Inventory;
 using System.Linq;
 using POGOProtos.Data;
 using System.Collections.Concurrent;
-using Google.Protobuf.Collections;
 using POGOProtos.Enums;
 
 #endregion

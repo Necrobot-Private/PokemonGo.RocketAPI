@@ -15,8 +15,6 @@ using PokemonGo.RocketAPI.Exceptions;
 using PokemonGo.RocketAPI.Authentication.Data;
 using PokemonGo.RocketAPI.LoginProviders;
 using POGOProtos.Settings;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 #endregion
 
