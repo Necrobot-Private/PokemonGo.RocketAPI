@@ -50,12 +50,9 @@ namespace PokemonGo.RocketAPI.Helpers
             _sessionHash = ByteString.CopyFrom(hashBytes);
         }
         
-        public int GetNextRequestId()
+        public long GetNextRequestId()
         {
-            _requestCount += 1;
-            var r = _lehmerRng.Next();
-            var nextRequestId = (r << 32) | _requestCount;
-            return nextRequestId;
+            return new RequestIdGenerator().Next();
         }
 
         private float GetCourse()
