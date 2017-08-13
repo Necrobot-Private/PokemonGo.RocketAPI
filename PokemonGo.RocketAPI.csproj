@@ -228,6 +228,7 @@
     <Compile Include="Helpers\PokemonMeta.cs" />
     <Compile Include="Helpers\PokemonMetaRegistry.cs" />
     <Compile Include="Helpers\PokemonMoveMeta.cs" />
+    <Compile Include="Helpers\RequestIdGenerator.cs" />
     <Compile Include="Helpers\TimeUtil.cs" />
     <Compile Include="HttpClient\PokemonClient.cs" />
     <Compile Include="Enums\AuthType.cs" />
