@@ -28,6 +28,7 @@ namespace PokemonGo.RocketAPI.Helpers
         private readonly ISettings _settings;
         private ByteString _sessionHash;
         private float _course;
+        private readonly RequestIdGenerator idGenerator = new RequestIdGenerator();
 
         public RequestBuilder(Client client, ISettings settings)
         {
@@ -50,7 +51,7 @@ namespace PokemonGo.RocketAPI.Helpers
         
         public long GetNextRequestId()
         {
-            return new RequestIdGenerator().Next();
+            return idGenerator.Next();
         }
 
         private float GetCourse()
