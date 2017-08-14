@@ -68,7 +68,7 @@ namespace PokemonGo.RocketAPI
         //public POGOLib.Net.Session AuthSession { get; set; }
         public ILoginProvider LoginProvider { get; set; }
         public AccessToken AccessToken { get; set; }
- 
+
         public Client(ISettings settings)
         {
             if (settings.UsePogoDevHashServer)

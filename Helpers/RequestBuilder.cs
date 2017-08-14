@@ -27,8 +27,8 @@ namespace PokemonGo.RocketAPI.Helpers
         private readonly Client _client;
         private readonly ISettings _settings;
         private ByteString _sessionHash;
-        private int _requestCount;
         private float _course;
+        private readonly RequestIdGenerator idGenerator = new RequestIdGenerator();
 
         public RequestBuilder(Client client, ISettings settings)
         {
@@ -38,7 +38,6 @@ namespace PokemonGo.RocketAPI.Helpers
             if (_sessionHash == null)
                 GenerateNewHash();
             
-            _requestCount = 1;
             _course =  (float) TRandomDevice.NextDouble(0, 359.9);
         }
         
@@ -50,12 +49,9 @@ namespace PokemonGo.RocketAPI.Helpers
             _sessionHash = ByteString.CopyFrom(hashBytes);
         }
         
-        public int GetNextRequestId()
+        public long GetNextRequestId()
         {
-            _requestCount += 1;
-            var r = _lehmerRng.Next();
-            var nextRequestId = (r << 32) | _requestCount;
-            return nextRequestId;
+            return idGenerator.Next();
         }
 
         private float GetCourse()
