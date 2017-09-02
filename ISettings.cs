@@ -40,5 +40,7 @@ namespace PokemonGo.RocketAPI
         string AuthAPIKey { get; set; }
         bool DisplayVerboseLog { get; set; }
         bool AutoExitBotIfAccountFlagged { get; set; }
+        double AccountLatitude { get; set; }
+        double AccountLongitude { get; set; }
     }
 }
