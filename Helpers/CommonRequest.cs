@@ -58,16 +58,16 @@ namespace PokemonGo.RocketAPI.Helpers
             };
         }
 
-        public static Request GetDefaultGetInventoryMessage(Client client)
+        public static Request GetDefaultGetHoloInventoryMessage(Client client)
         {
-            var getInventoryMessage = new GetInventoryMessage
+            var getHoloInventoryMessage = new GetHoloInventoryMessage
             {
                 LastTimestampMs = client.InventoryLastUpdateTimestamp
             };
             return new Request
             {
                 RequestType = RequestType.GetInventory,
-                RequestMessage = getInventoryMessage.ToByteString()
+                RequestMessage = getHoloInventoryMessage.ToByteString()
             };
         }
 
@@ -119,7 +119,7 @@ namespace PokemonGo.RocketAPI.Helpers
                     RequestType = RequestType.GetHatchedEggs,
                     RequestMessage = new GetHatchedEggsMessage().ToByteString()
                 },
-                GetDefaultGetInventoryMessage(client),
+                GetDefaultGetHoloInventoryMessage(client),
                 new Request
                 {
                     RequestType = RequestType.CheckAwardedBadges,
@@ -135,22 +135,22 @@ namespace PokemonGo.RocketAPI.Helpers
             return commonRequestsList.Where(r => !excludes.Contains(r.RequestType)).ToList();
         }
 
-        public static void ProcessGetInventoryResponse(Client client, GetInventoryResponse getInventoryResponse)
+        public static void ProcessGetHoloInventoryResponse(Client client, GetHoloInventoryResponse getHoloInventoryResponse)
         {
-            if (getInventoryResponse == null)
+            if (getHoloInventoryResponse == null)
                 return;
 
-            if (getInventoryResponse.Success)
+            if (getHoloInventoryResponse.Success)
             {
-                if (getInventoryResponse.InventoryDelta == null)
+                if (getHoloInventoryResponse.InventoryDelta == null)
                     return;
 
-                if (getInventoryResponse.InventoryDelta.NewTimestampMs >= client.InventoryLastUpdateTimestamp)
+                if (getHoloInventoryResponse.InventoryDelta.NewTimestampMs >= client.InventoryLastUpdateTimestamp)
                 {
-                    client.InventoryLastUpdateTimestamp = getInventoryResponse.InventoryDelta.NewTimestampMs;
+                    client.InventoryLastUpdateTimestamp = getHoloInventoryResponse.InventoryDelta.NewTimestampMs;
                 }
 
-                client.Inventory.MergeWith(getInventoryResponse);
+                client.Inventory.MergeWith(getHoloInventoryResponse);
             }
         }
 
