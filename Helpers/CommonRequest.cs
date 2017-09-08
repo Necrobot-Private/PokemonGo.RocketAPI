@@ -66,7 +66,7 @@ namespace PokemonGo.RocketAPI.Helpers
             };
             return new Request
             {
-                RequestType = RequestType.GetInventory,
+                RequestType = RequestType.GetHoloInventory,
                 RequestMessage = getHoloInventoryMessage.ToByteString()
             };
         }
