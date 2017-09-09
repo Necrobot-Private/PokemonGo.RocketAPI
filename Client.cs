@@ -60,7 +60,6 @@ namespace PokemonGo.RocketAPI
         internal uint AppVersion { get; set; }
         internal string UnknownPlat8Field { get; set; }
         internal long Unknown25 { get; set; }
-        internal long Unknown27 { get; set; }
         public string ApiEndPoint { get; set; }
         public long StartTime { get; set; }
         public Version CurrentApiEmulationVersion { get; set; }
@@ -84,8 +83,7 @@ namespace PokemonGo.RocketAPI
 
                 // These 4 constants below need to change if we update the hashing server API version that is used.
                 Unknown25 = Constants.Unknown25;
-                Unknown27 = Constants.Unknown27;
-				
+ 				
                 // WARNING! IF YOU CHANGE THE APPVERSION BELOW ALSO UPDATE THE API_VERSION AT THE TOP OF THE FILE!
                 AppVersion = Constants.AppVersion; 
 		

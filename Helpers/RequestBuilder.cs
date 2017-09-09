@@ -29,6 +29,7 @@ namespace PokemonGo.RocketAPI.Helpers
         private ByteString _sessionHash;
         private float _course;
         private readonly RequestIdGenerator idGenerator = new RequestIdGenerator();
+        private readonly Uk27IdGenerator uk27Id = new Uk27IdGenerator();
 
         public RequestBuilder(Client client, ISettings settings)
         {
@@ -48,7 +49,12 @@ namespace PokemonGo.RocketAPI.Helpers
 
             _sessionHash = ByteString.CopyFrom(hashBytes);
         }
-        
+
+        public int GetNextUnknow27()
+        {
+            return uk27Id.Next();
+        }
+
         public long GetNextRequestId()
         {
             return idGenerator.Next();
@@ -91,6 +97,7 @@ namespace PokemonGo.RocketAPI.Helpers
             {
                 SessionHash = _sessionHash,
                 Unknown25 = _client.Unknown25,
+                Unknown27 = GetNextUnknow27(),
                 Timestamp = (ulong)Utils.GetTime(true),
                 TimestampSinceStart = (ulong)(Utils.GetTime(true) - _client.StartTime),
                 DeviceInfo = deviceInfo

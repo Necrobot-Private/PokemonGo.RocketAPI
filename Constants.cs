@@ -38,7 +38,6 @@ namespace PokemonGo.RocketAPI
         public const string API_VERSION = "0.73.1";
         public const uint AppVersion = 7301;
         public const long Unknown25 = unchecked((long)0xF2AA99D7C5AB3DED);
-        public const long Unknown27 = 5 * 1000; //TODO: Review this....
         public const string UnknownPlat8Field = "15c79df0558009a4242518d2ab65de2a59e09499";
 
         // Login PTC
