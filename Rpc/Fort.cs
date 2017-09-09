@@ -461,5 +461,39 @@ namespace PokemonGo.RocketAPI.Rpc
 
             return response.Item1;
         }
+
+        public async Task<GetRaidDetailsResponse> GetRaidDetails(string gymId, long raidSeed)
+        {
+            var setGetRaidDetailsRequest = new Request
+            {
+                RequestType = RequestType.GetRaidDetails,
+                RequestMessage = ((IMessage)new GetRaidDetailsMessage
+                {
+                    GymId = gymId,
+                    PlayerLatDegrees = Client.CurrentLatitude,
+                    PlayerLngDegrees = Client.CurrentLongitude,
+                    RaidSeed = raidSeed
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setGetRaidDetailsRequest, Client)).ConfigureAwait(false);
+
+            Tuple<GetRaidDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, GetRaidDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
     }
 }
