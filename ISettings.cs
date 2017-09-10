@@ -1,4 +1,4 @@
-﻿#region using directives
+#region using directives
 
 using PokemonGo.RocketAPI.Enums;
 
@@ -42,5 +42,6 @@ namespace PokemonGo.RocketAPI
         bool AutoExitBotIfAccountFlagged { get; set; }
         double AccountLatitude { get; set; }
         double AccountLongitude { get; set; }
+        bool AccountActive { get; set; }
     }
 }
