@@ -136,7 +136,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<GymBattleAttackResponse> GymBattleAttak(string fortId, string battleId, List<BattleAction> battleActions,
+        public async Task<GymBattleAttackResponse> GymBattleAttak(string fortId, string battleId, IEnumerable<BattleAction> battleActions,
             BattleAction lastRetrievedAction)
         {
             var message = new GymBattleAttackMessage
@@ -146,7 +146,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 LastRetrievedAction = lastRetrievedAction,
                 PlayerLatDegrees = Client.CurrentLatitude,
                 PlayerLngDegrees = Client.CurrentLongitude,
-                AttackActions = { battleActions }
+                AttackActions = { } // { battleActions }
             };
 
             message.AttackActions.AddRange(battleActions);
