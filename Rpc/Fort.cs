@@ -136,35 +136,33 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        //TODO: revise https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L36
-        public async Task<AttackGymResponse> AttackGym(string fortId, string battleId, List<BattleAction> battleActions,
+        public async Task<GymBattleAttackResponse> GymBattleAttak(string fortId, string battleId, List<BattleAction> battleActions,
             BattleAction lastRetrievedAction)
         {
-            var message = new AttackGymMessage
+            var message = new GymBattleAttackMessage
             {
                 BattleId = battleId,
                 GymId = fortId,
                 LastRetrievedAction = lastRetrievedAction,
-                PlayerLatitude = Client.CurrentLatitude,
-                PlayerLongitude = Client.CurrentLongitude,
-                
+                PlayerLatDegrees = Client.CurrentLatitude,
+                PlayerLngDegrees = Client.CurrentLongitude,
                 AttackActions = { } // {battleActions}    ,
             };
 
             message.AttackActions.AddRange(battleActions);
             
-            var attackGymRequest = new Request
+            var gymBattleAttackGymRequest = new Request
             {
-                RequestType = RequestType.AttackGym,
+                RequestType = RequestType.GymBattleAttack,
                 RequestMessage = message.ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(attackGymRequest, Client)).ConfigureAwait(false);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(gymBattleAttackGymRequest, Client)).ConfigureAwait(false);
 
-            Tuple<AttackGymResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<GymBattleAttackResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, AttackGymResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, GymBattleAttackResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
