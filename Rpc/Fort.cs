@@ -282,7 +282,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<GymStartSessionResponse> StartGymBattle(string gymId, ulong defendingPokemonId,
+        public async Task<GymStartSessionResponse> GymStartSession(string gymId, ulong defendingPokemonId,
             IEnumerable<ulong> attackingPokemonIds)
         {
             var startGymBattleRequest = new Request
