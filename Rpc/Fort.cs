@@ -146,7 +146,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 LastRetrievedAction = lastRetrievedAction,
                 PlayerLatDegrees = Client.CurrentLatitude,
                 PlayerLngDegrees = Client.CurrentLongitude,
-                AttackActions = { } // {battleActions}    ,
+                AttackActions = { battleActions }
             };
 
             message.AttackActions.AddRange(battleActions);
@@ -282,29 +282,28 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        //TODO: revise https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L35
-        public async Task<StartGymBattleResponse> StartGymBattle(string gymId, ulong defendingPokemonId,
+        public async Task<GymStartSessionResponse> StartGymBattle(string gymId, ulong defendingPokemonId,
             IEnumerable<ulong> attackingPokemonIds)
         {
             var startGymBattleRequest = new Request
             {
-                RequestType = RequestType.StartGymBattle,
-                RequestMessage = ((IMessage)new StartGymBattleMessage
+                RequestType = RequestType.GymStartSession,
+                RequestMessage = ((IMessage)new GymStartSessionMessage
                 {
                     GymId = gymId,
                     DefendingPokemonId = defendingPokemonId,
-                    AttackingPokemonIds = { attackingPokemonIds },
-                    PlayerLatitude = Client.CurrentLatitude,
-                    PlayerLongitude = Client.CurrentLongitude
+                    AttackingPokemonId = { attackingPokemonIds },
+                    PlayerLatDegrees = Client.CurrentLatitude,
+                    PlayerLngDegrees = Client.CurrentLongitude
                 }).ToByteString()
             };
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(startGymBattleRequest, Client)).ConfigureAwait(false);
 
-            Tuple<StartGymBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<GymStartSessionResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, StartGymBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, GymStartSessionResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
