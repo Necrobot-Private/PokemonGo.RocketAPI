@@ -13,6 +13,8 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+
 namespace PokemonGo.RocketAPI.Helpers
 {
     public class RequestIdGenerator
@@ -31,6 +33,18 @@ namespace PokemonGo.RocketAPI.Helpers
         {
             rpcIdHigh = MULTIPLIER * rpcIdHigh % MODULUS;
             return rpcId++ | (rpcIdHigh << 32);
+        }
+    }
+
+    public class Uk27IdGenerator
+    {
+        private static int min = 1000;
+        private static int max = 60000;
+        private static readonly Random _random = new Random();
+
+        public int Next()
+        {
+            return _random.Next(min, max);
         }
     }
 }

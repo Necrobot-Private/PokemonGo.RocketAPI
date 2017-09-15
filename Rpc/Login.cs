@@ -1,4 +1,4 @@
-﻿#region using directives
+#region using directives
 
 using System;
 using System.Threading.Tasks;
@@ -12,7 +12,6 @@ using System.Threading;
 using PokemonGo.RocketAPI.LoginProviders;
 using PokemonGo.RocketAPI.Authentication.Data;
 using POGOProtos.Enums;
-//using System.Windows.Forms;
 
 #endregion
 

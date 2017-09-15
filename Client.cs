@@ -77,28 +77,13 @@ namespace PokemonGo.RocketAPI
 
                 Cryptor = new Cipher();
 
-                // This value will determine which version of the hashing service you will receive.
-                // Currently supported versions:
-                // v119   -> Pogo iOS 1.19
-                // v121   -> Pogo iOS 1.21
-                // v121_2 -> Pogo iOS 1.22
-                // v125   -> Pogo iOS 1.25
-                // v127_2 -> Pogo iOS 1.27.2
-                // v127_3 -> Pogo iOS 1.27.3
-                // v127_4 -> Pogo iOS 1.27.4
-                // v129_1 -> Pogo iOS 1.29.1
-                // v131_0 -> Pogo iOS 1.31.0
-                // v133_1 -> Pogo iOS 1.33.1
-                // v133_1 -> Pogo iOS 1.33.4
-                // v137_1 -> Pogo iOS 1.37.1
-
                 ApiEndPoint = Constants.ApiEndPoint;
 		
                 Hasher = new PokefarmerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog, ApiEndPoint);
 
                 // These 4 constants below need to change if we update the hashing server API version that is used.
                 Unknown25 = Constants.Unknown25;
-				
+ 				
                 // WARNING! IF YOU CHANGE THE APPVERSION BELOW ALSO UPDATE THE API_VERSION AT THE TOP OF THE FILE!
                 AppVersion = Constants.AppVersion; 
 		
