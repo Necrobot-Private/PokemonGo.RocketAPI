@@ -79,7 +79,7 @@ namespace PokemonGo.RocketAPI
 
                 ApiEndPoint = Constants.ApiEndPoint;
 		
-                Hasher = new PokefarmerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog, ApiEndPoint);
+                Hasher = new PokefarmerHasher(settings, settings.AuthAPIKey, settings.DisplayVerboseLog, ApiEndPoint);
 
                 // These 4 constants below need to change if we update the hashing server API version that is used.
                 Unknown25 = Constants.Unknown25;

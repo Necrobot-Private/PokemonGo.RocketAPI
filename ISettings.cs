@@ -36,6 +36,8 @@ namespace PokemonGo.RocketAPI
         string UseProxyUsername { get; set; }
         string UseProxyPassword { get; set; }
         bool UsePogoDevHashServer { get; set; }
+        string UrlHashServices { get; set; }
+        string EndPoint { get; set; }
         bool UseLegacyAPI { get; set; }
         string AuthAPIKey { get; set; }
         bool DisplayVerboseLog { get; set; }
