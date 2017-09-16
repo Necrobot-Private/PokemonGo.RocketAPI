@@ -41,7 +41,8 @@ namespace PokemonGo.RocketAPI.Hash
             {
                 PokeHashURL = settings.UrlHashServices;
                 PokeHashURL2 = settings.UrlHashServices;
-                apiEndPoint = settings.EndPoint;
+                if (!string.IsNullOrEmpty(settings.EndPoint))
+                    apiEndPoint = settings.EndPoint;
             }
         }
 
