@@ -16,7 +16,7 @@ namespace PokemonGo.RocketAPI.Hash
 {
     public class PokefarmerHasher : IHasher
     {
-        public static string PokeHashURL =  "https://pokehash.buddyauth.com/";
+        public static string PokeHashURL = "https://pokehash.buddyauth.com/";
         public static string PokeHashURL2 = "http://pokehash.buddyauth.com/";
         
         public class Stat
