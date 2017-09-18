@@ -71,7 +71,7 @@ namespace PokemonGo.RocketAPI
 
         public Client(ISettings settings)
         {
-            if (settings.UsePogoDevHashServer)
+            if (settings.UsePogoDevHashServer || settings.UseCustomAPI)
             {
                 if (string.IsNullOrEmpty(settings.AuthAPIKey)) throw new AuthConfigException("You have selected Pogodev API but not provide proper API Key");
 
@@ -79,7 +79,7 @@ namespace PokemonGo.RocketAPI
 
                 ApiEndPoint = Constants.ApiEndPoint;
 		
-                Hasher = new PokefarmerHasher(settings.AuthAPIKey, settings.DisplayVerboseLog, ApiEndPoint);
+                Hasher = new PokefarmerHasher(settings, settings.AuthAPIKey, settings.DisplayVerboseLog, ApiEndPoint);
 
                 // These 4 constants below need to change if we update the hashing server API version that is used.
                 Unknown25 = Constants.Unknown25;

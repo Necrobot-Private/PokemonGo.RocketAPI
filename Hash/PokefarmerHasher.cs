@@ -32,12 +32,20 @@ namespace PokemonGo.RocketAPI.Hash
 
         private HashInfo fullStats = new HashInfo();
 
-        public PokefarmerHasher(string apiKey, bool log, string apiEndPoint)
+        public PokefarmerHasher(ISettings settings, string apiKey, bool log, string apiEndPoint)
         {
             VerboseLog = log;
             this.apiKey = apiKey;
             this.apiEndPoint = apiEndPoint;
+            if (settings.UseCustomAPI)
+            {
+                PokeHashURL = settings.UrlHashServices;
+                PokeHashURL2 = settings.UrlHashServices;
+                if (!string.IsNullOrEmpty(settings.EndPoint))
+                    this.apiEndPoint = settings.EndPoint;
+            }
         }
+
         public async Task<HashResponseContent> RequestHashesAsync(HashRequestContent request)
         {
             int retry = 3;
