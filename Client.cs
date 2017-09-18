@@ -71,7 +71,7 @@ namespace PokemonGo.RocketAPI
 
         public Client(ISettings settings)
         {
-            if (settings.UsePogoDevHashServer)
+            if (settings.UsePogoDevHashServer || settings.UseCustomAPI)
             {
                 if (string.IsNullOrEmpty(settings.AuthAPIKey)) throw new AuthConfigException("You have selected Pogodev API but not provide proper API Key");
 

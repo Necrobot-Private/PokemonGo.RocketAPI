@@ -37,7 +37,7 @@ namespace PokemonGo.RocketAPI.Hash
             VerboseLog = log;
             this.apiKey = apiKey;
             this.apiEndPoint = apiEndPoint;
-            if (!string.IsNullOrEmpty(settings.UrlHashServices))
+            if (settings.UseCustomAPI)
             {
                 PokeHashURL = settings.UrlHashServices;
                 PokeHashURL2 = settings.UrlHashServices;
