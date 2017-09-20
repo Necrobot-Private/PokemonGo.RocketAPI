@@ -150,7 +150,7 @@ namespace PokemonGo.RocketAPI.Rpc
             };
 
             message.AttackActions.AddRange(battleActions);
-            
+
             var gymBattleAttackGymRequest = new Request
             {
                 RequestType = RequestType.GymBattleAttack,
@@ -479,6 +479,205 @@ namespace PokemonGo.RocketAPI.Rpc
                 await
                     PostProtoPayload
                         <Request, GetRaidDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<StartRaidBattleResponse> StartRaidBattle(string gymId, long raidSeed)
+        {
+            var StartRaidBattleRequest = new Request
+            {
+                RequestType = RequestType.StartRaidBattle,
+                RequestMessage = ((IMessage)new StartRaidBattleMessage
+                {
+                    GymId = gymId,
+                    PlayerLatDegrees = Client.CurrentLatitude,
+                    PlayerLngDegrees = Client.CurrentLongitude,
+                    RaidSeed = raidSeed
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(StartRaidBattleRequest, Client)).ConfigureAwait(false);
+
+            Tuple<StartRaidBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, StartRaidBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<AttackRaidBattleResponse> AttackRaidBattle(string gymId, long raidSeed)
+        {
+            var AttackRaidBattleRequest = new Request
+            {
+                RequestType = RequestType.AttackRaid,
+                RequestMessage = ((IMessage)new AttackRaidBattleMessage
+                {
+                    GymId = gymId,
+                    PlayerLatDegrees = Client.CurrentLatitude,
+                    PlayerLngDegrees = Client.CurrentLongitude,
+                    RaidSeed = raidSeed
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(AttackRaidBattleRequest, Client)).ConfigureAwait(false);
+
+            Tuple<AttackRaidBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, AttackRaidBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<JoinLobbyResponse> JoinLobby(string gymId, long raidSeed, bool _private)
+        {
+            var AttackRaidBattleRequest = new Request
+            {
+                RequestType = RequestType.JoinLobby,
+                RequestMessage = ((IMessage)new JoinLobbyMessage
+                {
+                    GymId = gymId,
+                    PlayerLatDegrees = Client.CurrentLatitude,
+                    PlayerLngDegrees = Client.CurrentLongitude,
+                    Private = _private,
+                    RaidSeed = raidSeed
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(AttackRaidBattleRequest, Client)).ConfigureAwait(false);
+
+            Tuple<JoinLobbyResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, JoinLobbyResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<LeaveLobbyResponse> LeaveLobby(string gymId, long raidSeed)
+        {
+            var LeaveLobbyRequest = new Request
+            {
+                RequestType = RequestType.LeaveLobby,
+                RequestMessage = ((IMessage)new LeaveLobbyMessage
+                {
+                    GymId = gymId,
+                    RaidSeed = raidSeed
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(LeaveLobbyRequest, Client)).ConfigureAwait(false);
+
+            Tuple<LeaveLobbyResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, LeaveLobbyResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<SetLobbyPokemonResponse> SetLobbyPokemon(string gymId, long raidSeed)
+        {
+            var SetLobbyPokemonRequest = new Request
+            {
+                RequestType = RequestType.SetLobbyPokemon,
+                RequestMessage = ((IMessage)new SetLobbyPokemonMessage
+                {
+                    GymId = gymId,
+                    RaidSeed = raidSeed
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(SetLobbyPokemonRequest, Client)).ConfigureAwait(false);
+
+            Tuple<SetLobbyPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, SetLobbyPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<SetLobbyVisibilityResponse> SetLobbyVisibility(string gymId, long raidSeed)
+        {
+            var SetLobbyVisibilityRequest = new Request
+            {
+                RequestType = RequestType.SetLobbyVisibility,
+                RequestMessage = ((IMessage)new SetLobbyVisibilityMessage
+                {
+                    GymId = gymId,
+                    RaidSeed = raidSeed
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(SetLobbyVisibilityRequest, Client)).ConfigureAwait(false);
+
+            Tuple<SetLobbyVisibilityResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, SetLobbyVisibilityResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
