@@ -176,6 +176,161 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
+        public async Task<SfidaActionLogResponse> SfidaAction()
+        {
+            var SfidaActionRequest = new Request
+            {
+                RequestType = RequestType.SfidaAction,
+                RequestMessage = ((IMessage)new SfidaActionLogMessage
+                {
+                    //
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(SfidaActionRequest, Client)).ConfigureAwait(false);
+
+            Tuple<SfidaActionLogResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, SfidaActionLogResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<SfidaActionLogResponse> SfidaCapture()
+        {
+            var SfidaCaptureRequest = new Request
+            {
+                RequestType = RequestType.SfidaCapture,
+                RequestMessage = ((IMessage)new SfidaActionLogMessage
+                {
+                    //
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(SfidaCaptureRequest, Client)).ConfigureAwait(false);
+
+            Tuple<SfidaActionLogResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, SfidaActionLogResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<SfidaActionLogResponse> SfidaCertification()
+        {
+            var SfidaCertificationRequest = new Request
+            {
+                RequestType = RequestType.SfidaCertification,
+                RequestMessage = ((IMessage)new SfidaActionLogMessage
+                {
+                    //
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(SfidaCertificationRequest, Client)).ConfigureAwait(false);
+
+            Tuple<SfidaActionLogResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, SfidaActionLogResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<SfidaActionLogResponse> SfidaDowser()
+        {
+            var SfidaDowserRequest = new Request
+            {
+                RequestType = RequestType.SfidaDowser,
+                RequestMessage = ((IMessage)new SfidaActionLogMessage
+                {
+                    //
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(SfidaDowserRequest, Client)).ConfigureAwait(false);
+
+            Tuple<SfidaActionLogResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, SfidaActionLogResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<SfidaActionLogResponse> SfidaUpdate()
+        {
+            var SfidaUpdateRequest = new Request
+            {
+                RequestType = RequestType.SfidaUpdate,
+                RequestMessage = ((IMessage)new SfidaActionLogMessage
+                {
+                    //
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(SfidaUpdateRequest, Client)).ConfigureAwait(false);
+
+            Tuple<SfidaActionLogResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, SfidaActionLogResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
         public async Task<GetInboxResponse> GetInbox(bool isHistory, bool isReverse, long notBeforeMs)
         {
             var GetInboxRequest = new Request
@@ -253,6 +408,38 @@ namespace PokemonGo.RocketAPI.Rpc
             };
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(RegisterPushNotificationRequest, Client)).ConfigureAwait(false);
+
+            Tuple<RegisterPushNotificationResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, RegisterPushNotificationResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<RegisterPushNotificationResponse> UnregisterPushNotification(ApnToken apnToken, GcmToken gcmToken)
+        {
+            var UnregisterPushNotificationRequest = new Request
+            {
+                RequestType = RequestType.UnregisterPushNotification,
+                RequestMessage = ((IMessage)new RegisterPushNotificationMessage
+                {
+                    ApnToken = apnToken,
+                    GcmToken = gcmToken,
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(UnregisterPushNotificationRequest, Client)).ConfigureAwait(false);
 
             Tuple<RegisterPushNotificationResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await

@@ -137,7 +137,7 @@ namespace PokemonGo.RocketAPI.Rpc
         }
 
         public async Task<GymBattleAttackResponse> GymBattleAttak(string fortId, string battleId, IEnumerable<BattleAction> battleActions,
-            BattleAction lastRetrievedAction)
+            BattleAction lastRetrievedAction, long timestampMs)
         {
             var message = new GymBattleAttackMessage
             {
@@ -146,6 +146,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 LastRetrievedAction = lastRetrievedAction,
                 PlayerLatDegrees = Client.CurrentLatitude,
                 PlayerLngDegrees = Client.CurrentLongitude,
+                TimestampMs = timestampMs,
                 AttackActions = { } // { battleActions }
             };
 
@@ -321,7 +322,7 @@ namespace PokemonGo.RocketAPI.Rpc
         //https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L64
         public async Task<GymFeedPokemonResponse> GymFeedPokemon(string gymId, ItemId item, ulong pokemonId, int startingQuantity = 1)
         {
-            var setFavoritePokemonRequest = new Request
+            var GymFeedPokemonRequest = new Request
             {
                 RequestType = RequestType.GymFeedPokemon,
                 RequestMessage = ((IMessage)new GymFeedPokemonMessage
@@ -335,7 +336,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setFavoritePokemonRequest, Client)).ConfigureAwait(false);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(GymFeedPokemonRequest, Client)).ConfigureAwait(false);
 
             Tuple<GymFeedPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
@@ -393,7 +394,7 @@ namespace PokemonGo.RocketAPI.Rpc
         //https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L87
         public async Task<GetGymBadgeDetailsResponse> GetGymBadgeDetails(string fortId, double latitude, double longitude)
         {
-            var setFavoritePokemonRequest = new Request
+            var GetGymBadgeDetailsRequest = new Request
             {
                 RequestType = RequestType.GetGymBadgeDetails,
                 RequestMessage = ((IMessage)new GetGymBadgeDetailsMessage
@@ -404,7 +405,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setFavoritePokemonRequest, Client)).ConfigureAwait(false);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(GetGymBadgeDetailsRequest, Client)).ConfigureAwait(false);
 
             Tuple<GetGymBadgeDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
@@ -427,7 +428,7 @@ namespace PokemonGo.RocketAPI.Rpc
         //https://github.com/AeonLucid/POGOProtos/blob/master/src/POGOProtos/Networking/Requests/RequestType.proto#L55
         public async Task<GymDeployResponse> GymDeploy(string fortId, ulong pokemonId)
         {
-            var setFavoritePokemonRequest = new Request
+            var GymDeploynRequest = new Request
             {
                 RequestType = RequestType.GymDeploy,
                 RequestMessage = ((IMessage)new GymDeployMessage
@@ -439,7 +440,7 @@ namespace PokemonGo.RocketAPI.Rpc
                 }).ToByteString()
             };
 
-            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setFavoritePokemonRequest, Client)).ConfigureAwait(false);
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(GymDeploynRequest, Client)).ConfigureAwait(false);
 
             Tuple<GymDeployResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await

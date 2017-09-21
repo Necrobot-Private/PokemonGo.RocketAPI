@@ -28,7 +28,7 @@ namespace PokemonGo.RocketAPI.Helpers
         private readonly ISettings _settings;
         private ByteString _sessionHash;
         private float _course;
-        private readonly RequestIdGenerator idGenerator = new RequestIdGenerator();
+        private readonly RandomIdGenerator idGenerator = new RandomIdGenerator();
         private readonly Uk27IdGenerator uk27Id = new Uk27IdGenerator();
 
         public RequestBuilder(Client client, ISettings settings)
@@ -55,7 +55,7 @@ namespace PokemonGo.RocketAPI.Helpers
             return uk27Id.Next();
         }
 
-        public long GetNextRequestId()
+        public ulong GetNextRequestId()
         {
             return idGenerator.Next();
         }
@@ -291,7 +291,7 @@ namespace PokemonGo.RocketAPI.Helpers
             var e = new RequestEnvelope
             {
                 StatusCode = 2, //1
-                RequestId = (ulong)GetNextRequestId(), //3
+                RequestId = GetNextRequestId(), //3
                 Latitude = currentLocation.Latitude, //7
                 Longitude = currentLocation.Longitude, //8
                 Accuracy = TRandomDevice.Choice(new List<int>(new int[] { 5, 5, 5, 5, 10, 10, 10, 30, 30, 50, 65, TRandomDevice.Next(66, 80) })), //9
@@ -348,6 +348,5 @@ namespace PokemonGo.RocketAPI.Helpers
                 RequestMessage = message.ToByteString()
             } }).ConfigureAwait(false);
         }
-
     }
 }
