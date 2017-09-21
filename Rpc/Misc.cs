@@ -145,6 +145,37 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
+        public async Task<SfidaActionLogResponse> SfidaActionLog()
+        {
+            var SfidaActionLogRequest = new Request
+            {
+                RequestType = RequestType.SfidaActionLog,
+                RequestMessage = ((IMessage)new SfidaActionLogMessage
+                {
+                    //
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(SfidaActionLogRequest, Client)).ConfigureAwait(false);
+
+            Tuple<SfidaActionLogResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, SfidaActionLogResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
         public async Task<GetInboxResponse> GetInbox(bool isHistory, bool isReverse, long notBeforeMs)
         {
             var GetInboxRequest = new Request
