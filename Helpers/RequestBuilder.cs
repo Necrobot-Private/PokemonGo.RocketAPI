@@ -50,16 +50,6 @@ namespace PokemonGo.RocketAPI.Helpers
             _sessionHash = ByteString.CopyFrom(hashBytes);
         }
 
-        public int GetNextUnknow27()
-        {
-            return uk27Id.Next();
-        }
-
-        public ulong GetNextRequestId()
-        {
-            return idGenerator.Next();
-        }
-
         private float GetCourse()
         {
             _course = (float)TRandomDevice.Triangular(0, 359.9, _course);
@@ -97,7 +87,7 @@ namespace PokemonGo.RocketAPI.Helpers
             {
                 SessionHash = _sessionHash,
                 Unknown25 = _client.Unknown25,
-                Unknown27 = GetNextUnknow27(),
+                Unknown27 = uk27Id.Next(),
                 Timestamp = (ulong)Utils.GetTime(true),
                 TimestampSinceStart = (ulong)(Utils.GetTime(true) - _client.StartTime),
                 DeviceInfo = deviceInfo
@@ -291,7 +281,7 @@ namespace PokemonGo.RocketAPI.Helpers
             var e = new RequestEnvelope
             {
                 StatusCode = 2, //1
-                RequestId = GetNextRequestId(), //3
+                RequestId = idGenerator.Next(), //3
                 Latitude = currentLocation.Latitude, //7
                 Longitude = currentLocation.Longitude, //8
                 Accuracy = TRandomDevice.Choice(new List<int>(new int[] { 5, 5, 5, 5, 10, 10, 10, 30, 30, 50, 65, TRandomDevice.Next(66, 80) })), //9
