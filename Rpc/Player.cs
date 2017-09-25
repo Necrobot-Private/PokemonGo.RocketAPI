@@ -15,6 +15,25 @@ using POGOProtos.Data;
 
 namespace PokemonGo.RocketAPI.Rpc
 {
+    /// <summary>
+    /// Description of LocaleInfo.
+    /// </summary>
+    public static class LocaleInfo
+    {
+        public static string Country = "US";
+        public static string Language = "en";
+        public static string TimeZone = "America/Los Angeles";
+        public static string POSIX = "en-us";
+
+        public static void SetValues(string country, string language, string timezone, string posix)
+        {
+            Country = country;
+            Language = language;
+            TimeZone = timezone;
+            POSIX = posix;
+        }
+    }
+
     public class Player : BaseRpc
     {
         public Player(Client client) : base(client)
@@ -105,10 +124,20 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<GetPlayerResponse> GetPlayer(bool addCommonRequests = true, bool addChallengeRequests = false)
         {
+            var locale = new GetPlayerMessage.Types.PlayerLocale
+            {
+                Country =  LocaleInfo.Country,
+                Language = LocaleInfo.Language,
+                Timezone = LocaleInfo.TimeZone
+            };
+
             var getPlayerRequest = new Request
             {
                 RequestType = RequestType.GetPlayer,
-                RequestMessage = new GetPlayerMessage().ToByteString()
+                RequestMessage = new GetPlayerMessage()
+                {
+                    PlayerLocale = locale
+                }.ToByteString()
             };
             
             if (addCommonRequests)

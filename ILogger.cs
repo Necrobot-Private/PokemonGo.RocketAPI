@@ -12,10 +12,16 @@ namespace PokemonGo.RocketAPI
         void LogError(string message);
         void LogFlaggedInit(string message);
         void LogErrorInit(string message);
+        void InboxStatusUpdate(string message, ConsoleColor color = ConsoleColor.White);
     }
 
     public class DefaultConsoleLogger : ILogger
     {
+        public void InboxStatusUpdate(string message, ConsoleColor color = ConsoleColor.White)
+        {
+            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] (INBOX)  {message}", color);
+        }
+
         public void HashStatusUpdate(HashInfo info)
         {
             Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] (HASH SERVER)  [{info.MaskedAPIKey}] in last 1 minute  {info.Last60MinAPICalles} request/min , AVG: {info.Last60MinAPIAvgTime:0.00} ms/request , Fastest : {info.Fastest}, Slowest: {info.Slowest}");
