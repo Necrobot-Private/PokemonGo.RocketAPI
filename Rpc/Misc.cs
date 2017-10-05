@@ -364,13 +364,15 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<UpdateNotificationResponse> UpdateNotification()
+        public async Task<UpdateNotificationResponse> UpdateNotification(RepeatedField<string> Notification_Ids, RepeatedField<Int64> TimeStampsMS)
         {
             var UpdateNotificationRequest = new Request
             {
                 RequestType = RequestType.UpdateNotificationStatus,
                 RequestMessage = ((IMessage)new UpdateNotificationMessage
                 {
+                    NotificationIds = { Notification_Ids },
+                    CreateTimestampMs = { TimeStampsMS },
                     State = NotificationState.Viewed
                 }).ToByteString()
             };
@@ -459,14 +461,14 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<OptOutPushNotificationCategoryResponse> OptOutPushNotificationCategory()
+        public async Task<OptOutPushNotificationCategoryResponse> OptOutPushNotificationCategory(RepeatedField<string> categories)
         {
             var OptOutPushNotificationCategoryRequest = new Request
             {
                 RequestType = RequestType.OptOutPushNotificationCategory,
                 RequestMessage = ((IMessage)new OptOutPushNotificationCategoryMessage
                 {
-                    //Categories
+                    Categories = { categories}
                 }).ToByteString()
             };
 
