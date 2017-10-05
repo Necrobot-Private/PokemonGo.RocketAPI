@@ -2,6 +2,7 @@
 
 using Google.Protobuf;
 using Google.Protobuf.Collections;
+using POGOProtos.Enums;
 using POGOProtos.Networking.Envelopes;
 using POGOProtos.Networking.Platform.Responses;
 using POGOProtos.Networking.Requests;
@@ -44,8 +45,9 @@ namespace PokemonGo.RocketAPI.Helpers
                             categorieIDs.Add(notification.Category);
                         }
 
+                        NotificationState notificationState = NotificationState.Viewed;
                         await client.Misc.OptOutPushNotificationCategory(categorieIDs).ConfigureAwait(false);
-                        UpdateNotificationResponse updateNotificationResponse = await client.Misc.UpdateNotification(notificationIDs, createTimestampMsIDs).ConfigureAwait(false);
+                        UpdateNotificationResponse updateNotificationResponse = await client.Misc.UpdateNotification(notificationIDs, createTimestampMsIDs, notificationState).ConfigureAwait(false);
                         APIConfiguration.Logger.InboxStatusUpdate($"Notifications {updateNotificationResponse.State}.", ConsoleColor.Magenta);
                     }
                     break;
