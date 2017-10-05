@@ -206,11 +206,7 @@ namespace PokemonGo.RocketAPI.Rpc
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
 
             GetInboxResponse req = await Client.Misc.GetInbox(true, false, 0L).ConfigureAwait(false);
-            APIConfiguration.Logger.LogDebug($"GetInbox done. Notifications: {req.Inbox.Notifications.Count}");
-            await RandomHelper.RandomDelay(300).ConfigureAwait(false);
-
-            UpdateNotificationResponse uptNot = await Client.Misc.UpdateNotification().ConfigureAwait(false);
-            APIConfiguration.Logger.LogDebug($"UpdateNotification done. Notifications state: {uptNot.State}");
+            CommonRequest.ProcessGetInboxResponse(Client, req);
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
 
             return player;
