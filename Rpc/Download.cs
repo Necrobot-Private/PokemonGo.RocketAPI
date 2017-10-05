@@ -129,5 +129,42 @@ namespace PokemonGo.RocketAPI.Rpc
 
             return response.Item1;
         }
+
+        public async Task<DownloadGmTemplatesResponse> DownloadGmTemplates(long basisBatchId, long batchId, int pageOffset)
+        {
+            var DownloadGmTemplatesRequest = new Request
+            {
+                RequestType = RequestType.DownloadGameMasterTemplates,
+                RequestMessage = new DownloadGmTemplatesMessage
+                {
+                    BasisBatchId = basisBatchId,
+                    BatchId = batchId,
+                    PageOffset = pageOffset
+                }.ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(DownloadGmTemplatesRequest, Client)).ConfigureAwait(false);
+
+            Tuple<DownloadGmTemplatesResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, DownloadGmTemplatesResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            /*
+             * maybe not needed
+             * 
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+            */
+
+            return response.Item1;
+        }
     }
 }
