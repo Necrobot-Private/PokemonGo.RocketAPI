@@ -32,7 +32,7 @@ namespace PokemonGo.RocketAPI.Rpc
                     // To be implemented
                     //PageTimestamp = 0,
                     //Paginate = true,
-                    PageOffset = Client.PageOffset
+                    //PageOffset = Client.PageOffset
                 }).ToByteString()
             };
 

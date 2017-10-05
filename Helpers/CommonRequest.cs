@@ -46,7 +46,7 @@ namespace PokemonGo.RocketAPI.Helpers
                         }
 
                         NotificationState notificationState = NotificationState.Viewed;
-                        await client.Misc.OptOutPushNotificationCategory(categorieIDs).ConfigureAwait(false);
+                        //await client.Misc.OptOutPushNotificationCategory(categorieIDs).ConfigureAwait(false);
                         UpdateNotificationResponse updateNotificationResponse = await client.Misc.UpdateNotification(notificationIDs, createTimestampMsIDs, notificationState).ConfigureAwait(false);
                         APIConfiguration.Logger.InboxStatusUpdate($"Notifications {updateNotificationResponse.State}.", ConsoleColor.Magenta);
                     }
