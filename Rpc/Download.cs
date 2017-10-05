@@ -24,11 +24,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<DownloadItemTemplatesResponse> GetItemTemplates()
         {
-            IMessage downloadItemTemplatesMessage = new DownloadItemTemplatesMessage();
             var downloadItemTemplatesRequest = new Request
             {
                 RequestType = RequestType.DownloadItemTemplates,
-                RequestMessage = downloadItemTemplatesMessage.ToByteString()
+                RequestMessage = ((IMessage)new DownloadItemTemplatesMessage()
+                {
+                    // To be implemented
+                    //PageTimestamp = 0,
+                    //Paginate = true,
+                    PageOffset = Client.PageOffset
+                }).ToByteString()
             };
 
             var requestEnvelope = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(downloadItemTemplatesRequest, Client)).ConfigureAwait(false);
@@ -135,12 +140,12 @@ namespace PokemonGo.RocketAPI.Rpc
             var DownloadGmTemplatesRequest = new Request
             {
                 RequestType = RequestType.DownloadGameMasterTemplates,
-                RequestMessage = new DownloadGmTemplatesMessage
+                RequestMessage = ((IMessage)new DownloadGmTemplatesMessage
                 {
                     BasisBatchId = basisBatchId,
                     BatchId = batchId,
                     PageOffset = pageOffset
-                }.ToByteString()
+                }).ToByteString()
             };
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(DownloadGmTemplatesRequest, Client)).ConfigureAwait(false);
