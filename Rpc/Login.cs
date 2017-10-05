@@ -193,7 +193,8 @@ namespace PokemonGo.RocketAPI.Rpc
             APIConfiguration.Logger.LogDebug("GetRemoteConfigVersion done.");
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
 
-            await Client.Download.GetAssetDigest().ConfigureAwait(false);
+            var pageOffset = await Client.Download.GetAssetDigest().ConfigureAwait(false);
+            Client.PageOffset = pageOffset.PageOffset;
             APIConfiguration.Logger.LogDebug("GetAssetDigest done.");
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
 
