@@ -364,14 +364,16 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<UpdateNotificationResponse> UpdateNotification()
+        public async Task<UpdateNotificationResponse> UpdateNotification(RepeatedField<string> Notification_Ids, RepeatedField<Int64> TimeStampsMS, NotificationState state)
         {
             var UpdateNotificationRequest = new Request
             {
                 RequestType = RequestType.UpdateNotificationStatus,
                 RequestMessage = ((IMessage)new UpdateNotificationMessage
                 {
-                    State = NotificationState.Viewed
+                    NotificationIds = { Notification_Ids },
+                    CreateTimestampMs = { TimeStampsMS },
+                    State = state
                 }).ToByteString()
             };
 
@@ -459,14 +461,14 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<OptOutPushNotificationCategoryResponse> OptOutPushNotificationCategory()
+        public async Task<OptOutPushNotificationCategoryResponse> OptOutPushNotificationCategory(RepeatedField<string> categories)
         {
             var OptOutPushNotificationCategoryRequest = new Request
             {
                 RequestType = RequestType.OptOutPushNotificationCategory,
                 RequestMessage = ((IMessage)new OptOutPushNotificationCategoryMessage
                 {
-                    //Categories
+                    Categories = { categories}
                 }).ToByteString()
             };
 
@@ -478,6 +480,9 @@ namespace PokemonGo.RocketAPI.Rpc
                         <Request, OptOutPushNotificationCategoryResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
+            /*
+             * not needed
+             * 
             CheckChallengeResponse checkChallengeResponse = response.Item2;
             CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
 
@@ -486,6 +491,7 @@ namespace PokemonGo.RocketAPI.Rpc
 
             DownloadSettingsResponse downloadSettingsResponse = response.Item6;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+            */
 
             return response.Item1;
         }

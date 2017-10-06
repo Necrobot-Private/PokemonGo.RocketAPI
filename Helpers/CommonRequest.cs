@@ -1,6 +1,8 @@
 ﻿#region using directives
 
 using Google.Protobuf;
+using Google.Protobuf.Collections;
+using POGOProtos.Enums;
 using POGOProtos.Networking.Envelopes;
 using POGOProtos.Networking.Platform.Responses;
 using POGOProtos.Networking.Requests;
@@ -17,6 +19,41 @@ namespace PokemonGo.RocketAPI.Helpers
 {
     public class CommonRequest
     {
+        public async static void ProcessGetInboxResponse(Client client, GetInboxResponse getInboxResponse)
+        {
+            var notifcation_count = getInboxResponse.Inbox.Notifications.Count();
+
+            switch (getInboxResponse.Result)
+            {
+                case GetInboxResponse.Types.Result.Unset:
+                    break;
+                case GetInboxResponse.Types.Result.Failure:
+                    APIConfiguration.Logger.InboxStatusUpdate($"There was an error, viewing your notifications!", ConsoleColor.Red);
+                    break;
+                case GetInboxResponse.Types.Result.Success:
+                    if (getInboxResponse.Inbox.Notifications.Count > 0)
+                    {
+                        APIConfiguration.Logger.InboxStatusUpdate($"We got {notifcation_count} new notification(s).", ConsoleColor.Magenta);
+                        RepeatedField<string> notificationIDs = new RepeatedField<string>();
+                        RepeatedField<string> categorieIDs = new RepeatedField<string>();
+                        RepeatedField<Int64> createTimestampMsIDs = new RepeatedField<Int64>();
+
+                        foreach (var notification in getInboxResponse.Inbox.Notifications)
+                        {
+                            notificationIDs.Add(notification.NotificationId);
+                            createTimestampMsIDs.Add(notification.CreateTimestampMs);
+                            categorieIDs.Add(notification.Category);
+                        }
+
+                        NotificationState notificationState = NotificationState.Viewed;
+                        //await client.Misc.OptOutPushNotificationCategory(categorieIDs).ConfigureAwait(false);
+                        UpdateNotificationResponse updateNotificationResponse = await client.Misc.UpdateNotification(notificationIDs, createTimestampMsIDs, notificationState).ConfigureAwait(false);
+                        APIConfiguration.Logger.InboxStatusUpdate($"Notifications {updateNotificationResponse.State}.", ConsoleColor.Magenta);
+                    }
+                    break;
+            }
+        }
+
         public static Request GetDownloadRemoteConfigVersionMessageRequest(Client client)
         {
             var downloadRemoteConfigVersionMessage = new DownloadRemoteConfigVersionMessage

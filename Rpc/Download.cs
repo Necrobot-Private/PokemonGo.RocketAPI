@@ -24,11 +24,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
         public async Task<DownloadItemTemplatesResponse> GetItemTemplates()
         {
-            IMessage downloadItemTemplatesMessage = new DownloadItemTemplatesMessage();
             var downloadItemTemplatesRequest = new Request
             {
                 RequestType = RequestType.DownloadItemTemplates,
-                RequestMessage = downloadItemTemplatesMessage.ToByteString()
+                RequestMessage = ((IMessage)new DownloadItemTemplatesMessage()
+                {
+                    // To be implemented
+                    //PageTimestamp = 0,
+                    //Paginate = true,
+                    //PageOffset = Client.PageOffset
+                }).ToByteString()
             };
 
             var requestEnvelope = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(downloadItemTemplatesRequest, Client)).ConfigureAwait(false);
@@ -126,6 +131,43 @@ namespace PokemonGo.RocketAPI.Rpc
 
             DownloadSettingsResponse downloadSettingsResponse = response.Item6;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<DownloadGmTemplatesResponse> DownloadGmTemplates(long basisBatchId, long batchId, int pageOffset)
+        {
+            var DownloadGmTemplatesRequest = new Request
+            {
+                RequestType = RequestType.DownloadGameMasterTemplates,
+                RequestMessage = ((IMessage)new DownloadGmTemplatesMessage
+                {
+                    BasisBatchId = basisBatchId,
+                    BatchId = batchId,
+                    PageOffset = pageOffset
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(DownloadGmTemplatesRequest, Client)).ConfigureAwait(false);
+
+            Tuple<DownloadGmTemplatesResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, DownloadGmTemplatesResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            /*
+             * maybe not needed
+             * 
+            CheckChallengeResponse checkChallengeResponse = response.Item2;
+            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+            */
 
             return response.Item1;
         }
