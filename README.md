@@ -16,20 +16,20 @@ Interface to Pokémon Go Client including pretty much every call
 ```
 var client = new Client(new Settings()); //Define your own ISettings implementation
 await _client.Login.DoGoogleLogin();
-var inventory = await _client.Inventory.GetInventory();
-var profile = await _client.Player.GetOwnProfile();
-var playerStats = await _inventory.GetPlayerStats();
-var settings = await _client.Download.GetSettings();
-var mapObjects = await _client.Map.GetMapObjects();
-var updateLocation = await _client.Player.UpdatePlayerLocation();
-var encounter = await _client.Encounter.EncounterPokemon(encId, spawnId);
-var catchPokemon = await _client.Encounter.CatchPokemon(pokemon.EncounterId, pokemon.SpawnPointId, pokeball)
-var evolvePokemon = await _client.Inventory.EvolvePokemon(pokemonId);
-var transfer = await _client.Inventory.TransferPokemon(pokemonId);
-var recycle = await _client.Inventory.RecycleItem(item.ItemId, item.Count);
-var useBerry = await _client.Encounter.UseCaptureItem(encounterId, ItemId.ItemRazzBerry, spawnPointId);
-var fortInfo = await _client.Fort.GetFort(pokeStopId, pokeStopLatitude, pokeStopLongitude);
-var fortSearch = await _client.Fort.SearchFort(pokeStopId, pokeStopLatitude, pokeStopLongitude);
+var inventory = await _client.Inventory.GetInventory().ConfigureAwait(false);
+var profile = await _client.Player.GetOwnProfile().ConfigureAwait(false);
+var playerStats = await _inventory.GetPlayerStats().ConfigureAwait(false);
+var settings = await _client.Download.GetSettings().ConfigureAwait(false);
+var mapObjects = await _client.Map.GetMapObjects().ConfigureAwait(false);
+var updateLocation = await _client.Player.UpdatePlayerLocation().ConfigureAwait(false);
+var encounter = await _client.Encounter.EncounterPokemon(encId, spawnId).ConfigureAwait(false);
+var catchPokemon = await _client.Encounter.CatchPokemon(pokemon.EncounterId, pokemon.SpawnPointId, pokeball).ConfigureAwait(false)
+var evolvePokemon = await _client.Inventory.EvolvePokemon(pokemonId).ConfigureAwait(false);
+var transfer = await _client.Inventory.TransferPokemon(pokemonId).ConfigureAwait(false);
+var recycle = await _client.Inventory.RecycleItem(item.ItemId, item.Count).ConfigureAwait(false);
+var useBerry = await _client.Encounter.UseCaptureItem(encounterId, ItemId.ItemRazzBerry, spawnPointId).ConfigureAwait(false);
+var fortInfo = await _client.Fort.GetFort(pokeStopId, pokeStopLatitude, pokeStopLongitude).ConfigureAwait(false);
+var fortSearch = await _client.Fort.SearchFort(pokeStopId, pokeStopLatitude, pokeStopLongitude).ConfigureAwait(false);
 
 and a lot more :)
 
