@@ -15,7 +15,7 @@ namespace PokemonGo.RocketAPI
 
         public const string LoginUrl = "https://sso.pokemon.com/sso/login?service=https%3A%2F%2Fsso.pokemon.com%2Fsso%2Foauth2.0%2FcallbackAuthorize";
 
-        public const string LoginUserAgent = "pokemongo/1 CFNetwork/811.4.18 Darwin/17.0.0";
+        public const string LoginUserAgent = "pokemongo/1 CFNetwork/811.4.18 Darwin/17.2.0";
         public const string LoginManufactor = "X-Unity-Version";
         public const string LoginManufactorVersion = "5.6.1f1";//"5.5.1f1";
         public const string LoginHostValue = "sso.pokemon.com";
