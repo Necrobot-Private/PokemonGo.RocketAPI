@@ -22,7 +22,7 @@ namespace PokemonGo.RocketAPI.Rpc
     {
         public static string Country = "US";
         public static string Language = "en";
-        public static string TimeZone = "America/Los Angeles";
+        public static string TimeZone = "America/New_York";
         public static string POSIX = "en-us";
 
         public static void SetValues(string country, string language, string timezone, string posix)
@@ -38,6 +38,7 @@ namespace PokemonGo.RocketAPI.Rpc
     {
         public Player(Client client) : base(client)
         {
+            LocaleInfo.SetValues(client.Settings.Country, client.Settings.Language, client.Settings.TimeZone, client.Settings.POSIX);
         }
 
         public PlayerData PlayerData { get; set; }

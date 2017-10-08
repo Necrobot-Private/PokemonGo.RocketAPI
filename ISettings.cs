@@ -45,5 +45,9 @@ namespace PokemonGo.RocketAPI
         double AccountLatitude { get; set; }
         double AccountLongitude { get; set; }
         bool AccountActive { get; set; }
+        string Country { get; set; }
+        string Language { get; set; }
+        string TimeZone { get; set; }
+        string POSIX { get; set; }
     }
 }
