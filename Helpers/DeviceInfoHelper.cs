@@ -52,11 +52,11 @@ namespace PokemonGo.RocketAPI.Helpers
 
                 new string[] {"iPhone9,1", "iPhone", "D10AP"},
                 new string[] {"iPhone9,2", "iPhone", "D11AP"},
-                new string[] {"iPhone9,3", "iPhone", "D101AP"},
+                new string[] {"iPhone9,3", "iPhone", "MN9N2"},
                 new string[] {"iPhone9,4", "iPhone", "D111AP"}
             };
 
-        private static readonly string[] IosVersions = { "8.1.1", "8.1.2", "8.1.3", "8.2", "8.3", "8.4", "8.4.1", "9.0", "9.0.1", "9.0.2", "9.1", "9.2", "9.2.1", "9.3", "9.3.1", "9.3.2", "9.3.3", "9.3.4", "10.2", "10.2.1", "10.3", "10.3.1" };
+        private static readonly string[] IosVersions = { "8.1.1", "8.1.2", "8.1.3", "8.2", "8.3", "8.4", "8.4.1", "9.0", "9.0.1", "9.0.2", "9.1", "9.2", "9.2.1", "9.3", "9.3.1", "9.3.2", "9.3.3", "9.3.4", "10.2", "10.2.1", "10.3", "10.3.1", "10.3.3", "11.0.0", "11.1.0" };
 
         public static string BytesToHex(byte[] bytes)
         {
@@ -80,7 +80,9 @@ namespace PokemonGo.RocketAPI.Helpers
             var  deviceId = new Random().NextHexNumber(40).ToLower();
 
             deviceInfo.DeviceId = deviceId;
-            deviceInfo.FirmwareType = IosVersions[new Random().Next(IosVersions.Length)];
+            //PokemonGo.RocketAPI kernel emulated is lasted Darwin/17.2.0 according iOS 11.1.0
+            //deviceInfo.FirmwareType = IosVersions[new Random().Next(IosVersions.Length)];
+            deviceInfo.FirmwareType = "11.1.0";
             string[] device = IosDeviceInfo[(new Random()).Next(IosDeviceInfo.Length)];
             deviceInfo.DeviceModelBoot = device[0];
             deviceInfo.DeviceModel = device[1];
@@ -436,7 +438,6 @@ namespace PokemonGo.RocketAPI.Helpers
                     HardwareModel = "SM-T705"
                 }
             },
-
         };
     }
 }
