@@ -8,52 +8,44 @@ namespace PokemonGo.RocketAPI.Helpers
     {
         private static readonly string[][] IosDeviceInfo = new string[][]
             {
-                new string[] {"iPad3,1", "iPad", "J1AP"},
-                new string[] {"iPad3,2", "iPad", "J2AP"},
-                new string[] {"iPad3,3", "iPad", "J2AAP"},
-                new string[] {"iPad3,4", "iPad", "P101AP"},
-                new string[] {"iPad3,5", "iPad", "P102AP"},
-                new string[] {"iPad3,6", "iPad", "P103AP"},
+                new string[] {"iPad3,1", "iPad", "MC707"},
+                new string[] {"iPad3,2", "iPad", "MC756"},
+                new string[] {"iPad3,3", "iPad", "MD368"},
+                new string[] {"iPad3,4", "iPad", "ME392"},
+                new string[] {"iPad3,5", "iPad", "ME400"},
+                new string[] {"iPad3,6", "iPad", "ME410"},
 
-                new string[] {"iPad4,1", "iPad", "J71AP"},
-                new string[] {"iPad4,2", "iPad", "J72AP"},
-                new string[] {"iPad4,3", "iPad", "J73AP"},
-                new string[] {"iPad4,4", "iPad", "J85AP"},
-                new string[] {"iPad4,5", "iPad", "J86AP"},
-                new string[] {"iPad4,6", "iPad", "J87AP"},
-                new string[] {"iPad4,7", "iPad", "J85mAP"},
-                new string[] {"iPad4,8", "iPad", "J86mAP"},
-                new string[] {"iPad4,9", "iPad", "J87mAP"},
+                new string[] {"iPad4,1", "iPad", "ME906"},
+                new string[] {"iPad4,2", "iPad", "MF019"},
+                new string[] {"iPad4,3", "iPad", "MF236"},
 
-                new string[] {"iPad5,1", "iPad", "J96AP"},
-                new string[] {"iPad5,2", "iPad", "J97AP"},
-                new string[] {"iPad5,3", "iPad", "J81AP"},
-                new string[] {"iPad5,4", "iPad", "J82AP"},
+                new string[] {"iPad5,3", "iPad", "MH1J2"},
+                new string[] {"iPad5,4", "iPad", "MH2D2"},
 
-                new string[] {"iPad6,7", "iPad", "J98aAP"},
-                new string[] {"iPad6,8", "iPad", "J99aAP"},
+                new string[] {"iPad6,7", "iPad", "ML0V2"},
+                new string[] {"iPad6,8", "iPad", "ML2N2"},
 
-                new string[] {"iPad7,1", "iPad", "N102AP"},
+                new string[] {"iPad7,1", "iPad", "MPL12"},
 
-                new string[] {"iPhone5,1", "iPhone", "N41AP"},
-                new string[] {"iPhone5,2", "iPhone", "N42AP"},
-                new string[] {"iPhone5,3", "iPhone", "N48AP"},
-                new string[] {"iPhone5,4", "iPhone", "N49AP"},
+                new string[] {"iPhone5,1", "iPhone", "MD642"},
+                new string[] {"iPhone5,2", "iPhone", "MD662"},
+                new string[] {"iPhone5,3", "iPhone", "MF134"},
+                new string[] {"iPhone5,4", "iPhone", "MF154"},
 
-                new string[] {"iPhone6,1", "iPhone", "N51AP"},
-                new string[] {"iPhone6,2", "iPhone", "N53AP"},
+                new string[] {"iPhone6,1", "iPhone", "ME304"},
+                new string[] {"iPhone6,2", "iPhone", "ME440"},
 
-                new string[] {"iPhone7,1", "iPhone", "N56AP"},
-                new string[] {"iPhone7,2", "iPhone", "N61AP"},
+                new string[] {"iPhone7,1", "iPhone", "MGAF2"},
+                new string[] {"iPhone7,2", "iPhone", "MG3G2"},
 
-                new string[] {"iPhone8,1", "iPhone", "N71AP"},
-                new string[] {"iPhone8,2", "iPhone", "N66AP"},
-                new string[] {"iPhone8,4", "iPhone", "N69AP"},
+                new string[] {"iPhone8,1", "iPhone", "MKQG2"},
+                new string[] {"iPhone8,2", "iPhone", "MKTX2"},
+                new string[] {"iPhone8,4", "iPhone", "MP952"},
 
-                new string[] {"iPhone9,1", "iPhone", "D10AP"},
-                new string[] {"iPhone9,2", "iPhone", "D11AP"},
+                new string[] {"iPhone9,1", "iPhone", "MN8R2"},
+                new string[] {"iPhone9,2", "iPhone", "MN4E2"},
                 new string[] {"iPhone9,3", "iPhone", "MN9N2"},
-                new string[] {"iPhone9,4", "iPhone", "D111AP"}
+                new string[] {"iPhone9,4", "iPhone", "MN592" }
             };
 
         private static readonly string[] IosVersions = { "8.1.1", "8.1.2", "8.1.3", "8.2", "8.3", "8.4", "8.4.1", "9.0", "9.0.1", "9.0.2", "9.1", "9.2", "9.2.1", "9.3", "9.3.1", "9.3.2", "9.3.3", "9.3.4", "10.2", "10.2.1", "10.3", "10.3.1", "10.3.3", "11.0.0", "11.1.0" };
