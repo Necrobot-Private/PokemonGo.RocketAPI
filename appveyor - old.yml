@@ -6,8 +6,7 @@ skip_tags: true
 image: Visual Studio 2017
 configuration: Release
 platform: x86
-build:
-  verbosity: minimal
+# environment variables
 environment:
   SolutionDirectory: .
 before_build:
@@ -16,3 +15,8 @@ before_build:
 
     nuget restore -OutputDirectory packages
     
+    git clone -q --branch=master https://github.com/Necrobot-Private/POGOProtos.git POGOProtos
+    
+    sed -i "s#$(SolutionDir)#..#g" POGOProtos/POGOProtos.csproj
+build:
+  verbosity: minimal
