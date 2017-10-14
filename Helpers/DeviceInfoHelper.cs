@@ -8,6 +8,9 @@ namespace PokemonGo.RocketAPI.Helpers
     {
         private static readonly string[][] IosDeviceInfo = new string[][]
             {
+                /*
+                 * Not sure for models iPad for emulated kernel darwin/17.2.0
+                 * 
                 new string[] {"iPad3,1", "iPad", "MC707"},
                 new string[] {"iPad3,2", "iPad", "MC756"},
                 new string[] {"iPad3,3", "iPad", "MD368"},
@@ -27,6 +30,9 @@ namespace PokemonGo.RocketAPI.Helpers
 
                 new string[] {"iPad7,1", "iPad", "MPL12"},
 
+                 *
+                 * Not compatible to emulated kernel Darwin/17.2.0
+                 * 
                 new string[] {"iPhone5,1", "iPhone", "MD642"},
                 new string[] {"iPhone5,2", "iPhone", "MD662"},
                 new string[] {"iPhone5,3", "iPhone", "MF134"},
@@ -45,7 +51,26 @@ namespace PokemonGo.RocketAPI.Helpers
                 new string[] {"iPhone9,1", "iPhone", "MN8R2"},
                 new string[] {"iPhone9,2", "iPhone", "MN4E2"},
                 new string[] {"iPhone9,3", "iPhone", "MN9N2"},
-                new string[] {"iPhone9,4", "iPhone", "MN592" }
+                new string[] {"iPhone9,4", "iPhone", "MN592" }*/
+                new string[] {"iPhone8,1", "iPhone", "N71AP"},   // 6s
+                new string[] {"iPhone8,1", "iPhone", "N71mAP"},  // 6s
+                new string[] {"iPhone8,2", "iPhone", "N66AP"},   // 6s plus
+                new string[] {"iPhone8,2", "iPhone", "N66mAP"},  // 6s plus
+                new string[] {"iPhone8,4", "iPhone", "N69AP"},   // SE
+                new string[] {"iPhone8,4", "iPhone", "N69uAP"},  // SE
+
+                new string[] {"iPhone9,1", "iPhone", "D10AP"},   // 7
+                new string[] {"iPhone9,2", "iPhone", "D11AP"},   // 7 plus
+                new string[] {"iPhone9,3", "iPhone", "D101AP"},  // 7
+                new string[] {"iPhone9,4", "iPhone", "D111AP"},  // 7 plus
+
+                new string[] {"iPhone10,1", "iPhone", "D20AP"},  // 8 
+                new string[] {"iPhone10,2", "iPhone", "D21AP"},  // 8 plus
+                new string[] {"iPhone10,3", "iPhone", "D22AP"},  // X 
+                new string[] {"iPhone10,4", "iPhone", "D201AP"}, // 8 
+                new string[] {"iPhone10,5", "iPhone", "D211AP"}, // 8 plus
+                new string[] {"iPhone10,6", "iPhone", "D221AP"}, // X 
+
             };
 
         private static readonly string[] IosVersions = { "8.1.1", "8.1.2", "8.1.3", "8.2", "8.3", "8.4", "8.4.1", "9.0", "9.0.1", "9.0.2", "9.1", "9.2", "9.2.1", "9.3", "9.3.1", "9.3.2", "9.3.3", "9.3.4", "10.2", "10.2.1", "10.3", "10.3.1", "10.3.3", "11.0.0", "11.1.0" };
