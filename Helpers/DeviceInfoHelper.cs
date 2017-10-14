@@ -29,7 +29,6 @@ namespace PokemonGo.RocketAPI.Helpers
                 new string[] {"iPad6,8", "iPad", "ML2N2"},
 
                 new string[] {"iPad7,1", "iPad", "MPL12"},
-
                  *
                  * Not compatible to emulated kernel Darwin/17.2.0
                  * 
@@ -91,7 +90,7 @@ namespace PokemonGo.RocketAPI.Helpers
             deviceInfo.DeviceId = deviceId;
             //PokemonGo.RocketAPI kernel emulated is lasted Darwin/17.2.0 according iOS 11.1.0
             //deviceInfo.FirmwareType = IosVersions[new Random().Next(IosVersions.Length)];
-            deviceInfo.FirmwareType = "11.1.0";
+            deviceInfo.FirmwareType = "11.1.0"; // force use lasted iOS
             string[] device = IosDeviceInfo[(new Random()).Next(IosDeviceInfo.Length)];
             deviceInfo.DeviceModelBoot = device[0];
             deviceInfo.DeviceModel = device[1];
