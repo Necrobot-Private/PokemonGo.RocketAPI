@@ -43,15 +43,8 @@ namespace PokemonGo.RocketAPI.Helpers
 
                 new string[] {"iPhone7,1", "iPhone", "MGAF2"},
                 new string[] {"iPhone7,2", "iPhone", "MG3G2"},
+                */
 
-                new string[] {"iPhone8,1", "iPhone", "MKQG2"},
-                new string[] {"iPhone8,2", "iPhone", "MKTX2"},
-                new string[] {"iPhone8,4", "iPhone", "MP952"},
-
-                new string[] {"iPhone9,1", "iPhone", "MN8R2"},
-                new string[] {"iPhone9,2", "iPhone", "MN4E2"},
-                new string[] {"iPhone9,3", "iPhone", "MN9N2"},
-                new string[] {"iPhone9,4", "iPhone", "MN592" }*/
                 new string[] {"iPhone8,1", "iPhone", "N71AP"},   // 6s
                 new string[] {"iPhone8,1", "iPhone", "N71mAP"},  // 6s
                 new string[] {"iPhone8,2", "iPhone", "N66AP"},   // 6s plus
@@ -69,8 +62,7 @@ namespace PokemonGo.RocketAPI.Helpers
                 new string[] {"iPhone10,3", "iPhone", "D22AP"},  // X 
                 new string[] {"iPhone10,4", "iPhone", "D201AP"}, // 8 
                 new string[] {"iPhone10,5", "iPhone", "D211AP"}, // 8 plus
-                new string[] {"iPhone10,6", "iPhone", "D221AP"}, // X 
-
+                new string[] {"iPhone10,6", "iPhone", "D221AP"}  // X 
             };
 
         private static readonly string[] IosVersions = { "8.1.1", "8.1.2", "8.1.3", "8.2", "8.3", "8.4", "8.4.1", "9.0", "9.0.1", "9.0.2", "9.1", "9.2", "9.2.1", "9.3", "9.3.1", "9.3.2", "9.3.3", "9.3.4", "10.2", "10.2.1", "10.3", "10.3.1", "10.3.3", "11.0.0", "11.1.0" };
