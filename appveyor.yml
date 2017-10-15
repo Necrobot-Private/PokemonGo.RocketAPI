@@ -12,7 +12,7 @@ environment:
   SolutionDirectory: .
 before_build:
 - cmd: >-
-    sed -i "s#$(SolutionDir)#.#g" POGOProtos.csproj
+    sed -i "s#$(SolutionDir)#.#g" PokemonGo.RocketAPI.csproj
 
     nuget restore -OutputDirectory packages
     
