@@ -21,6 +21,9 @@ pull_requests:
 # Build worker image (VM template)
 image: Visual Studio 2017
 
+# clone directory
+clone_folder: c:\projects\feroxrev
+
 # fetch repository as zip archive
 shallow_clone: false
 
@@ -50,6 +53,10 @@ build:
   # MSBuild verbosity level
   verbosity: minimal
 
+ # environment variables
+environment:
+  SolutionDirectory: .
+  
 # scripts to run before build
 before_build:
   - nuget restore
