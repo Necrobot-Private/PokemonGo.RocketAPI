@@ -1,62 +1,22 @@
 version: 1.0.0.{build}
-
 branches:
   only:
   - master
-  
-# Do not build on tags
-skip_tags: false
-
-# Start builds on tags only
-skip_non_tags: false
-
-# 
-pull_requests:
-  do_not_increment_build_number: true
-  
-#---------------------------------#
-#    environment configuration    #
-#---------------------------------#
-
-# Build worker image (VM template)
+skip_tags: true
 image: Visual Studio 2017
-
-# clone directory
-clone_folder: c:\projects\feroxrev
-
-# fetch repository as zip archive
-shallow_clone: false
-
-
-#---------------------------------#
-#       build configuration       #
-#---------------------------------#
-
-# build platform, i.e. x86, x64, Any CPU. This setting is optional.
-#platform: x86
-platform:  x86
-
-# to add several platforms to build matrix:
-#platform:
-#  - x86
-#  - Any CPU
-
-# build Configuration, i.e. Debug, Release, etc.
 configuration: Release
-
-# to add several configurations to build matrix:
-#configuration:
-#  - Debug
-#  - Release
-
-build:
-  # MSBuild verbosity level
-  verbosity: minimal
-
- # environment variables
+platform: x86
+# environment variables
 environment:
   SolutionDirectory: .
-  
-# scripts to run before build
 before_build:
-  - nuget restore -OutputDirectory packages
+- cmd: >-
+    sed -i "s#$(SolutionDir)#.#g" PokemonGo.RocketAPI.csproj
+
+    nuget restore -OutputDirectory packages
+    
+#    git clone -q --branch=master https://github.com/Necrobot-Private/POGOProtos.git POGOProtos
+    
+#    sed -i "s#$(SolutionDir)#..#g" POGOProtos/POGOProtos.csproj
+build:
+  verbosity: minimal
