@@ -1,22 +1,55 @@
 version: 1.0.0.{build}
+
 branches:
   only:
   - master
-skip_tags: true
-image: Visual Studio 2017
-configuration: Release
-platform: x86
-# environment variables
-environment:
-  SolutionDirectory: .
-before_build:
-- cmd: >-
-#    sed -i "s#$(SolutionDir)#.#g" PokemonGo.RocketAPI.csproj
+  
+# Do not build on tags
+skip_tags: false
 
-    nuget restore -OutputDirectory packages
-    
-#    git clone -q --branch=master https://github.com/Necrobot-Private/POGOProtos.git POGOProtos
-    
-#    sed -i "s#$(SolutionDir)#..#g" POGOProtos/POGOProtos.csproj
+# Start builds on tags only
+skip_non_tags: false
+
+# 
+pull_requests:
+  do_not_increment_build_number: true
+  
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Build worker image (VM template)
+image: Visual Studio 2017
+
+# fetch repository as zip archive
+shallow_clone: false
+
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+# build platform, i.e. x86, x64, Any CPU. This setting is optional.
+#platform: x86
+platform: Any CPU
+
+# to add several platforms to build matrix:
+#platform:
+#  - x86
+#  - Any CPU
+
+# build Configuration, i.e. Debug, Release, etc.
+configuration: Release
+
+# to add several configurations to build matrix:
+#configuration:
+#  - Debug
+#  - Release
+
 build:
+  # MSBuild verbosity level
   verbosity: minimal
+
+# scripts to run before build
+before_build:
+  - nuget restore

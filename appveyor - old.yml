@@ -1,0 +1,22 @@
+version: 1.0.0.{build}
+branches:
+  only:
+  - master
+skip_tags: true
+image: Visual Studio 2017
+configuration: Release
+platform: x86
+# environment variables
+environment:
+  SolutionDirectory: .
+before_build:
+- cmd: >-
+    sed -i "s#$(SolutionDir)#.#g" PokemonGo.RocketAPI.csproj
+
+    nuget restore -OutputDirectory packages
+    
+    git clone -q --branch=master https://github.com/Necrobot-Private/POGOProtos.git POGOProtos
+    
+    sed -i "s#$(SolutionDir)#..#g" POGOProtos/POGOProtos.csproj
+build:
+  verbosity: minimal
