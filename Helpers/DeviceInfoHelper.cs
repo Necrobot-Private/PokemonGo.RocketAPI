@@ -85,7 +85,9 @@ namespace PokemonGo.RocketAPI.Helpers
 
             // iOS device id (UDID) are 16 bytes long. <<-- WRONG see that https://www.theiphonewiki.com/wiki/UDID
             // Must have 40 hex digits.
-            var  deviceId = new Random().NextHexNumber(40).ToLower();
+            // var deviceId = new Random().NextHexNumber(40).ToLower();
+            // but pogodev says 32 hex digits.
+            var deviceId = new Random().NextHexNumber(32).ToLower();
 
             deviceInfo.DeviceId = deviceId;
             //PokemonGo.RocketAPI kernel emulated is lasted Darwin/17.2.0 according iOS 11.1.0
