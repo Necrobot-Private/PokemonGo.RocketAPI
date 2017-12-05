@@ -17,7 +17,7 @@ namespace PokemonGo.RocketAPI
 
         public const string LoginUserAgent = "pokemongo/1 CFNetwork/893.10 Darwin/17.3.0"; //iOS 11.2.0
         public const string LoginManufactor = "X-Unity-Version";
-        public const string LoginManufactorVersion = "5.5.1f1";//"5.6.1f1";
+        public const string LoginManufactorVersion = "2017.1.2f1"; //"5.5.1f1";//"5.6.1f1";
         public const string LoginHostValue = "sso.pokemon.com";
         public const string LoginOauthUrl = "https://sso.pokemon.com/sso/oauth2.0/accessToken";
         public const string Connection = "keep-alive";
