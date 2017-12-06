@@ -39,19 +39,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getFortRequest, Client)).ConfigureAwait(false);
 
-            Tuple<FortDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<FortDetailsResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, FortDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, FortDetailsResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -74,19 +71,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(searchFortRequest, Client)).ConfigureAwait(false);
 
-            Tuple<FortSearchResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<FortSearchResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, FortSearchResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, FortSearchResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             // Update LastMapObject to mark fort as being used
@@ -118,19 +112,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(addFortModifierRequest, Client)).ConfigureAwait(false);
 
-            Tuple<AddFortModifierResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<AddFortModifierResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, AddFortModifierResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, AddFortModifierResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -160,19 +151,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(gymBattleAttackGymRequest, Client)).ConfigureAwait(false);
 
-            Tuple<GymBattleAttackResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<GymBattleAttackResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, GymBattleAttackResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, GymBattleAttackResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -195,19 +183,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(fortDeployPokemonRequest, Client)).ConfigureAwait(false);
 
-            Tuple<FortDeployPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<FortDeployPokemonResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, FortDeployPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, FortDeployPokemonResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -229,19 +214,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(fortRecallPokemonRequest, Client)).ConfigureAwait(false);
 
-            Tuple<FortRecallPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<FortRecallPokemonResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, FortRecallPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, FortRecallPokemonResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -265,19 +247,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(getGymDetailsRequest, Client)).ConfigureAwait(false);
 
-            Tuple<GymGetInfoResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<GymGetInfoResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, GymGetInfoResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, GymGetInfoResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -301,19 +280,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(startGymBattleRequest, Client)).ConfigureAwait(false);
 
-            Tuple<GymStartSessionResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<GymStartSessionResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, GymStartSessionResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, GymStartSessionResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -338,19 +314,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(GymFeedPokemonRequest, Client)).ConfigureAwait(false);
 
-            Tuple<GymFeedPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<GymFeedPokemonResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, GymFeedPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, GymFeedPokemonResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -373,19 +346,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(useItemInGymRequest, Client)).ConfigureAwait(false);
 
-            Tuple<UseItemGymResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<UseItemGymResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, UseItemGymResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, UseItemGymResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -407,19 +377,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(GetGymBadgeDetailsRequest, Client)).ConfigureAwait(false);
 
-            Tuple<GetGymBadgeDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<GetGymBadgeDetailsResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, GetGymBadgeDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, GetGymBadgeDetailsResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -442,19 +409,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(GymDeploynRequest, Client)).ConfigureAwait(false);
 
-            Tuple<GymDeployResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<GymDeployResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, GymDeployResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, GymDeployResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -476,19 +440,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(setGetRaidDetailsRequest, Client)).ConfigureAwait(false);
 
-            Tuple<GetRaidDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<GetRaidDetailsResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, GetRaidDetailsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, GetRaidDetailsResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -510,19 +471,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(StartRaidBattleRequest, Client)).ConfigureAwait(false);
 
-            Tuple<StartRaidBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<StartRaidBattleResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, StartRaidBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, StartRaidBattleResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -544,19 +502,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(AttackRaidBattleRequest, Client)).ConfigureAwait(false);
 
-            Tuple<AttackRaidBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<AttackRaidBattleResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, AttackRaidBattleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, AttackRaidBattleResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -579,19 +534,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(AttackRaidBattleRequest, Client)).ConfigureAwait(false);
 
-            Tuple<JoinLobbyResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<JoinLobbyResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, JoinLobbyResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, JoinLobbyResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -611,19 +563,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(LeaveLobbyRequest, Client)).ConfigureAwait(false);
 
-            Tuple<LeaveLobbyResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<LeaveLobbyResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, LeaveLobbyResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, LeaveLobbyResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -643,19 +592,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(SetLobbyPokemonRequest, Client)).ConfigureAwait(false);
 
-            Tuple<SetLobbyPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<SetLobbyPokemonResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, SetLobbyPokemonResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, SetLobbyPokemonResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
@@ -675,19 +621,16 @@ namespace PokemonGo.RocketAPI.Rpc
 
             var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(SetLobbyVisibilityRequest, Client)).ConfigureAwait(false);
 
-            Tuple<SetLobbyVisibilityResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+            Tuple<SetLobbyVisibilityResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
                 await
                     PostProtoPayload
-                        <Request, SetLobbyVisibilityResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                        <Request, SetLobbyVisibilityResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
                             CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
 
-            CheckChallengeResponse checkChallengeResponse = response.Item2;
-            CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
-
-            GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            GetHoloInventoryResponse getHoloInventoryResponse = response.Item3;
             CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
 
-            DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            DownloadSettingsResponse downloadSettingsResponse = response.Item5;
             CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
 
             return response.Item1;
