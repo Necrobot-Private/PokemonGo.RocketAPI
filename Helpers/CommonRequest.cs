@@ -108,6 +108,19 @@ namespace PokemonGo.RocketAPI.Helpers
             };
         }
 
+        public static Request[] AppendCheckChallenge(Request request)
+        {
+            return new[]
+            {
+                request,
+                new Request
+                {
+                    RequestType = RequestType.CheckChallenge,
+                    RequestMessage = new CheckChallengeMessage().ToByteString()
+                }
+            };
+        }
+
         public static Request GetVerifyChallenge(string token)
         {
             return new Request
@@ -133,6 +146,11 @@ namespace PokemonGo.RocketAPI.Helpers
         {
             List<Request> commonRequestsList = new List<Request>
             {
+                new Request
+                {
+                    RequestType = RequestType.CheckChallenge,
+                    RequestMessage = new CheckChallengeMessage().ToByteString()
+                },
                 new Request
                 {
                     RequestType = RequestType.GetHatchedEggs,
@@ -195,6 +213,15 @@ namespace PokemonGo.RocketAPI.Helpers
                     //}
                 }
             }
+        }
+
+        public static void ProcessCheckChallengeResponse(Client client, CheckChallengeResponse checkChallengeResponse)
+        {
+            if (checkChallengeResponse == null)
+                return;
+
+            if (checkChallengeResponse.ShowChallenge)
+                throw new CaptchaException(checkChallengeResponse.ChallengeUrl);
         }
 
         public static void ProcessGetPlayerResponse(Client client, GetPlayerResponse getPlayerResponse)
