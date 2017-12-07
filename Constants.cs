@@ -35,8 +35,8 @@ namespace PokemonGo.RocketAPI
         public const string GoogleAuthClientSig = "321187995bc7cdc2b5fc91b11a96e2baa8602c62";
 
         public const string ApiEndPoint = "api/v153_2/hash";
-        public const string API_VERSION = "0.83.2";
-        public const uint AppVersion = 8300;
+        public const string API_VERSION = "0.85.1";
+        public const uint AppVersion = 8501;
         public const long Unknown25 = unchecked((long)0x2AC22400401779DE);
         public const string UnknownPlat8Field = "15c79df0558009a4242518d2ab65de2a59e09499";
 
