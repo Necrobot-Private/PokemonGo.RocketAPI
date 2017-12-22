@@ -9,6 +9,7 @@ using POGOProtos.Networking.Responses;
 using Google.Protobuf;
 using PokemonGo.RocketAPI.Helpers;
 using System;
+using POGOProtos.Map.Fort;
 
 #endregion
 
@@ -192,7 +193,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<DiskEncounterResponse> EncounterLurePokemon(ulong encounterId, string fortId)
+        public async Task<DiskEncounterResponse> EncounterLurePokemon(ulong encounterId, FortData fort)
         {
             var encounterLurePokemonRequest = new Request
             {
@@ -200,9 +201,11 @@ namespace PokemonGo.RocketAPI.Rpc
                 RequestMessage = ((IMessage)new DiskEncounterMessage
                 {
                     EncounterId = encounterId,
-                    FortId = fortId,
+                    FortId = fort.Id,
                     PlayerLatitude = Client.CurrentLatitude,
-                    PlayerLongitude = Client.CurrentLongitude
+                    PlayerLongitude = Client.CurrentLongitude,
+                    GymLatDegrees = fort.Latitude,
+                    GymLngDegrees = fort.Longitude
                 }).ToByteString()
             };
 
