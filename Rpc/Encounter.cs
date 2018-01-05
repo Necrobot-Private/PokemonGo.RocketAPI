@@ -10,6 +10,7 @@ using Google.Protobuf;
 using PokemonGo.RocketAPI.Helpers;
 using System;
 using POGOProtos.Map.Fort;
+using POGOProtos.Data;
 
 #endregion
 
@@ -126,11 +127,18 @@ namespace PokemonGo.RocketAPI.Rpc
             ItemId pokeballItemId, double normalizedRecticleSize = 1.950, double spinModifier = 1,
             bool hitPokemon = true, double normalizedHitPos = 1)
         {
+            var arPlusValues = new ARPlusEncounterValues();
+                APIConfiguration.Logger.LogInfo("Using AR Bonus Values");
+                arPlusValues.Awareness = (float)0.000;
+                arPlusValues.Proximity = (float)0.000;
+                arPlusValues.PokemonFrightened = false;
+
             var catchPokemonRequest = new Request
             {
                 RequestType = RequestType.CatchPokemon,
                 RequestMessage = ((IMessage)new CatchPokemonMessage
                 {
+                    ArPlusValues = arPlusValues,
                     EncounterId = encounterId,
                     Pokeball = pokeballItemId,
                     SpawnPointId = spawnPointGuid,
