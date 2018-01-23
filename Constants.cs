@@ -15,7 +15,7 @@ namespace PokemonGo.RocketAPI
 
         public const string LoginUrl = "https://sso.pokemon.com/sso/login?service=https%3A%2F%2Fsso.pokemon.com%2Fsso%2Foauth2.0%2FcallbackAuthorize";
 
-        public const string LoginUserAgent = "pokemongo/1 CFNetwork/893.10 Darwin/17.3.0"; //iOS 11.2.0
+        public const string LoginUserAgent = "pokemongo/1 CFNetwork/893.14.2 Darwin/17.4.0"; //iOS 11.2.5
         public const string LoginManufactor = "X-Unity-Version";
         public const string LoginManufactorVersion = "2017.1.2f1"; //"5.5.1f1";//"5.6.1f1";
         public const string LoginHostValue = "sso.pokemon.com";
@@ -34,11 +34,11 @@ namespace PokemonGo.RocketAPI
         public const string GoogleAuthApp = "com.nianticlabs.pokemongo";
         public const string GoogleAuthClientSig = "321187995bc7cdc2b5fc91b11a96e2baa8602c62";
 
-        public const string ApiEndPoint = "api/v157_5/hash";
-        public const string API_VERSION = "0.87.5";
-        public const uint AppVersion = 8700;
-        public const long Unknown25 = unchecked((long)0x3E75FB078C4573FA);
-        public const string UnknownPlat8Field = "15c79df0558009a4242518d2ab65de2a59e09499";
+        public const string ApiEndPoint = "api/v159_1/hash";
+        public const string API_VERSION = "0.89.1";
+        public const uint AppVersion = 8900;
+        public const long Unknown25 = unchecked((long)0xF522F8878F08FFD6);
+        public const string UnknownPlat8Field = "4d32f6b70cda8539ab82be5750e009d6d05a48ad";
 
         // Login PTC
 
