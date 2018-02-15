@@ -12,6 +12,8 @@ using System.Threading;
 using PokemonGo.RocketAPI.LoginProviders;
 using PokemonGo.RocketAPI.Authentication.Data;
 using POGOProtos.Enums;
+using System.Collections.Generic;
+using Google.Protobuf.Collections;
 
 #endregion
 
@@ -203,6 +205,19 @@ namespace PokemonGo.RocketAPI.Rpc
             //Client.PageOffset = getItemTemplates.PageOffset;
             await Client.Download.GetItemTemplates().ConfigureAwait(false);
             APIConfiguration.Logger.LogDebug("GetItemTemplates done.");
+            await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+
+            //Need get storeitems
+
+            //New on protos:
+            var ids = await Client.Misc.FetchAllNews().ConfigureAwait(false);
+            var newids = new RepeatedField<string>();
+            foreach (var id in ids.CurrentNews.NewsArticles)
+                newids.Add(id.Id);
+            APIConfiguration.Logger.LogDebug("FetchAllNews done.");
+            await RandomHelper.RandomDelay(300).ConfigureAwait(false);
+            await Client.Misc.MarkReadNewsArticle(newids).ConfigureAwait(false);
+            APIConfiguration.Logger.LogDebug("MarkReadNewsArticle done.");
             await RandomHelper.RandomDelay(300).ConfigureAwait(false);
 
             await Client.Player.GetPlayerProfile().ConfigureAwait(false);
