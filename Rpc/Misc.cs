@@ -21,6 +21,68 @@ namespace PokemonGo.RocketAPI.Rpc
         {
         }
 
+        public async Task<FetchAllNewsResponse> FetchAllNews()
+        {
+            var claimCodenameRequest = new Request
+            {
+                RequestType = RequestType.FetchAllNews,
+                RequestMessage = ((IMessage)new FetchAllNewsMessage
+                {
+                    //
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(claimCodenameRequest, Client)).ConfigureAwait(false);
+
+            Tuple<FetchAllNewsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, FetchAllNewsResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            //CheckChallengeResponse checkChallengeResponse = response.Item2;
+            //CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            //GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            //CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            //DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            //CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
+        public async Task<MarkReadNewsArticleResponse> MarkReadNewsArticle(RepeatedField<string> newsIds)
+        {
+            var claimCodenameRequest = new Request
+            {
+                RequestType = RequestType.MarkReadNewsArticle,
+                RequestMessage = ((IMessage)new MarkReadNewsArticleMessage
+                {
+                    NewsIds = { newsIds }
+                }).ToByteString()
+            };
+
+            var request = await GetRequestBuilder().GetRequestEnvelope(CommonRequest.FillRequest(claimCodenameRequest, Client)).ConfigureAwait(false);
+
+            Tuple<MarkReadNewsArticleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse, CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse> response =
+                await
+                    PostProtoPayload
+                        <Request, MarkReadNewsArticleResponse, CheckChallengeResponse, GetHatchedEggsResponse, GetHoloInventoryResponse,
+                            CheckAwardedBadgesResponse, DownloadSettingsResponse, GetBuddyWalkedResponse>(request).ConfigureAwait(false);
+
+            //CheckChallengeResponse checkChallengeResponse = response.Item2;
+            //CommonRequest.ProcessCheckChallengeResponse(Client, checkChallengeResponse);
+
+            //GetHoloInventoryResponse getHoloInventoryResponse = response.Item4;
+            //CommonRequest.ProcessGetHoloInventoryResponse(Client, getHoloInventoryResponse);
+
+            //DownloadSettingsResponse downloadSettingsResponse = response.Item6;
+            //CommonRequest.ProcessDownloadSettingsResponse(Client, downloadSettingsResponse);
+
+            return response.Item1;
+        }
+
         public async Task<ClaimCodenameResponse> ClaimCodename(string codename)
         {
             var claimCodenameRequest = new Request
