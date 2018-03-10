@@ -1,4 +1,4 @@
-﻿#region using directives
+#region using directives
 
 using System;
 using System.Net;
@@ -85,7 +85,7 @@ namespace PokemonGo.RocketAPI
 
                 // These 4 constants below need to change if we update the hashing server API version that is used.
                 Unknown25 = Constants.Unknown25;
- 				
+
                 // WARNING! IF YOU CHANGE THE APPVERSION BELOW ALSO UPDATE THE API_VERSION AT THE TOP OF THE FILE!
                 AppVersion = Constants.AppVersion; 
 		
