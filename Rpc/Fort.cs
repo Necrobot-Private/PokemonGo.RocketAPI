@@ -13,6 +13,7 @@ using System;
 using System.Linq;
 using POGOProtos.Map;
 using PokemonGo.RocketAPI.Extensions;
+using Google.Protobuf.Collections;
 
 #endregion
 
@@ -147,10 +148,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 PlayerLatDegrees = Client.CurrentLatitude,
                 PlayerLngDegrees = Client.CurrentLongitude,
                 TimestampMs = timestampMs,
-                AttackActions = { } // { battleActions }
+                AttackerActions = { } // { battleActions }
             };
 
-            message.AttackActions.AddRange(battleActions);
+            message.AttackerActions.AddRange(battleActions);
 
             var gymBattleAttackGymRequest = new Request
             {
@@ -528,7 +529,7 @@ namespace PokemonGo.RocketAPI.Rpc
             return response.Item1;
         }
 
-        public async Task<AttackRaidBattleResponse> AttackRaidBattle(string gymId, long raidSeed)
+        public async Task<AttackRaidBattleResponse> AttackRaidBattle(string gymId, RepeatedField<BattleAction> attackeractions, string battleid, BattleAction lastretrievedaction, long timestampms)
         {
             var AttackRaidBattleRequest = new Request
             {
@@ -536,9 +537,10 @@ namespace PokemonGo.RocketAPI.Rpc
                 RequestMessage = ((IMessage)new AttackRaidBattleMessage
                 {
                     GymId = gymId,
-                    PlayerLatDegrees = Client.CurrentLatitude,
-                    PlayerLngDegrees = Client.CurrentLongitude,
-                    RaidSeed = raidSeed
+                    AttackerActions = { attackeractions },
+                    BattleId = battleid,
+                    LastRetrievedAction = lastretrievedaction,
+                    TimestampMs = timestampms
                 }).ToByteString()
             };
 
