@@ -49,5 +49,7 @@ namespace PokemonGo.RocketAPI
         string Language { get; set; }
         string TimeZone { get; set; }
         string POSIX { get; set; }
+        double RunStart { get; set; }
+        double RunEnd { get; set; }
     }
 }
